@@ -89,7 +89,7 @@ define(['N/record', 'N/search', '../BSG_Library_Modules/bsg_module_core.js','N/t
                               params: { custscript_assets_to_process : itemsFulfilled,
                             	  custscript_so_id : soId }
                           });
-						var mrID = mapReduce.submit();
+						var  mrID = mapReduce.submit();
 				}
 			}
 		}
