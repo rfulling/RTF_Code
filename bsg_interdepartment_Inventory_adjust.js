@@ -43,7 +43,7 @@ define([
      * @return {Array|Object|Search|RecordRef} inputSummary
      * @since 2015.1
      */
-    function handleErrorAndSendNotification(e, stage) {
+    function handleErrorAndSendNotification(e, stage ) {
         log.error('Stage: ' + stage + ' failed', e);   
 
         var author = 25154;
