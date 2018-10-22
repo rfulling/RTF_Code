@@ -1,0 +1,13 @@
+{
+	"paths":{
+		"accountSettings": "../BSG_Library_Modules/bsg_module_account_settings",
+		"moment": "../BSG_Library_Modules/moment.min",
+		"jquery": "../BSG_Library_Modules/jquery.min",
+		"jqueryui": "../BSG_Library_Modules/jquery-ui/jquery-ui.min"
+	},
+	"shim": {
+		"moment": {
+			"exports": "moment"
+		}
+	}
+}
