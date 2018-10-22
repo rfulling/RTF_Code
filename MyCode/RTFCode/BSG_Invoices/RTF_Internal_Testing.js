@@ -13,7 +13,7 @@ define(['N/record', 'N/search', 'N/runtime', '../BSG_Library_Modules/bsg_module_
 				return false;
 			}
 			var nrec = context.newRecord;
-			//new comment on this.
+			//n ew comment on this.
 			
 			//if this is internal billing create  a credit memo
 			var invInternal =parseInt(nrec.getValue({fieldId:'entity'}));
