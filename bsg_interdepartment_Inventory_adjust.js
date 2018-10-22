@@ -44,7 +44,7 @@ define([
      * @since 2015.1
      */
     function handleErrorAndSendNotification(e, stage) {
-        log.error('Stage: ' + stage + ' failed', e);
+        log.error('Stage: ' + stage + ' failed', e);   
 
         var author = 25154;
         var recipients = 'russell@totalwarehouse.com';
