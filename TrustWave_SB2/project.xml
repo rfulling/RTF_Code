@@ -1,0 +1,37 @@
+<project info="SuiteCloud IDE generated file, do not edit." setAttributesOnUpdate="false">
+  <folder name="TrustWave_SB2">
+    <file name="Coupa FX Rate 2.0.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Coupa Scripts to Get ERs and Amounts (1).js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Coupa Supplier Items.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Coupa-Create-PO.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Coupa-Employee.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Coupa-Project.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Email Invoice - Suitelet.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Email Invoice - UE.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Expense Report Billable Flag for Billable Category.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="IL_SS_Print_Checks-test.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Invoice Classification (2).js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Invoice Payment Status to Coupa.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="JE_script.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Mark Exported.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="NSPS Trustwave_Set_CRM_ID_on_JE_massUpdate.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Non Exported Expense Paid Status.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Payment Status to Coupa.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Reclass Amex.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Reclass Coupa Corporate Card ERs.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_CS_SetDefaultDeptBasedFromGLAcct.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_ChangeCustomForm.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_ConsolidatedInvoice.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_ConsolidatedInvoice_01172013.1.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_ConsolidatedInvoice_11052012.1.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_PDFTemplate.xml" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_PDFTemplate_01172013.1.xml" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_PDFTemplate_11052012.1.xml" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_UpdateDepartment.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_UpdateInvoiceBillPeriod.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_UpdateJournalEntry.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="TrustWave_SS_UpdateTransactionCurrency.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="coupa-items.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="customlibrary.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+  </folder>
+</project>

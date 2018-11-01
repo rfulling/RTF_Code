@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<!DOCTYPE pdf PUBLIC "-//big.faceless.org//report" "report-1.1.dtd">
+<pdf>
+    <head>
+        <style>
+            body					{font-size: 11px; font-family:sans-serif; margin:0;}
+            table.half              {width:70%}
+            table.full 				{width:100%;}
+            table.quarter           {width:30%}
+            .full td 				{background:white; }
+			td 						{border-color: #000000; border-style: solid; }
+            td.header 				{font-size: 10px; font-weight: bold; border: 1px solid #000000; background-color:#b3aaaa; text-align:center;}
+			td.header-style			{font-size: 10px; font-family:sans-serif;}
+            td.footer			    {font-size: 10px; font-family:sans-serif;}
+			td.inner				{}
+			td.bdrleft				{border-left: 0pt;}
+			td.bdrright				{border-right: 0pt;}
+			td.common 				{font-size:10px; border: 1px solid #000000; text-align: center; padding: 10px 10px 10px 10px;}
+            td.commonsmall   		{font-size:9px; border: 1px solid #000000; text-align: center; padding: 10px 10px 10px 10px;}
+            td.commonsmallnoborder  {font-size:9px; border: 0px solid #000000; text-align: center; padding: 10px 10px 10px 10px;}
+			th 						{background-color:gray; color:white; }
+			.itemline 				{font-size:10px; text-align: right; padding-right: 0pt;}
+			.itemline-common 		{font-size:11px;}
+			.footer 				{text-align: left; padding:5px; margin:0px}
+			div.header-container 	{height: 100px;}
+			span.header 			{border: 1px solid #000;}
+			span.subheader 			{font-size:16px; font-weight: bold; float: right;}
+			span					{float:right;}
+			h1						{font-size:32px;font-family:sans-serif;}
+			.content				{clear: both; position: relative;}			
+			div.headerContainer 	{border: 1pt solid black; position: relative; height: 285pt; width: 100%; margin: 0pt;}
+			div.logoContainer		{border: 1pt solid black; margin-top: 0pt; position: relative; height: 60px; width: 269pt; float: left;}
+			div.invContainer		{border: 1pt solid black; margin-top: 0pt; position: relative; text-align: right; height: 60px; width: 269pt; float: right;}
+			span.invLabel H1		{text-align: right;}
+			
+			.header-black                   {color: #000; font-size: 10px; font-style: bold;}
+            td.header-black                 {border: 1px solid #000; align: center;}
+            td.header-black                 {border-left: 0px; width: 10%;}
+            td.header-black:first-child     {border-left: 1px; width: 30%;}
+			
+			.common-black                   {color: #000; font-size: 10px; font-style: bold;}
+            td.common-black                 {border: 1px solid #000; align: center;}
+            td.common-black                 {border-left: 0px; width: 10%;}
+            td.common-black:first-child     {border-left: 1px; width: 30%;}
+	   </style>
+       <macrolist>
+            <macro id="ci_header">
+        		<table cellpadding="0" border="0" class="full" table-layout="fixed">
+                    	<tr>
+                    		<td width="50%"><img src="{NLMAINLOGO}" dpi="120"/></td>
+                    		<td width="50%" rowspan="1" align="right"><h1>INVOICE</h1></td>
+                    	</tr>
+                        <tr>
+                    		<td>&#160;</td>
+                            <td>&#160;</td>
+                        </tr>
+                    	<tr>
+                    	    <td align="left" white-space="nowrap" width="1in" class=""><b>{NLSUBSIDIARYNAME}</b><br/>{NLSUBRETADDRS}</td>                    		
+                    		<td align="right">                    		    
+                                <table align="right" border="0" cellpadding="0" width="60%" table-layout="fixed">                                    
+                                    <tr>
+                                        <td class="header-black" style="background-color: #b3aaaa;" align="center" width="33%">Date</td>
+                                        <td class="header-black" style="background-color: #b3aaaa;" align="center" width="33%">Invoice#</td>
+                    					<td class="header-black" style="background-color: #b3aaaa;" align="center" width="34%">Page No</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="common-black" style="border-top: 0px solid #000;" align="center">{NLDATE}</td>
+                                        <td class="common-black" style="border-top: 0px solid #000;" align="center">{NLINVOICENO}</td>
+                    					<td class="common-black" style="border-top: 0px solid #000;" align="center">&#160;<pagenumber/>&#160;of&#160;<totalpages/></td>
+                                    </tr>
+                				</table>
+                            </td>
+                    	</tr>
+                    	<tr>
+                    		<td>&#160;</td>
+                    		<td align="right" style="margin-left: 1%">
+                                <table border="0" cellpadding="0" class="full">
+                                    <tr>
+                                        <td class="header-black" style="background-color: #b3aaaa;" align="center" width="20%">Terms</td>
+                                        <td class="header-black" style="background-color: #b3aaaa;" align="center" width="20%">Due Date</td>
+                    					<td class="header-black" style="background-color: #b3aaaa;" align="center" width="60%">PO#</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="common-black" style="border-top: 0px solid #000;" align="center">{NLTERMS}&#160;</td>
+                                        <td class="common-black" style="border-top: 0px solid #000;" align="center">{NLDUEDATE}&#160;</td>
+                    					<td class="common-black" style="border-top: 0px solid #000;" align="center">{NLPONUM}&#160;</td>
+                                    </tr>
+                                </table>
+                            </td>
+                    	</tr>
+                        <tr>
+                    		<td>&#160;</td>
+                            <td>&#160;</td>
+                        </tr>
+                    </table>
+                    <table border="0" white-space="nowrap" cellpadding="2" class="full" table-layout="fixed">
+                    	<tr>
+                    		<td class="header-black" style="background-color: #b3aaaa;" align="left" width="49%"><b>&#160;Bill To</b></td>
+                    		<td border-left="0pt" width="2%">&#160;</td>
+                    		<td class="header-black" style="background-color: #b3aaaa; border-left: 1px solid #000;" align="left" width="49%"><b>&#160;Ship To</b></td>
+                    	</tr>
+                    	<tr>
+                    		<td class="common-black" style="border-top: 0px solid #000;" align="left" vertical-align="top" width="49%">{NLBILLTO}</td>
+                    		<td border-left="0pt" width="2%">&#160;</td>
+                    		<td class="common-black" style="border-top: 0px solid #000; border-left: 1px solid #000;" align="left" vertical-align="top" width="49%">{NLSHIPTO}</td>
+                    	</tr>
+                    	<tr>
+                    	    <td border-top="0pt" width="49%">&#160;</td>
+                            <td border-top="0pt" width="2%">&#160;</td>
+                            <td border-top="0pt" width="49%">&#160;</td>                    		
+                    	</tr>
+                    </table>                    
+            </macro>
+        </macrolist>
+        
+		<macrolist>
+            <macro id="ci_footer">
+                
+            </macro>
+        </macrolist>
+		<macrolist>
+			<macro id="remittance_slip_footer">
+				
+			</macro>
+		</macrolist>
+        
+        <macrolist>
+			<macro id="remittance_slip_header">
+				<table border="0" cellpadding="2" class="full" table-layout="fixed">
+					<tr>
+						<td align="left"><b>Trustwave Holdings, Inc.</b></td>
+						<td align="right"><span class="subheader">Remittance Slip</span></td>                        
+					</tr>
+                    <tr>
+                        <td align="left">&#160;</td>
+                    </tr>
+				</table>                
+				<table align="right" border="1" cellpadding="2" width="60%" table-layout="fixed">
+					<tr>
+						<!--<td class="header" border-top="0pt" border-right="0pt" border-left="0pt" border-bottom="0pt" width="30%" align="left">Customer</td>-->				
+						<td class="header" border-top="0pt" border-right="0pt" border-left="0pt" border-bottom="0pt" width="24%" align="left">Invoice#</td>
+						<td class="header" border-top="0pt" border-right="0pt" border-bottom="0pt" width="23%" align="left">Amount Due</td>
+						<td class="header" border-top="0pt" border-right="0pt" border-bottom="0pt" width="23%" align="left">Amount Paid</td>
+					</tr>
+					<tr>
+						<!--<td class="common" border-left="0pt" border-bottom="0pt" border-right="0pt" align="left">{NLCUSTOMER}</td>-->		
+						<td class="common" border-right="0pt" border-bottom="0pt" border-left="0pt" align="left">{NLINVOICENO}</td>
+						<td class="common" border-right="0pt" border-bottom="0pt" align="right"><b>{NLINVAMOUNTFT}</b></td>
+						<td class="common" border-right="0pt" border-bottom="0pt" align="right">&#160;</td>					
+					</tr>
+				</table>
+                <br/><br/><br/>
+                <table border="0" cellpadding="2" width="100%" table-layout="fixed">
+                    <tr>
+                        <td align="left">
+                            <table border="1" cellpadding="2" width="100%" table-layout="fixed">
+            					<tr>
+            						<td align="left" class="header" border-top="0pt" border-right="0pt" border-left="0pt" border-bottom="0pt" width="30%">Please Enter Your Credit Card Information</td>						
+            					</tr>
+            					<tr>
+            						<td align="left" class="commonsmall" border-left="0pt" border-bottom="0pt" border-right="0pt">Type:_____Discover_____Master Card_____ VISA_____American Express<br/>Credit Card #________________ <br/>Expiration Date:______Month______Year<br/>Signature:______________________________</td>
+            					</tr>
+            				</table>
+                        </td>
+                        <td align="right">&#160;
+                            <table border="0" cellpadding="2" width="100%" table-layout="fixed">
+            					<tr>            						
+                                    <td class="commonsmallnoborder" align="center" width="50%"><b>Make Checks Payable To:</b><br/>{NLREMIADDR}</td>
+            					</tr>
+            				</table>
+                        </td>
+                    </tr>
+                    <!--<tr>
+                        <td align="left">
+                            <table border="0" cellpadding="2" width="100%" table-layout="fixed">
+            					<tr>
+            						<td class="commonsmallnoborder" align="left" width="60%"><b>Fax credit card information to:</b> <br/>{NLFAX}</td>                        
+            					</tr>
+            				</table>
+                        </td>
+                    </tr>-->
+                </table>
+			</macro>
+		</macrolist>
+    </head>
+	{NLDETAILLINE}    
+</pdf>
