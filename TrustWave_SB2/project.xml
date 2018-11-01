@@ -3,7 +3,7 @@
     <file name="Coupa FX Rate 2.0.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
     <file name="Coupa Scripts to Get ERs and Amounts (1).js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
     <file name="Coupa Supplier Items.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
-    <file name="Coupa-Create-PO.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
+    <file name="Coupa-Create-PO.js" bundleable="false" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
     <file name="Coupa-Employee.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
     <file name="Coupa-Project.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
     <file name="Email Invoice - Suitelet.js" hideInBundle="false" isOnline="false" textFileEncoding="_utf8"/>
