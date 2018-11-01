@@ -5,10 +5,12 @@
 	Description
 	This integration is called when Coupa Purchase Order is created and needs to integrate over to NS depending on who created it.
 	**/
+//check into dev
 var errmsg;
 var customFields = new Array();
 var customFieldsToSet = new Array();
 var PurchaseOrderID;
+
 // TODO: Add logic for posting period and cutoff day here using event/(status of
 // approved for payment)created_at
 function scheduled(type) {
@@ -136,7 +138,7 @@ function scheduled(type) {
 		LogMsg('body is ' + response.getBody());
 		//var file = nlapiCreateFile('searchresults.xml', 'XMLDOC', response.getBody());
 		//file.setFolder(25257);
-//nlapiSubmitFile(file);
+        //nlapiSubmitFile(file);
 	
 
 		var purchaseHeaderNode = nlapiSelectNode(responseXML, 'order-headers');
