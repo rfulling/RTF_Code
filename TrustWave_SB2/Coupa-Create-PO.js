@@ -17,8 +17,7 @@ var PurchaseOrderID;
 function scheduled(type) {
 	// Variable Declaration
 	var param_url = context.getSetting('SCRIPT', 'custscript_coupa_po_url');
-	var param_APIKey = context.getSetting('SCRIPT',
-			'custscript_coupa_po_apikey');
+	var param_APIKey = context.getSetting('SCRIPT','custscript_coupa_po_apikey');
 	var iTimeOutCnt = 0;
 	var headers = new Array();
 	var tranid = '';
@@ -36,8 +35,7 @@ function scheduled(type) {
 	
 	var response = '';
 
-	var url = param_url
-		+ '/api/purchase_orders?status=issued&exported=false&created-at[gt]='+POdate;		
+	var url = param_url + '/api/purchase_orders?status=issued&exported=false&created-at[gt]='+POdate;		
 
 	nlapiLogExecution('DEBUG', 'url', url);
 	
@@ -70,16 +68,13 @@ function scheduled(type) {
 		nlapiLogExecution(
 				'ERROR',
 				'Processing Error - Unable to do Coupa request api call to export Purchase Orders',
-				'Error Code = ' + errorcode + ' Error Description = '
-						+ errordetails);
+				'Error Code = ' + errorcode + ' Error Description = '+ errordetails);
+		
 		nlapiSendEmail(
 				-5,
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_po_email_addr_notify'),
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_po_acccountname')
-						+ ' Purchase Report Integration:Processing Error - Unable to do Coupa request api call to export Purchase Orders',
-				'Error Code = ' + errorcode + ' Error Description = '
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_email_addr_notify'),
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_acccountname')
+						+ ' Purchase Report Integration:Processing Error - Unable to do Coupa request api call to export Purchase Orders','Error Code = ' + errorcode + ' Error Description = '
 						+ errordetails);
 		throw error;
 	}
@@ -90,8 +85,7 @@ function scheduled(type) {
 	LogMsg('url: ' + url);
 	try {
 		response = nlapiRequestURL(url, null, headers);
-		nlapiLogExecution(
-				'DEBUG', 'Message', response.getCode());
+		nlapiLogExecution('DEBUG', 'Message', response.getCode());
 
 	} catch (error) {
 		if (error instanceof nlobjError) {
@@ -122,12 +116,9 @@ function scheduled(type) {
 					+ errorcode + 'Error description:' + errordetails);
 			nlapiSendEmail(
 					-5,
-					nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_po_email_addr_notify'),
-					nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_po_acccountname')
-							+ ' Invoice Integration:Processing Error - Unable to do Coupa request api call to export Purchase Report',
-					'Error Code = ' + errorcode + ' Error Description = '
+					nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_email_addr_notify'),
+					nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_acccountname')
+							+ ' Invoice Integration:Processing Error - Unable to do Coupa request api call to export Purchase Report','Error Code = ' + errorcode + ' Error Description = '
 							+ errordetails);
 		}
 	} // catch end
@@ -135,28 +126,24 @@ function scheduled(type) {
 	if (response.getCode() == 200) {
 		LogMsg('response.getCode() is ' + response.getCode());
 		var responseXML = nlapiStringToXML(response.getBody());
-
 		LogMsg('body is ' + response.getBody());
 		//var file = nlapiCreateFile('searchresults.xml', 'XMLDOC', response.getBody());
 		//file.setFolder(25257);
         //nlapiSubmitFile(file);
-	
 
 		var purchaseHeaderNode = nlapiSelectNode(responseXML, 'order-headers');
-		
 		var purchaseHeaderHeaderNode = new Array();
-		purchaseHeaderHeaderNode = nlapiSelectNodes(purchaseHeaderNode,
-				'order-header');
+		purchaseHeaderHeaderNode = nlapiSelectNodes(purchaseHeaderNode,'order-header');
 
 		LogMsg('Purchase Order to Process :' + purchaseHeaderHeaderNode.length);
 
 		for (var i = 0; i < purchaseHeaderHeaderNode.length; i++) {
 			var usage = getnumber(context.getRemainingUsage());
+			
 			LogAudit('current Usage at: ' + usage);
-			if (usage < 1000) {
+						if (usage < 1000) {
 				LogAudit('Usage Exceeded at: ' + i);
-				var status = nlapiScheduleScript(context.getScriptId(), context
-						.getDeploymentId());
+				var status = nlapiScheduleScript(context.getScriptId(), context.getDeploymentId());
 				if (status == 'QUEUED')
 					break;
 			}
@@ -170,19 +157,17 @@ function scheduled(type) {
 			LogMsg('Coupa Purchase Order ID is ' + poExists);
 
 			if (poExists == 'false') {
-				LogMsg('Purchase Order ' + tranid
-						+ ' does not exist in NetSuite');
-				var pocreatereturn = createPurchaseOrder(
-						purchaseHeaderHeaderNode[i], tranid);
+				LogMsg('Purchase Order ' + tranid+ ' does not exist in NetSuite');
+				
+				var pocreatereturn = createPurchaseOrder(purchaseHeaderHeaderNode[i], tranid);
+				
 				if (!pocreatereturn)
 					LogAudit('Error Creating ER: ' + tranid + ', ' + errmsg);
 				else {
-					LogAudit('Successfully created NetSuite Purchase Order: '
-							+ PurchaseOrderID + ' for Coupa #: ' + tranid);
+					LogAudit('Successfully created NetSuite Purchase Order: ' + PurchaseOrderID + ' for Coupa #: ' + tranid);
 				}
 			} else {
-				LogMsg('Editing is not feasible in Coupa. You are trying to Update Purchase Order #:'
-							+ poExists);
+				LogMsg('Editing is not feasible in Coupa. You are trying to Update Purchase Order #:'+ poExists);
 			}
 		}
 
@@ -279,17 +264,13 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 
 		var record = nlapiCreateRecord('purchaseorder');
 		// var x = 0;
-		var testparam_url = context.getSetting('SCRIPT',
-				'custscript_coupa_po_url');
-		var testparam_APIKey = context.getSetting('SCRIPT',
-				'custscript_coupa_po_apikey');
+		var testparam_url = context.getSetting('SCRIPT','custscript_coupa_po_url');
+		var testparam_APIKey = context.getSetting('SCRIPT','custscript_coupa_po_apikey');
 		// Get Custom Body Parameter value
-		var PurchaseOrderID = context.getSetting('SCRIPT',
-				'custscript_coupa_po_body');
+		var PurchaseOrderID = context.getSetting('SCRIPT','custscript_coupa_po_body');
 		// var arrCustBodyList = new Array();
 		// var arrTempList = new Array();
-		nlapiLogExecution('DEBUG', 'Message',
-							PurchaseOrderID);
+		nlapiLogExecution('DEBUG', 'Message',PurchaseOrderID);
 		
 
 		if (PurchaseOrderID) {
@@ -307,8 +288,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 		}
 
 		var expenseLinesNode = new Array();
-		expenseLinesNode = nlapiSelectNodes(purchaseHeaderHeaderNode,
-				'order-lines');
+		expenseLinesNode = nlapiSelectNodes(purchaseHeaderHeaderNode,'order-lines');
 		//empLinesNode = nlapiSelectNodes(purchaseHeaderHeaderNode,
 			//	'employee-number');
 		//employeeexpenseLinesNode = nlapiSelectNodes(empLinesNode,
@@ -320,26 +300,13 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 		// Expense Nodes
 		for (var xx = 0; xx < expenseLinesNode.length; xx++) {
 			//Getting Nodes
-			expenseLinesLineNode = nlapiSelectNodes(expenseLinesNode[xx],
-					'order-line');
-				
-			expensedByNode = nlapiSelectNode(purchaseHeaderHeaderNode,
-					'requested-by');
-			
-			requesterNode = nlapiSelectNode(purchaseHeaderHeaderNode,
-							'requisition-header/requested-by');
-					
-			vendorNode = nlapiSelectNode(purchaseHeaderHeaderNode,
-					'supplier');	
-						
-			accountaccountNode = nlapiSelectNode(expenseLinesLineNode[xx],
-					'account/account-type');	
-
-			shipAddressNode = nlapiSelectNode(purchaseHeaderHeaderNode,
-					'ship-to-address');	
-			
-			shipCountryNode = nlapiSelectNode(purchaseHeaderHeaderNode,
-					'ship-to-address/country');
+			expenseLinesLineNode = nlapiSelectNodes(expenseLinesNode[xx],'order-line');
+			expensedByNode = nlapiSelectNode(purchaseHeaderHeaderNode,'requested-by');
+			requesterNode = nlapiSelectNode(purchaseHeaderHeaderNode,'requisition-header/requested-by');
+			vendorNode = nlapiSelectNode(purchaseHeaderHeaderNode,'supplier');	
+			accountaccountNode = nlapiSelectNode(expenseLinesLineNode[xx],'account/account-type');	
+			shipAddressNode = nlapiSelectNode(purchaseHeaderHeaderNode,'ship-to-address');	
+			shipCountryNode = nlapiSelectNode(purchaseHeaderHeaderNode,'ship-to-address/country');
 			
 				
 			//Define the fields
@@ -350,13 +317,11 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 			
 			var CityStateZipAdd = nlapiSelectValue(shipAddressNode,'city') + ', ' + nlapiSelectValue(shipAddressNode,'state') + ', (' + nlapiSelectValue(shipCountryNode, 'code') + '), ' + nlapiSelectValue(shipAddressNode,'postal-code');
 				
-			var coupaAccount = nlapiSelectValue(accountaccountNode,
-					'name');
+			var coupaAccount = nlapiSelectValue(accountaccountNode,'name');
 			
 			LogMsg(coupaAccount);
 					
-			var coupaVendor = nlapiSelectValue(vendorNode,
-					'number');
+			var coupaVendor = nlapiSelectValue(vendorNode,'number');
 			
 			LogMsg(coupaVendor);
 			
@@ -370,8 +335,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 			LogMsg('entered for coupaEmployee ' + coupaEmployee);
 
 			// Get custom columns
-			var coupaPOCustomCols = context.getSetting('SCRIPT',
-					'custscript_coupa_po_column');
+			var coupaPOCustomCols = context.getSetting('SCRIPT','custscript_coupa_po_column');
 
 			if (coupaPOCustomCols) {
 				getCustomColumn(coupaPOCustomCols, expenseLinesLineNode);
@@ -380,8 +344,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 			var customColumnsToSetLen = customColumnsToSet.length;
 
 			for (var yy = 0; yy < expenseLinesLineNode.length; yy++) {
-				var accountNode = nlapiSelectNode(expenseLinesLineNode[yy],
-						'account');
+				var accountNode = nlapiSelectNode(expenseLinesLineNode[yy],'account');
 
 				if (accountNode) {
 					coupaDept = getCoupaDept(accountNode);
@@ -398,12 +361,10 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 				record.setFieldValue('custbody_coupa_po_internalrevision', 1);
 
 				// Coupa PO ID
-				if (nlapiSelectValue(expenseLinesLineNode[yy],
-						'po-number')) {
+				if (nlapiSelectValue(expenseLinesLineNode[yy],'po-number')) {
 					//var coupaPONumber = nlapiSelectValue(
 						//	expenseLinesLineNode[yy], 'po-number');
-					record.setFieldValue('custbody_coupa_po_number',
-							CoupaPONum);
+					record.setFieldValue('custbody_coupa_po_number',CoupaPONum);
 				} else {
 					errmsg = 'No value for coupaPONumber for PO#: ' + tranid;
 					coupaPONumber = null;
@@ -426,18 +387,15 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					if (verifiedEmployee) {
 						record.setFieldValue('employee', verifiedEmployee);
 						record.setFieldValue('custbodyrequest_by_employee', verifiedEmployee);			
-							nlapiLogExecution('DEBUG', 'verfied employee ',
-							verifiedEmployee);
+							nlapiLogExecution('DEBUG', 'verfied employee ',verifiedEmployee);
 					} else {
-						errmsg = 'Employee internal ID not found in NetSuite from Purchase Order:'
-								+ tranid;
+						errmsg = 'Employee internal ID not found in NetSuite from Purchase Order:'+ tranid;
 						LogErr(errmsg);
 						continue;
 					}
 
 					// Setting Headers
-					var eventHeader = nlapiSelectNode(purchaseHeaderHeaderNode,
-							'requisition-header');
+					var eventHeader = nlapiSelectNode(purchaseHeaderHeaderNode,'requisition-header');
 					//var events = new Array();
 					//events = nlapiSelectNodes(eventHeader, 'event');
 					var approved_date = nlapiSelectValue(eventHeader, 'created-at');
@@ -449,9 +407,9 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					{
 						if (verifiedEmployee == '154258' || verifiedEmployee == '1314')
 						{
-					var purchasetype = nlapiSelectValue(expenseLinesLineNode[yy], 'purchase-request-type');
-					LogMsg(purchasetype);
-					LogMsg('Inside the loop 1');						
+								var purchasetype = nlapiSelectValue(expenseLinesLineNode[yy], 'purchase-request-type');
+								LogMsg(purchasetype);
+								LogMsg('Inside the loop 1');						
 						}
 					}	
 										
@@ -470,16 +428,16 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					record.setFieldValue('custbodyship_to_company', shipCompany);
 					record.setFieldValue('custbodyship_to', shipName);					
 					record.setFieldValue('trandate', formattedDate);	
+					
 					if (potype)
 					{
 						if (verifiedEmployee == '154258' || verifiedEmployee == '1314')
 						{	
-					LogMsg('Insdie the loop');						
-					record.setFieldValue('custbodypurchase_request_ype', getNSInternalPOType(purchasetype));
+							LogMsg('Insdie the loop');						
+							record.setFieldValue('custbodypurchase_request_ype', getNSInternalPOType(purchasetype));
 						}					
 					}
-					record.setFieldValue('externalid', 'Coupa-purchaseorder'
-							+ tranid);
+					record.setFieldValue('externalid', 'Coupa-purchaseorder'+ tranid);
 					record.setFieldValue('customform', 116);
 		
 					// Set Custom Field Values
@@ -492,8 +450,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 
 				} // End of yy == 0
 				
-				var eventHeader = nlapiSelectNode(purchaseHeaderHeaderNode,
-							'requisition-header');
+				var eventHeader = nlapiSelectNode(purchaseHeaderHeaderNode,'requisition-header');
 				//var events = new Array();
 					//events = nlapiSelectNodes(eventHeader, 'event');
 					var approved_date = nlapiSelectValue(eventHeader, 'created-at');
@@ -502,8 +459,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 			
 
 				var lineID = nlapiSelectValue(expenseLinesLineNode[yy], 'id');
-				var coupaExpDescription = nlapiSelectValue(
-						expenseLinesLineNode[yy], 'description');
+				var coupaExpDescription = nlapiSelectValue(expenseLinesLineNode[yy], 'description');
 				
 							
 				// getting line currency
@@ -526,10 +482,8 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					
 			
 					if (expenseLineAmount) {
-					record.setCurrentLineItemValue('item', 'rate',
-								expenseLineAmount);
-					record.setCurrentLineItemValue('item', 'quantity',
-								expenseLineqty);
+							record.setCurrentLineItemValue('item', 'rate',expenseLineAmount);
+							record.setCurrentLineItemValue('item', 'quantity',expenseLineqty);
 						
 					} else {
 						LogMsg('No Amount in Coupa.');
@@ -537,24 +491,21 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					LogMsg('entered for amount ' + expenseLineAmount);
 
 					if (convertedcurr) {
-						record.setCurrentLineItemValue('item', 'currency',
-								convertedcurr);
+						record.setCurrentLineItemValue('item', 'currency',convertedcurr);
 					} else {
 						LogMsg('No Currency in Coupa.');
 					}
 					LogMsg('entered for currency ' + convertedcurr);
 
 					if (lineID) {
-						record.setCurrentLineItemValue('item',
-								'custcol_coupa_po_lineid', lineID);
+						record.setCurrentLineItemValue('item','custcol_coupa_po_lineid', lineID);
 					} else {
 						LogMsg('No Line ID in Coupa.');
 					}
 					LogMsg('entered for lineID ' + lineID);
 					
 					if (coupaExpDescription) {
-						record.setCurrentLineItemValue('item',
-								'itemdescription', coupaExpDescription);
+						record.setCurrentLineItemValue('item','itemdescription', coupaExpDescription);
 					} else {
 						LogMsg('No Expense Description in Coupa.');
 					}
@@ -565,8 +516,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					if (context.getSetting('SCRIPT',
 							'custscript_coupa_er_deptseg')) {
 						if (coupaDept != null && coupaDept != "") {
-							record.setCurrentLineItemValue('item',
-									'department', coupaDept);
+							record.setCurrentLineItemValue('item','department', coupaDept);
 						} else {
 							LogMsg('Coupa Department not found.');
 						}
@@ -576,8 +526,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 
 					if (coupaClass) {
 						if (coupaClass != null && coupaClass != "") {
-							record.setCurrentLineItemValue('item', 'class',
-									coupaClass);
+							record.setCurrentLineItemValue('item', 'class',coupaClass);
 						} else {
 							LogMsg('Coupa class not Found.');
 						}
@@ -588,8 +537,7 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 					if (context.getSetting('SCRIPT',
 							'custscript_coupa_er_locseg')) {
 						if (coupaLocation != null && coupaLocation != "") {
-							record.setCurrentLineItemValue('item',
-									'location', coupaLocation);
+							record.setCurrentLineItemValue('item','location', coupaLocation);
 						} else {
 							LogMsg('Coupa Location not found.');
 						}
@@ -626,8 +574,8 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 							LogMsg('customColumnsToSet[y] '
 									+ customColumnsToSet[y]
 									+ ' valuecustfield ' + valuecustfield);
-							record.setCurrentLineItemValue('expense',
-									customColumnsToSet[y], valuecustfield);
+										record.setCurrentLineItemValue('expense',
+										customColumnsToSet[y], valuecustfield);
 
 						} // end of FOR that goes through each custom columns
 					} // end of IF that goes through each custom columns
@@ -649,20 +597,16 @@ function createPurchaseOrder(purchaseHeaderHeaderNode, tranid) {
 		} catch (error) {
 			var expenseExists = findPurchaseOrder(tranid);
 			if (expenseExists != 'false') {
-				LogMsg('NetSuite Purchase Order Created: ' + tranid
-						+ ' and updating export flag');
+				LogMsg('NetSuite Purchase Order Created: ' + tranid+ ' and updating export flag');
 				setExportedToTrue(tranid);
 				return true;
 			} else {
 				errmsg = getErrorDetails(error);
 				nlapiSendEmail(
 				-5,
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_po_email_addr_notify'),
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_po_acccountname')
-						+ ' Purchase Report Integration:Processing Error',
-				'Error Code = ' + errorcode + ' Error Description = '
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_email_addr_notify'),
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_acccountname')
+						+ ' Purchase Report Integration:Processing Error','Error Code = ' + errorcode + ' Error Description = '
 						+ errordetails);
 				return false;
 			}
@@ -685,8 +629,7 @@ function calculatePostingPeriod(invoiceDate) {
 	var filters = [];
 	var columns = [];
 
-	filters.push(new nlobjSearchFilter('enddate', null, 'onorafter',
-			invoiceDate));
+	filters.push(new nlobjSearchFilter('enddate', null, 'onorafter',invoiceDate));
 	filters.push(new nlobjSearchFilter('aplocked', null, 'is', 'F'));
 	filters.push(new nlobjSearchFilter('closed', null, 'is', 'F'));
 	filters.push(new nlobjSearchFilter('isquarter', null, 'is', 'F'));
@@ -702,14 +645,13 @@ function calculatePostingPeriod(invoiceDate) {
 	// unlocked period
 
 	if (result != null && result.length > 0)
-		postingPeriodId = result[0].getId();
+		 postingPeriodId = result[0].getId();
 
 	if (!postingPeriodId) {
 		var filters1 = [];
 		var columns1 = [];
 
-		filters1.push(new nlobjSearchFilter('startdate', null, 'onorbefore',
-				invoiceDate));
+		filters1.push(new nlobjSearchFilter('startdate', null, 'onorbefore',invoiceDate));
 		filters1.push(new nlobjSearchFilter('aplocked', null, 'is', 'F'));
 		filters1.push(new nlobjSearchFilter('closed', null, 'is', 'F'));
 		filters1.push(new nlobjSearchFilter('isquarter', null, 'is', 'F'));
@@ -727,8 +669,7 @@ function calculatePostingPeriod(invoiceDate) {
 }
 
 function getCoupaDept(accountNode) {
-	var deptsegment = nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_po_deptseg');
+	var deptsegment = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_deptseg');
 	if (deptsegment) {
 		var split_dept = nlapiSelectValue(accountNode, deptsegment);
 		var dept = split_dept.split(':');
@@ -801,8 +742,7 @@ function ConvertCoupaDateToNetSuiteDate(CoupaDate)// OK_Loy
 function findPurchaseOrder(tranid) {
 	var filters = new Array();
 
-	filters[0] = new nlobjSearchFilter('custbody_coupa_po_number', null, 'is',
-			tranid);
+	filters[0] = new nlobjSearchFilter('custbody_coupa_po_number', null, 'is',tranid);
 
 	var searchresults = nlapiSearchRecord('purchaseorder', null, filters);
 
@@ -815,8 +755,7 @@ function findPurchaseOrder(tranid) {
 }
 
 function verifyEmployee(verifiedEmployee) {
-	var customField = context.getSetting('SCRIPT',
-			'custscript_coupa_po_employee_num');
+	var customField = context.getSetting('SCRIPT','custscript_coupa_po_employee_num');
 	var column = "";
 	if (customField == null || customField == '') {
 		column = 'internalid';
@@ -852,11 +791,9 @@ function getCustomFields(PurchaseOrderID, purchaseHeaderHeaderNode) {
 				// set array values only if x=0
 				if (x == 0) {
 					// customFields.push(arrCustBodyList[0]);
-					var valueSet = nlapiSelectValue(purchaseHeaderHeaderNode,
-							arrCustBodyList[0]);
+					var valueSet = nlapiSelectValue(purchaseHeaderHeaderNode,arrCustBodyList[0]);
 					if (valueSet.indexOf("\n") > -1) {
-						valueSet = nlapiSelectValue(purchaseHeaderHeaderNode,
-								arrCustBodyList[0] + '/external-ref-num');
+						valueSet = nlapiSelectValue(purchaseHeaderHeaderNode,arrCustBodyList[0] + '/external-ref-num');
 					}
 					customFields[ctr] = valueSet;
 					customFieldsToSet[ctr] = arrCustBodyList[1];
@@ -927,8 +864,7 @@ function getCoupaDept(accountNode) {
 }
 
 function getCoupaClass(accountNode) {
-	var classsegment = nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_po_classseg');
+	var classsegment = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_classseg');
 	if (classsegment) {
 		var split_class = nlapiSelectValue(accountNode, classsegment);
 		var classs = split_class.split(':');
@@ -943,8 +879,7 @@ function getCoupaClass(accountNode) {
 }
 
 function getCoupaLocation(accountNode) {
-	var locsegment = nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_po_locseg');
+	var locsegment = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_locseg');
 	if (locsegment) {
 		var split_loc = nlapiSelectValue(accountNode, locsegment);
 		var location = split_loc.split(':');
@@ -959,8 +894,7 @@ function getCoupaLocation(accountNode) {
 
 function getCoupaSubsidiary(accountNode) {
 	// if subsidiary needed test account has no subsidiary
-	var subsegment = nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_po_subsseg');
+	var subsegment = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_po_subsseg');
 	if (subsegment) {
 		var split_sub = nlapiSelectValue(accountNode, subsegment);
 		var subsidiary = split_sub.split(':');
@@ -996,17 +930,14 @@ function getNetsuiteCurrency(objectinternalid, objectname) {
 		searchresults = nlapiSearchRecord(objectinternalid, null, filters);
 	} catch (e) {
 		var error = e.getDetails();
-		if (error
-				.indexOf("The feature 'Multiple Currencies' required to access this page is not enabled in this account") > -1) {
-			nlapiLogExecution('DEBUG', "multiple currencys not enabled",
-					'Defaulting currency ID to 1');
+		if (error.indexOf("The feature 'Multiple Currencies' required to access this page is not enabled in this account") > -1) {
+			nlapiLogExecution('DEBUG', "multiple currencys not enabled",'Defaulting currency ID to 1');
 			return 1;
 		}
 	}
 	if (!searchresults) {
 		nlapiLogExecution('Error', 'Error getting ID for',
-				'internalobjectid = ' + objectinternalid + ' objectname =  '
-						+ objectname);
+				'internalobjectid = ' + objectinternalid + ' objectname =  '+ objectname);
 		return 'INVALID_NAME';
 	}
 	// nlapiLogExecution('DEBUG', 'in getNetsuitetermid after calling Search
