@@ -30,9 +30,9 @@
      "AND", 
        ["custbody_yp_pdf","isempty",""], 
       "AND", 
-       ["status","anyof","CustInvc:A"], 
-      "AND", 
-      ["internalid","anyof","2079166"]
+       ["status","anyof","CustInvc:A"] 
+     // ,"AND", 
+     // ["internalid","anyof","2079166"]
    ],
                     columns:
                     [
