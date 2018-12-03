@@ -242,12 +242,7 @@ define(['N/http',
 
               var arrPeriods =[];
               var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Payments', tab: null })
-                paySublist.addField({
-                    id: 'custpage_tranid',
-                    label: 'Transaction',
-                    type: ui.FieldType.TEXT,
-                    source: 'Document'
-                });
+               
 
               //get the revenue search  build an array of accounting periods
               var actPeriodNames =[];
@@ -256,14 +251,17 @@ define(['N/http',
               log.debug('revrec  ', revenueRec);
               var name =''
               var nameId =''
+              var srdTrans ='';
+              var amt ='';
                     //go through the result set and build an array of accounting period names 
               for (var a = 0; a < revenueRec.length ; a++) {
             	  if (actPeriodNames.indexOf(revenueRec[a].getText({name: 'srctranpostperiod',summary: 'group'}))==-1){
             	        actPeriodNames.push(revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}));
             	        name =revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'})
             	        nameId=revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}).replace(/\s+/g, '');
-            	        amt = revenueRec[a].getValue({name: 'recurfxamount', summary: 'sum'})
-            	        seaActPeriodNames.push({gridname: name,gridid: nameId,gridamount : amt});
+            	        amt = revenueRec[a].getValue({name: 'recurfxamount', summary: 'sum'});
+            	        srcTrans = revenueRec[a].getText({name: 'srctran', summary: 'group'});
+            	         seaActPeriodNames.push({gridname: name, gridid: nameId , gridamount : amt , gridsource: srcTrans});
             	 }
               }
               log.debug('Revenue Periods ', actPeriodNames);
@@ -273,32 +271,34 @@ define(['N/http',
                     
                 	  log.debug('after splice.length  ' ,seaActPeriodNames.length);
                 	  log.debug('revenue search.length   ',  actPeriodNames.length);
-                	  
+                	  paySublist.addField({id: 'custpage_tranid',label: 'Source Trans', type: ui.FieldType.TEXT});
                 	  for (var i = 0; i < seaActPeriodNames.length ; i++) {
                 		 var extraId = seaActPeriodNames[i].gridid.toLowerCase();
                 		 var actPeriodname = seaActPeriodNames[i].gridname
                 		 paySublist.addField({id: 'custpage_select_actperiod_'+extraId,label: actPeriodname, type: ui.FieldType.TEXT});
+                		 
                       	 arrPeriods.push({'periodId':parseInt(extraId) ,'periodName': actPeriodname });
                       	 }
                 };
             	
             	 if (seaActPeriodNames) {
                  	for (var x = 0; x < seaActPeriodNames.length ; x++) {
-                 	     periodName =  seaActPeriodNames[x].gridname
+                 	     periodName =  seaActPeriodNames[x].gridname;
                  	     amtMonthly = seaActPeriodNames[x].gridamount;
                  	     thisPeriodId= seaActPeriodNames[x].gridid.toLowerCase();
-                    	    /* 
+                 	    thisTransId =seaActPeriodNames[x].gridsource;
+                    	     
                  	     paySublist.setSublistValue({
                             id: 'custpage_tranid',
-                            line: 0,
-                            value: amtMonthly
+                            line: x,
+                            value: thisTransId
                         }),
-                 	*/
+                 	
                         paySublist.setSublistValue({
                             id: 'custpage_select_actperiod_'+thisPeriodId,
-                            line: 0,
+                            line: x,
                             value: amtMonthly
-                        })
+                        });
                
                  	    }
                  	}
