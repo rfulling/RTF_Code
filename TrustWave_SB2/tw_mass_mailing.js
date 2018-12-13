@@ -22,7 +22,8 @@ define(['N/http',
              * @Since 2015.2
              */
             function onRequest(context) {
-                 if (context.request.method === 'GET') {
+               
+            	if (context.request.method === 'GET') {
                     var objForm = ui.createForm({
                         title: 'Mass Email Invoices'
                         //clientScriptFileId: 7579
@@ -51,8 +52,7 @@ define(['N/http',
                    
                     var mysub1 = objForm.addSubmitButton({label: 'Search'});
                     //hid this field when ready
-                    objForm.addField({id: 'custpage_method',type: ui.FieldType.TEXT,label: 'Method',}).defaultValue = "Search";
-
+                    objForm.addField({id: 'custpage_method',type: ui.FieldType.TEXT,label: 'Method'}).updateDisplayType({displayType: ui.FieldDisplayType.HIDDEN}).defaultValue = "Search";
                     context.response.writePage(objForm);
 
                 } else if (context.request.parameters.custpage_method == "Search") {
@@ -77,12 +77,13 @@ define(['N/http',
                     
                     var subListFields = req.parameters.custpage_mysublistfields.split(delimiter);
                     var intLineItemCount= req.getLineCount({group: 'custpage_mysublist'});
-                   
-                   for (var i = 0; i < intLineItemCount; i++){
+                    
+                    context.request.parameters.custpage_method ="GET";
+                  
+                    for (var i = 0; i < intLineItemCount; i++){
                 	   var toProc = req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_process',line: i});
                 	     if(toProc=='T'){
-                	   
-		                	   var intTranid = parseInt(req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_inv_internal',line: i}));
+                	    	   var intTranid = parseInt(req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_inv_internal',line: i}));
 		                       var toEmail =req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_inv_email',line: i});
 		                       var docNumber =req.getSublistValue({group: 'custpage_mysublist', name: 'custpage_tranid',line: i});
 		                	         log.debug('internla id  ',docNumber );
@@ -90,33 +91,8 @@ define(['N/http',
                 	     }
                            }
                    
-                   
-                    //var mySublist = req.parameters.subListId;
-                    var mySublist = req.custpage_mysublist;
-                   
-                    //log.debug('SUBMITTED get count of sublist', batch);
-                   // log.debug('SUBMITTED subList', subListFields);
-                   // var objForm = ui.createForm({title: 'Query Invoices'});
-                    // log.debug('actPeriod GET', context.request.parameters.actPeriod);
-                    // log.debug('actPeriod GET', context.request.parameters.actPeriod);
-                    //var actPeriodStart = objForm.addField({id: 'custpage_period_start',type: ui.FieldType.DATE,label: 'Start Date'});
-                   // var actPeriodEnd = objForm.addField({id: 'custpage_period_end',type: ui.FieldType.DATE,label: 'End Date'});
-                   // var custName = objForm.addField({id: 'custpage_batch_id',type: ui.FieldType.SELECT,label: 'Batch Number',source: 'customlist_batch_name'});
-
-                    //custName.defaultValue = context.request.parameters.custpage_customer;
-
-                    //Conditional filter here if no customer selected then get all.
-                   //var procBtn = objForm.addSubmitButton({label: 'Process',id: 'proc1'});
-
-                  //  log.debug('Submitted by ' + context.request.parameters.submitter);
-                    var btn = context.request.parameters.submitter;
-
-                   /* if (btn == 'Search') {
-                    } else {
-                       // createAndSubmitMapReduceJob(requstedPeriod, context, objForm);
-                    }*/
-                }
-
+                   showMessagePage(context);
+                 }
             }
             
             /*function createAndSubmitMapReduceJob(requstedPeriod, context, objForm) {
@@ -152,49 +128,34 @@ define(['N/http',
             function showMessagePage(context) {
               
             	var objFormm = ui.createForm({
-                    title: 'Payments Processing'
+                    title: 'Invoice Mailings'
                 });
-                
-                
-                
                 var msgField = objFormm.addField({
                     id: 'custpage_waiting_messate',
                     type: ui.FieldType.INLINEHTML,
                     label: 'Waiting Text',
                     defaultValue: 'Your Request has been submitted to be processed'
                 });
-                // var msgLinkField = objFormm.addField({
-                //    id: 'custpage_search_link',
-                //     type: ui.FieldType.URL,
-                //     label: 'Text',
-                //      defaultValue: 'Your Request has been submitted to be processed'
-                //    });
                 msgField.defaultValue = 'Your Request has been submitted to be processed';
-                //    msgLinkField.defaultValue='link here'
                 context.response.writePage(objFormm);
             }
             
             function showResults(context, startDate, endDate, intCustName,intBatchId) {
-            	
             	log.debug('startDate ', startDate);
-            	
                 //Conditional filter here 
                var sDate = new Date(startDate);
                var eDate = new Date(endDate);
-                var objForm = ui.createForm({title: 'Process Payments by Period'});
-                              
+                var objForm = ui.createForm({title: 'Email Invoices'});
                 var actPeriodStart = objForm.addField({
                     id: 'custpage_period_start',
                     type: ui.FieldType.DATE,
                     label: 'Start Date'
                   }).updateDisplayType({displayType: ui.FieldDisplayType.INLINE}).defaultValue = sDate
-
                 var actPeriodEnd = objForm.addField({
                     id: 'custpage_period_end',
                     type: ui.FieldType.DATE,
                     label: 'End Date'
                 }).updateDisplayType({displayType: ui.FieldDisplayType.INLINE}).defaultValue = eDate
-
                 var batchId = objForm.addField({
                     id: 'custpage_batch_id_test',
                     type: ui.FieldType.SELECT,
@@ -203,21 +164,23 @@ define(['N/http',
                     isMandatory : true
                  })
                 batchId.updateDisplayType({displayType: ui.FieldDisplayType.INLINE}).defaultValue = intBatchId;
-                
                 var myButton = objForm.addSubmitButton({
                     id: 'custpage_sbutton',
                     label: 'Process'
                 });
-
+                var myButton = objForm.addResetButton({
+                    id: 'custpage_sreturn',
+                    label: 'Return'
+                });
                 var submitField = objForm.addField({
                     id: 'custpage_method',
                     type: ui.FieldType.TEXT,
                     displayType: 'Normal',
                     label: 'Method',
-                }).updateDisplayType({displayType: ui.FieldDisplayType.NORMAL}).defaultValue = "Submit"
+                }).updateDisplayType({displayType: ui.FieldDisplayType.HIDDEN}).defaultValue = "Submit"
 
 
-            var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Payments', tab: null })
+            var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Invoices', tab: null })
               
              
               log.debug('batch = ' )
@@ -331,16 +294,26 @@ define(['N/http',
                         start: 0,
                         end: 200
                     });
-                   log.debug('seasrchResults ', invoiceToPrint);
+                   //log.debug('seasrchResults ', invoiceToPrint);
             	return invoiceToPrint;
 
            }
             
-            function sendEmail(transId, toEmail,transType,docNumber){
+          function sendEmail(transId, toEmail,transType,docNumber){
              var pdfTemplateFileId = 5;
              var pdfStorageFolderId=525484;	
-             toEmail='russell.fulling@trustwave.com';
-             //try{
+          //   toEmail='russell.fulling@trustwave.com';
+             try{
+             var primaryEmail =toEmail;
+             if (toEmail)
+              	{
+            	  	var cc = [];
+            	  	toEmail = toEmail.split(',');
+            	  	primaryEmail=toEmail[0];
+            	  	for (var x = 0; x<toEmail.length-1; x++){
+            	  		cc[x] = toEmail[x+1];
+            	  	}
+            	 }
             	 //create a new message for this invoice 
             	 var msgRec = record.create({type: record.Type.MESSAGE,isDynamic: false});
  			   
@@ -352,52 +325,34 @@ define(['N/http',
  	    	   transType = transType.trim();
  	    	   var invRec = record.load({type:transType,id:transId});
  			  //Load template and populate with record
- 	    	   log.debug('transaction Loaded ', invRec);
+ 	    	  // log.debug('transaction Loaded ', invRec);
  	    	   
  	    	  var transactionFile = render.transaction({entityId: parseInt(transId),printMode: render.PrintMode.PDF,inCustLocale: true});
  	    	   transactionFile.name='Customer Invoice - '+ docNumber +'.pdf';
  	    	   transactionFile.folder=pdfStorageFolderId; 
- 	    	   var fileID = transactionFile.save();
-
+ 	    	   
+         	   var fileID = transactionFile.save();
+         	   var fileAttach = file.load({id:fileID});
  	    	  var mergeResult = render.mergeEmail({templateId: 5,transactionId: transId,custmRecord: null});
- 	    	  renderSubj=mergeResult.subject
- 	    	  renderBody=mergeResult.body
+ 	    	  renderSubj=mergeResult.subject;
+ 	    	  renderBody=mergeResult.body;
  	    	  
- 	    	  
- 	    	  /*
-				 email.send({author:1392262,
-					          recipients: toEmail,
-					          subject: renderSubj,
-					          body :renderBody,
-					          attachments: [fileID]
-				  });*/
+ 	    	  email.send({author:1392262,recipients: primaryEmail ,subject: renderSubj,body :renderBody, attachments: [fileAttach],cc:cc, relatedRecords: {transactionId : transId}});
 				
-				 
-				 msgRec.setValue({fieldId: 'subject',value: renderSubj});				 
+ 	    	/*  msgRec.setValue({fieldId: 'subject',value: renderSubj});				 
 				 msgRec.setValue({fieldId: 'message',value: renderBody});
 				 msgRec.setValue({fieldId: 'transaction',value: transId});
 				 msgRec.setValue({fieldId: 'emailed',value: true});
 				 msgRec.setValue({fieldId: 'recipientemail',value: toEmail});
 				 msgRec.setValue({fieldId: 'author',value: 1392262});
-				 
-				 
 				  var index = msgRec.getLineCount({sublistId: 'mediaitem'});
 				  log.debug('what index ',index);
 				  msgRec.setSublistValue({sublistId: 'mediaitem', fieldId: 'mediaitem', line: index  , value: fileID});
-				 var  messegeid=msgRec.save({ enableSourcing: true, ignoreMandatoryFields : true});
-         //   }
-				 
-				 //nlapiSendEmail(23779, cc, renderSubj, renderBody, null, null, records, file);
- 				
- 				
- 		//		nrec.setSublistValue({sublistId:'mediaitem',fieldId:'mediaitem',line:nrec.getLineCount({sublistId:'mediaitem'})+1,value:servicePDFId});
-
- 			
- 				
- 	     // }catch(e){
- 				//log.error({title:'FAILED TO ATTACH SERVICE PDF',details:e.message});
- 		//	}
-             	return fileID;
+				 var  messegeid=msgRec.save({ enableSourcing: true, ignoreMandatoryFields : true});*/
+ 	      }catch(e){
+ 				log.error({title:'FAILED TO ATTACH SERVICE PDF',details:e.message});
+ 		  }
+             	return true;;
        }
             
            
