@@ -300,8 +300,9 @@ define(['N/http',
            }
             
           function sendEmail(transId, toEmail,transType,docNumber){
-             var pdfTemplateFileId = 5;
-             var pdfStorageFolderId=525484;	
+            	var scriptObj = runtime.getCurrentScript();
+      		var folderId = scriptObj.getParameter({name: 'custscript_tw_invoice_folder_id'});
+      		var templateId = scriptObj.getParameter({name: 'custscript_tw_mass_email_template'});
           //   toEmail='russell.fulling@trustwave.com';
              try{
              var primaryEmail =toEmail;
@@ -329,15 +330,15 @@ define(['N/http',
  	    	   
  	    	  var transactionFile = render.transaction({entityId: parseInt(transId),printMode: render.PrintMode.PDF,inCustLocale: true});
  	    	   transactionFile.name='Customer Invoice - '+ docNumber +'.pdf';
- 	    	   transactionFile.folder=pdfStorageFolderId; 
+ 	    	   transactionFile.folder=folderId; 
  	    	   
          	   var fileID = transactionFile.save();
          	   var fileAttach = file.load({id:fileID});
- 	    	  var mergeResult = render.mergeEmail({templateId: 5,transactionId: transId,custmRecord: null});
+ 	    	  var mergeResult = render.mergeEmail({templateId: templateId,transactionId: transId,custmRecord: null});
  	    	  renderSubj=mergeResult.subject;
  	    	  renderBody=mergeResult.body;
  	    	  
- 	    	  email.send({author:1392262,recipients: primaryEmail ,subject: renderSubj,body :renderBody, attachments: [fileAttach],cc:cc, relatedRecords: {transactionId : transId}});
+ 	    	  email.send({author:48513,recipients: primaryEmail ,subject: renderSubj,body :renderBody, attachments: [fileAttach],cc:cc, relatedRecords: {transactionId : transId}});
 				
  	    	/*  msgRec.setValue({fieldId: 'subject',value: renderSubj});				 
 				 msgRec.setValue({fieldId: 'message',value: renderBody});
