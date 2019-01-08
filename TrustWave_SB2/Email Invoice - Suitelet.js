@@ -19,8 +19,8 @@ function suitelet_print(request, response){
 	  var records = new Array();
 	  records['transaction'] = nlapiGetRecordId(); //internal id of Transaction
 	  nlapiLogExecution('DEBUG', 'To Email', toEmail);	
-	 
-	  if (toEmail)
+	
+	 if (toEmail)
 	  {
 	  var cc = [];
       toEmail = toEmail.split(',');
@@ -32,23 +32,30 @@ function suitelet_print(request, response){
       
       var renderer = nlapiCreateTemplateRenderer();
 	  renderer.addRecord('transaction', record);
-	  nlapiLogExecution('DEBUG', 'Internal ID of Invoice 2', ifid);	
+	  nlapiLogExecution('DEBUG', 'toEmail now = ', toEmail);
+	  nlapiLogExecution('DEBUG', 'what id the cc ', cc);	
+	  
 	  renderer.setTemplate(emailSubj);	 
 	  renderSubj = renderer.renderToString();
+	  
+	  nlapiLogExecution('DEBUG', 'what is the subject '+ renderSubj);
+	  
 	  renderer.setTemplate(emailBody);
 	  renderBody = renderer.renderToString();
+	  
 	  nlapiSendEmail(23779, cc, renderSubj, renderBody, null, null, records, file);
 	  nlapiLogExecution('DEBUG', 'Email successfully Sent');	  
 	 
 	  //RF to save pdf and put file on the transction.
 	  
 	  file.setName(docName + ' - '+  mailDate + '.pdf' );
-	  file.setFolder(603208);
+	  file.setFolder(25257);
 	  fileId = nlapiSubmitFile(file);
 	  
 	  //create the message so it stays on the transaction 
 	  
 	  var mailedMessage = nlapiCreateRecord('message');
+	  mailedMessage.setFieldValue('author',23779);
 	  mailedMessage.setFieldValue('subject',renderSubj);
 	  mailedMessage.setFieldValue('message', renderBody);
 	  mailedMessage.setFieldValue('transaction', ifid);

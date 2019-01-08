@@ -79,7 +79,7 @@ define(['N/http',
                     var intLineItemCount= req.getLineCount({group: 'custpage_mysublist'});
                     
                     context.request.parameters.custpage_method ="GET";
-                  
+                  var emailToSend = [];
                     for (var i = 0; i < intLineItemCount; i++){
                 	   var toProc = req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_process',line: i});
                 	     if(toProc=='T'){
@@ -87,44 +87,16 @@ define(['N/http',
 		                       var toEmail =req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_inv_email',line: i});
 		                       var docNumber =req.getSublistValue({group: 'custpage_mysublist', name: 'custpage_tranid',line: i});
 		                	         log.debug('internla id  ',docNumber );
-		                	         sendEmail(intTranid, toEmail,'invoice',docNumber)
-                	     }
+		                	         emailToSend.push({transId: intTranid, emailAdd : toEmail, transType : 'invoice', txtDoc : docNumber});
+		                	       
+		                	         //sendEmail(intTranid, toEmail,'invoice',docNumber)
+                	          }
                            }
-                   
+                    sendMailToMR(JSON.stringify(emailToSend));
                    showMessagePage(context);
                  }
             }
-            
-            /*function createAndSubmitMapReduceJob(requstedPeriod, context, objForm) {
-                var mapReduceScriptId = 'customscript_jm_mrs_apply_payments';
-                log.audit('mapreduce id: ', mapReduceScriptId);
-                var mrTask = task.create({
-                    taskType: task.TaskType.MAP_REDUCE
-                });
-                mrTask.scriptId = mapReduceScriptId;
-                mrTask.deploymentId = 'customdeployjm_mrs_apply_papyments';
-
-                mrTask.params = { 'custscript_actPeriod': requstedPeriod };
-
-              //  log.debug('params' + mrTask.params);
-
-                var mrTaskId = mrTask.submit();
-                var taskStatus = task.checkStatus(mrTaskId);
-                if (taskStatus.status === 'FAILED') {
-                    var authorId = -5;
-                    var recipientEmail = 'rfulling@netsuite.com';
-                    email.send({
-                        author: authorId,
-                        recipients: recipientEmail,
-                        subject: 'Failure executing map/reduce job!',
-                        body: 'Map reduce task: ' + mapReduceScriptId + ' has failed.'
-                    });
-                }
-                //resest button to search
-
-                showMessagePage(context);
-            }*/
-            
+           
             function showMessagePage(context) {
               
             	var objFormm = ui.createForm({
@@ -140,7 +112,7 @@ define(['N/http',
                 context.response.writePage(objFormm);
             }
             
-            function showResults(context, startDate, endDate, intCustName,intBatchId) {
+            function showResults(context, startDate, endDate, intCustName, intBatchId) {
             	log.debug('startDate ', startDate);
                 //Conditional filter here 
                var sDate = new Date(startDate);
@@ -213,13 +185,13 @@ define(['N/http',
             	  paySublist.setSublistValue({id: 'custpage_tranid', line: a,value: getInvData[a].getValue({name: 'tranid'})});
             	  paySublist.setSublistValue({id: 'custpage_trdate', line: a,value: getInvData[a].getValue({name: 'trandate'})});
             	  paySublist.setSublistValue({id: 'custpage_amt', line: a,value: getInvData[a].getValue({name: 'amount'})});
-            	  paySublist.setSublistValue({id: 'custpage_from_email', line: a,value: getInvData[a].getValue({name: 'custbody_email_address'})});
+            	 // paySublist.setSublistValue({id: 'custpage_from_email', line: a,value: getInvData[a].getValue({name: 'custbody_email_address'})});
             	  paySublist.setSublistValue({id: 'custpage_cust_name', line: a,value: getInvData[a].getValue({name: 'internalid', join: 'customerMain'})});
             	
-            	  if(getInvData[a].getValue({name: 'custbody_to_email'})){
-            	      paySublist.setSublistValue({id: 'custpage_inv_email', line: a,value: getInvData[a].getValue({name: 'custbody_to_email'})});
-            	  }
-            	  paySublist.setSublistValue({id: 'custpage_cust_email', line: a,value: getInvData[a].getValue({name: 'email', join: 'customerMain'})});
+            	//  if(getInvData[a].getValue({name: 'custbody_to_email'})){
+            	    //  paySublist.setSublistValue({id: 'custpage_inv_email', line: a,value: getInvData[a].getValue({name: 'custbody_to_email'})});
+            	//  }
+            	  paySublist.setSublistValue({id: 'custpage_cust_email', line: a,value: 'russell.fulling@trustwave.com'});
             	  
               }
                     context.response.writePage(objForm)
@@ -298,8 +270,18 @@ define(['N/http',
             	return invoiceToPrint;
 
            }
+            function sendMailToMR(arrEmail){
+            	 log.debug('call the MR ', arrEmail);
+            	var mapReduce = task.create({
+                     taskType: task.TaskType.MAP_REDUCE,
+                     scriptId: 'customscript_tw_email_mr',
+                     deploymentId: 'customdeploytw_email_mr',
+                     params: { custscript_invoices_to_process : arrEmail}
+                 });
+            	var  mrID = mapReduce.submit();
+            }
             
-          function sendEmail(transId, toEmail,transType,docNumber){
+          function sendEmail(transId, toEmail, transType , docNumber){
             	var scriptObj = runtime.getCurrentScript();
       		var folderId = scriptObj.getParameter({name: 'custscript_tw_invoice_folder_id'});
       		var templateId = scriptObj.getParameter({name: 'custscript_tw_mass_email_template'});
@@ -339,17 +321,7 @@ define(['N/http',
  	    	  renderBody=mergeResult.body;
  	    	  
  	    	  email.send({author:48513,recipients: primaryEmail ,subject: renderSubj,body :renderBody, attachments: [fileAttach],cc:cc, relatedRecords: {transactionId : transId}});
-				
- 	    	/*  msgRec.setValue({fieldId: 'subject',value: renderSubj});				 
-				 msgRec.setValue({fieldId: 'message',value: renderBody});
-				 msgRec.setValue({fieldId: 'transaction',value: transId});
-				 msgRec.setValue({fieldId: 'emailed',value: true});
-				 msgRec.setValue({fieldId: 'recipientemail',value: toEmail});
-				 msgRec.setValue({fieldId: 'author',value: 1392262});
-				  var index = msgRec.getLineCount({sublistId: 'mediaitem'});
-				  log.debug('what index ',index);
-				  msgRec.setSublistValue({sublistId: 'mediaitem', fieldId: 'mediaitem', line: index  , value: fileID});
-				 var  messegeid=msgRec.save({ enableSourcing: true, ignoreMandatoryFields : true});*/
+			
  	      }catch(e){
  				log.error({title:'FAILED TO ATTACH SERVICE PDF',details:e.message});
  		  }

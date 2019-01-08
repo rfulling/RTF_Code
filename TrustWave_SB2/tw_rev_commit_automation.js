@@ -5,7 +5,7 @@
  */
 define([
     'N/search',
-    'N/record',
+    'N/record', 
     'N/error',
     'N/runtime',
     'N/email',
@@ -28,7 +28,7 @@ define([
 
         var author = -5;
         var recipients = 'russell.fulling@trustwave.com';
-        var subject = 'CSV create Script  ' + runtime.getCurrentScript().id + ' failed for stage: ' + stage;
+        var subject = 'Revenue Commit Script  ' + runtime.getCurrentScript().id + ' failed for stage: ' + stage;
         var body = 'An error occurred with the following information:\n' +
             'Error code: ' + e.name + '\n' +
             'Error msg: ' + e.message;
@@ -80,7 +80,7 @@ define([
         summary.output.iterator().each(function (key, value) {
             contents += (key + ' ' + value + '\n');
             log.debug('in teh each ', contents);
-            //return true;
+            return true;
         });
 
 
@@ -88,31 +88,6 @@ define([
             var seconds = summary.seconds;
             var usage = summary.usage;
             var yields = summary.yields;
-            /*
-                        var rec = record.create({
-                            type: 'customrecord_summary',
-                        });
-            
-                        rec.setValue({
-                            fieldId: 'name',
-                            value: 'Summary for  script: ' + runtime.getCurrentScript().id
-                        });
-            
-                        rec.setValue({
-                            fieldId: 'custrecord_time',
-                            value: seconds
-                        });
-                        rec.setValue({
-                            fieldId: 'custrecord_usage',
-                            value: usage
-                        });
-                        rec.setValue({
-                            fieldId: 'custrecord_yields',
-                            value: yields
-                        });
-            
-                        rec.save();
-                        */
         }
 
         catch (e) {
@@ -121,7 +96,6 @@ define([
     }
 
     function getInputData() {
-      
     	var rev_commit_automationSearchObj = search.create({
             		   type: "customrecordtw__rev_commit_automation",
             		   filters:
@@ -139,8 +113,6 @@ define([
             		      search.createColumn({name: "custrecord_tw_rev_commit_auto_enddate", label: "Rev Rec End"})
             		   ]
             		});
-            		//var searchResultCount = customrecordtw__rev_commit_automationSearchObj.runPaged().count;
-            		//log.debug("customrecordtw__rev_commit_automationSearchObj result count",searchResultCount);
             		
         return rev_commit_automationSearchObj;
     }
@@ -152,22 +124,13 @@ define([
      * @since 2015.1
      */
     function map(context) {
-     //log.debug('raw context ', context );
     	var searchResult = JSON.parse(context.value);
-    //	log.debug('Context.value parsed ', searchResult);
-      //  log.debug('map SearchResults ', searchResult.values.custrecord_tw_rec_commit_automation.value);
-      //  log.debug('map SearchResults.value ', searchResult)
-
-    	//log.debug('length of values ', context.values.length);
-        	
+      	
     	context.write({
             key: searchResult.values.custrecord_tw_rec_commit_automation.value,
             value : searchResult.id
         	});
-        	
-        	
-
-    }
+      }
 
     /**
      * Executes when the reduce entry point is triggered and applies to each group.
@@ -176,25 +139,10 @@ define([
      * @since 2015.1
      */
     function reduce(context) {
-
-       // var arrOFItems  = JSON.parse(context.values);
-       
-        
-        var itemS = [];
-        itemS = JSON.stringify(context);
-        itemS=JSON.parse(itemS);
-       log.debug('id of customRecord  ', context.key); 
-      log.debug('contexxt should be soids  ', itemS);
-      //here send the key and the array ato the
-      //arrOFItems=JSON.parse(arrOFItems.values)
-     
-       
          transformCommit(context.key);
-        
-        
     }
 
-      function transformCommit(soID){
+    function transformCommit(soID){
     	  
         var revCommit = record.transform({ 
           	fromType : record.Type.SALES_ORDER,
@@ -205,61 +153,20 @@ define([
       });
     	 var lineCount = revCommit.getLineCount({sublistId : 'item'});
     	  var arrItem =[];   
-    	  //loop through the new record 
     	       for (var x = 0; x < lineCount; x++) {
-    	    	   
-    	    	   subLineItem=revCommit.getSublistValue({
-    	        	   sublistId: 'item',
-    	        	   fieldId: 'item',
-    	        	   line: x
-    	    	   }); 
-    	              //log.debug('evaluating the array of items ', soID + '  item ' + subLineItem)
-		    	      
+    	    	   subLineItem=revCommit.getSublistValue({sublistId: 'item',fieldId: 'item',line: x}); 
     	            var  arrItem =  checkItemInArray(soID,subLineItem);
-    	           // log.debug('arrItem ', arrItem);
-    	            
-    	            
-    	              log.debug('startDate ', arrItem.getValue({name:'custrecord_tw_rev_commit_auto_start'}));
-		    	 
-    	              log.debug('endDate ', arrItem.getValue({name:'custrecord_tw_rev_commit_auto_enddate'}));
-		    	      log.debug('amount ', arrItem.getValue({name:'custrecord_tw_rev_commit_auto_qty'}));
-		    	      log.debug('qty ', arrItem.getValue({name:'custrecord_tw_rev_commit_auto_amt'}));
-		    	   
-		    	    if(arrItem){
-		    	    	  //log.debug('get the endDate ', arrItem[0].endDate);
-		    	    	
+    	         
+    	            if(arrItem){
 		    	    	   var startDate= new Date(arrItem.getValue({name:'custrecord_tw_rev_commit_auto_start'}));
 		    	    	   var endDate= new Date(arrItem.getValue({name:'custrecord_tw_rev_commit_auto_enddate'}));
 		    	   
-		    	    	  revCommit.setSublistValue({
-		          		   sublistId: 'item', 
-		          		   fieldId: 'quantity', 
-		          		   line: x , 
-		          		   value: arrItem.getValue({name:'custrecord_tw_rev_commit_auto_qty'}),
-		          		   }),
-		          		   
-		          		   revCommit.setSublistValue({
-		          		   sublistId: 'item', 
-		          		   fieldId: 'revrecstartdate', 
-		          		   line: x , 
-		          		   value: startDate
-		          		   }),
-		          		    revCommit.setSublistValue({
-		          		   sublistId: 'item', 
-		          		   fieldId: 'amount', 
-		          		   line: x , 
-		          		   value: arrItem.getValue({name:'custrecord_tw_rev_commit_auto_amt'}),
-		          		   }),
-		          		   
-		          		   revCommit.setSublistValue({
-		          		   sublistId: 'item', 
-		          		   fieldId: 'revrecenddate', 
-		          		   line: x , 
-		          		   value: endDate
-		          		   })
+		    	    	   revCommit.setSublistValue({sublistId: 'item',fieldId: 'quantity',line: x ,value: arrItem.getValue({name:'custrecord_tw_rev_commit_auto_qty'}),}),
+		          		   revCommit.setSublistValue({sublistId: 'item',fieldId: 'revrecstartdate',line: x ,value: startDate}),
+		          		   revCommit.setSublistValue({sublistId: 'item',fieldId: 'amount',line: x ,value: arrItem.getValue({name:'custrecord_tw_rev_commit_auto_amt'}),}),
+		          		   revCommit.setSublistValue({sublistId: 'item',fieldId: 'revrecenddate',line: x ,value: endDate});
 		    	    
 		    	    }else if(!arrItem){
-		    	    	  //remove theline. 
 		    	    	   revCommit.removeLine({
 		           		   sublistId: 'item',
 		           		   line : x,
@@ -306,17 +213,12 @@ define([
     		      search.createColumn({name: "custrecord_tw_rev_commit_auto_enddate", label: "Rev Rec End"})
     		   ]
     		});
-    	
-    	 
     		var searchResultCount = custRecItem.runPaged().count;
     		var mysr=[];
     		if(searchResultCount>0){
-    		   
-    		   // log.debug("customrecordtw__rev_commit_automationSearchObj result count",searchResultCount);
     		   custRecItem.run().each(function(result){
-    		   mysr=result;
-    			
-    		  });
+    			   mysr=result;
+    		});
     	}
      return mysr; 
      } 
@@ -354,15 +256,8 @@ define([
     	        	        ignoreMandatoryFields : true
     	        	    }
     	        	});     
-    	           
     	  }
       }
-      
-      
-      
-      
-      
-      
     /**
      * Executes when the summarize entry point is triggered and applies to the result set.
      *
