@@ -140,8 +140,8 @@ define([
     function sendEmail(transId, transType , docNumber,context){
     	var scriptObj = runtime.getCurrentScript();
 		
-    	var folderId = scriptObj.getParameter({name: 'custscript_tw_invoice_folder_id'});
-		var templateId = scriptObj.getParameter({name: 'custscript_tw_mass_email_template'});
+    	var folderId = scriptObj.getParameter({name: 'custscript_tw_invoice_folder'});
+		var templateId = scriptObj.getParameter({name: 'custscript_tw_mass_email_template_id'});
      toEmail='russell.fulling@trustwave.com';
      try{
      var primaryEmail =toEmail;

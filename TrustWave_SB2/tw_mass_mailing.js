@@ -89,7 +89,6 @@ define(['N/http',
 		                	         log.debug('internla id  ',docNumber );
 		                	         emailToSend.push({transId: intTranid, emailAdd : toEmail, transType : 'invoice', txtDoc : docNumber});
 		                	       
-		                	         //sendEmail(intTranid, toEmail,'invoice',docNumber)
                 	          }
                            }
                     sendMailToMR(JSON.stringify(emailToSend));
@@ -109,6 +108,7 @@ define(['N/http',
                     defaultValue: 'Your Request has been submitted to be processed'
                 });
                 msgField.defaultValue = 'Your Request has been submitted to be processed';
+                
                 context.response.writePage(objFormm);
             }
             
@@ -154,9 +154,7 @@ define(['N/http',
 
             var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Invoices', tab: null })
               
-             
-              log.debug('batch = ' )
-           
+              paySublist.addMarkAllButtons();
              
               var getInvData = invoiceData(intBatchId,startDate,endDate);
               log.debug('revrec  ', invoiceData);
@@ -185,13 +183,13 @@ define(['N/http',
             	  paySublist.setSublistValue({id: 'custpage_tranid', line: a,value: getInvData[a].getValue({name: 'tranid'})});
             	  paySublist.setSublistValue({id: 'custpage_trdate', line: a,value: getInvData[a].getValue({name: 'trandate'})});
             	  paySublist.setSublistValue({id: 'custpage_amt', line: a,value: getInvData[a].getValue({name: 'amount'})});
-            	 // paySublist.setSublistValue({id: 'custpage_from_email', line: a,value: getInvData[a].getValue({name: 'custbody_email_address'})});
+            	  paySublist.setSublistValue({id: 'custpage_from_email', line: a,value: getInvData[a].getValue({name: 'custbody_email_address'})});
             	  paySublist.setSublistValue({id: 'custpage_cust_name', line: a,value: getInvData[a].getValue({name: 'internalid', join: 'customerMain'})});
             	
-            	//  if(getInvData[a].getValue({name: 'custbody_to_email'})){
-            	    //  paySublist.setSublistValue({id: 'custpage_inv_email', line: a,value: getInvData[a].getValue({name: 'custbody_to_email'})});
-            	//  }
-            	  paySublist.setSublistValue({id: 'custpage_cust_email', line: a,value: 'russell.fulling@trustwave.com'});
+            	  if(getInvData[a].getValue({name: 'custbody_to_email'})){
+            	      paySublist.setSublistValue({id: 'custpage_inv_email', line: a,value: getInvData[a].getValue({name: 'custbody_to_email'})});
+            	  }
+            	//  paySublist.setSublistValue({id: 'custpage_cust_email', line: a,value: 'russell.fulling@trustwave.com'});
             	  
               }
                     context.response.writePage(objForm)
@@ -275,7 +273,7 @@ define(['N/http',
             	var mapReduce = task.create({
                      taskType: task.TaskType.MAP_REDUCE,
                      scriptId: 'customscript_tw_email_mr',
-                     deploymentId: 'customdeploytw_email_mr',
+                     deploymentId: 'customdeploy_tw_email_mr',
                      params: { custscript_invoices_to_process : arrEmail}
                  });
             	var  mrID = mapReduce.submit();
