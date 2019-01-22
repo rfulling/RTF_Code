@@ -6,8 +6,8 @@ function suitelet_print(request, response){
 	 
 	 var docName = record.getFieldValue('tranid');
 	 var mailDate= new Date();
-	 nlapiLogExecution('DEBUG', 'Emails: ', toEmail);	
-	 nlapiLogExecution('DEBUG', 'Created From SO Internal ID: ', createdFrom);	
+	 nlapiLogExecution('DEBUG', 'to email from field : ', toEmail);	
+	// nlapiLogExecution('DEBUG', 'Created From SO Internal ID: ', createdFrom);	
      var file = nlapiPrintRecord('TRANSACTION', ifid, 'PDF',null); 
 	 //this will allow you to define the template that will be used to print the invoice
      response.setContentType('PDF', 'Print Invoice Record', 'INLINE');
@@ -18,32 +18,33 @@ function suitelet_print(request, response){
 	  var emailBody = emailTemp.getFieldValue('content');	  
 	  var records = new Array();
 	  records['transaction'] = nlapiGetRecordId(); //internal id of Transaction
-	  nlapiLogExecution('DEBUG', 'To Email', toEmail);	
+	 
 	
-	 if (toEmail)
-	  {
-	  var cc = [];
-      toEmail = toEmail.split(',');
-      for (var x = 0; x<toEmail.length; x++){
-      cc[x] = toEmail[x];
-      }
-	  
-       
-      
+	  if (toEmail)
+    	{
+  	  	var cc = [];
+  	  	toEmail = toEmail.split(',');
+  	  	primaryEmail=toEmail[0];
+  	  	for (var x = 0; x < toEmail.length-1; x++){
+  	  		cc.push(toEmail[x+1]);
+            
+  	  	}
+  	 }   
+   
       var renderer = nlapiCreateTemplateRenderer();
 	  renderer.addRecord('transaction', record);
-	  nlapiLogExecution('DEBUG', 'toEmail now = ', toEmail);
+	  nlapiLogExecution('DEBUG', 'primaryEmail = ', primaryEmail);
 	  nlapiLogExecution('DEBUG', 'what id the cc ', cc);	
 	  
 	  renderer.setTemplate(emailSubj);	 
 	  renderSubj = renderer.renderToString();
 	  
-	  nlapiLogExecution('DEBUG', 'what is the subject '+ renderSubj);
+	  nlapiLogExecution('DEBUG', 'what is the subject ', renderSubj);
 	  
 	  renderer.setTemplate(emailBody);
 	  renderBody = renderer.renderToString();
 	  
-	  nlapiSendEmail(23779, cc, renderSubj, renderBody, null, null, records, file);
+	  nlapiSendEmail(23779, primaryEmail, renderSubj, renderBody, cc, null, records, file);
 	  nlapiLogExecution('DEBUG', 'Email successfully Sent');	  
 	 
 	  //RF to save pdf and put file on the transction.
@@ -60,13 +61,16 @@ function suitelet_print(request, response){
 	  mailedMessage.setFieldValue('message', renderBody);
 	  mailedMessage.setFieldValue('transaction', ifid);
 	  mailedMessage.setFieldValue('emailed','T');
-	  mailedMessage.setFieldValue('recipientemail',toEmail);
+	  mailedMessage.setFieldValue('recipientemail',primaryEmail);
 	  var index = mailedMessage.getLineItemCount('mediaitem');
 	  nlapiLogExecution('DEBUG', 'what index '+index);
 	  mailedMessage.setLineItemValue('mediaitem', 'mediaitem', index + 1, fileId);
-	  
+	 // 	mailedMessage.selectNewLineItem('ccbcclist');
+     // 	mailedMessage.setCurrentLineItemValue('ccbcclist','cc','T');
+//		mailedMessage.setCurrentLineItemValue('ccbcclist','email',cc);
+	//	mailedMessage.commitLineItem('ccbcclist');
+ 
 	  
 	  nlapiSubmitRecord(mailedMessage);
 	  
 	  }
-}
