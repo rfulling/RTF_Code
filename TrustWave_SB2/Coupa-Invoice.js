@@ -453,9 +453,7 @@ function CreateVendorBillorVendorCredit(invoice) {
 }
 
 function CreateVendorCredit(invoice) {
-	var record = nlapiCreateRecord('vendorcredit', {
-		recordmode : 'dynamic'
-	});
+	var record = nlapiCreateRecord('vendorcredit', {recordmode : 'dynamic'});
 
 	var supplierNode = nlapiSelectNode(invoice, 'supplier');
 	nlapiLogExecution('DEBUG', 'SupplierName', nlapiSelectValue(supplierNode,'name'));
@@ -468,10 +466,8 @@ function CreateVendorCredit(invoice) {
 
 	var lineleveltaxation = 'false';
 	var dynamicAccounting = 'F';
-	if (nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_inv_dynamicaccts'))
-		dynamicAccounting = nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_dynamicaccts');
+	if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_dynamicaccts'))
+		dynamicAccounting = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_dynamicaccts');
 
 	lineleveltaxation = nlapiSelectValue(invoice, 'line-level-taxation');
 
@@ -1021,16 +1017,12 @@ function CreateVendorCredit(invoice) {
 
 			if (nlapiGetContext().getSetting('SCRIPT',
 					'custscript_coupa_inv_deptseg')) {
-				var dept = nlapiSelectValue(
-						accountNode,
-						nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_deptseg')).split(':');
+				var dept = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')).split(':');
+				
 				if (dynamicAccounting == 'T') {
-					record.setCurrentLineItemValue('expense', 'department',
-							dept);
+					record.setCurrentLineItemValue('expense', 'department',dept);
 				} else {
-					record.setCurrentLineItemValue('expense', 'department',
-							dept[1]);
+					record.setCurrentLineItemValue('expense', 'department',dept[1]);
 				}
 			}
 
