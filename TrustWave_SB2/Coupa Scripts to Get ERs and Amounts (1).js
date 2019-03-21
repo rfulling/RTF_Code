@@ -13,7 +13,6 @@ function scheduled(type) {
 	var tranid = '';
 	headers['Accept'] = 'text/xml';
 	headers['X-COUPA-API-KEY'] = param_APIKey;
-{ccccx};;a;
 
 	var today  = new Date();  
 	var yesterday = new Date(today);

@@ -3,11 +3,11 @@ function suitelet_print(request, response){
 	 var record = nlapiLoadRecord('invoice', ifid);
 	 var toEmail = record.getFieldValue('custbody_to_email');	
 	 var createdFrom = record.getFieldValue('createdfrom');	
-	 
+	 var curUser = nlapiGetUser();
 	 var docName = record.getFieldValue('tranid');
 	 var mailDate= new Date();
-	 nlapiLogExecution('DEBUG', 'to email from field : ', toEmail);	
-	// nlapiLogExecution('DEBUG', 'Created From SO Internal ID: ', createdFrom);	
+	 nlapiLogExecution('DEBUG', 'Emails: ', toEmail);	
+	 nlapiLogExecution('DEBUG', 'Created From SO Internal ID: ', createdFrom);	
      var file = nlapiPrintRecord('TRANSACTION', ifid, 'PDF',null); 
 	 //this will allow you to define the template that will be used to print the invoice
      response.setContentType('PDF', 'Print Invoice Record', 'INLINE');
@@ -18,8 +18,10 @@ function suitelet_print(request, response){
 	  var emailBody = emailTemp.getFieldValue('content');	  
 	  var records = new Array();
 	  records['transaction'] = nlapiGetRecordId(); //internal id of Transaction
-	 
-	
+	  nlapiLogExecution('DEBUG', 'To Email', toEmail);	
+	  toEmail=toEmail.replace(';',',');
+  
+      var primaryEmail='';
 	  if (toEmail)
     	{
   	  	var cc = [];
@@ -30,7 +32,7 @@ function suitelet_print(request, response){
             
   	  	}
   	 }   
-   
+      
       var renderer = nlapiCreateTemplateRenderer();
 	  renderer.addRecord('transaction', record);
 	  nlapiLogExecution('DEBUG', 'primaryEmail = ', primaryEmail);
@@ -39,11 +41,15 @@ function suitelet_print(request, response){
 	  renderer.setTemplate(emailSubj);	 
 	  renderSubj = renderer.renderToString();
 	  
-	  nlapiLogExecution('DEBUG', 'what is the subject ', renderSubj);
+	  nlapiLogExecution('DEBUG', 'what is the subject '+ renderSubj);
 	  
 	  renderer.setTemplate(emailBody);
 	  renderBody = renderer.renderToString();
 	  
+	  
+	  
+	  try{
+		  
 	  nlapiSendEmail(23779, primaryEmail, renderSubj, renderBody, cc, null, records, file);
 	  nlapiLogExecution('DEBUG', 'Email successfully Sent');	  
 	 
@@ -65,12 +71,22 @@ function suitelet_print(request, response){
 	  var index = mailedMessage.getLineItemCount('mediaitem');
 	  nlapiLogExecution('DEBUG', 'what index '+index);
 	  mailedMessage.setLineItemValue('mediaitem', 'mediaitem', index + 1, fileId);
-	 // 	mailedMessage.selectNewLineItem('ccbcclist');
-     // 	mailedMessage.setCurrentLineItemValue('ccbcclist','cc','T');
-//		mailedMessage.setCurrentLineItemValue('ccbcclist','email',cc);
-	//	mailedMessage.commitLineItem('ccbcclist');
- 
+	  
 	  
 	  nlapiSubmitRecord(mailedMessage);
+	  
+	  }catch(e) {
+		  
+		  log.error("Script Error", e);
+			var author = 23779;
+			//var recipients = ['russell.fulling@trustwave.com','LZdunczyk@trustwave.com','LDiCosola@trustwave.com','JUstianowski@trustwave.com','jscharf@yaypay.com'];
+			var subject = 'Send email failed for '+ ifid;
+			var body = 'Invalid address :\n' +
+              'For Record :'+  ifid +
+			    'Error code: ' + e.name + '\n' +
+			    'Error msg: ' + e.message;
+			nlapiSendEmail(23779, curUser, subject, body, 'russell.fulling@trustwave.com', null, null, null);
+			
+	  }
 	  
 	  }
