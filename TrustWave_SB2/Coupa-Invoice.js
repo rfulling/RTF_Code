@@ -1,5 +1,5 @@
-/**
- * Module Description
+/*
+ * Module Descriptionf
  * This scheduled script pulls OK to Pay invoices from Coupa into Netsuite
  * 
  *
@@ -37,7 +37,8 @@ function scheduled(type) {
 				}
 			}
 			if (!test_url) {
-				var errMsg = 'Error - script is running in non prod environment and not using a '+ url_test_contains
+				var errMsg = 'Error - script is running in non prod environment and not using a '
+						+ url_test_contains
 						+ ' in the coupa URL. If you believe this to be incorrect, please contact Coupa Support';
 				throw nlapiCreateError('BadEnv', errMsg, false);
 			}
@@ -54,8 +55,7 @@ function scheduled(type) {
 						+ errordetails);
 		nlapiSendEmail(
 				-5,
-				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),
-				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
 						+ ' Invoice Integration:Processing Error - Unable to do Coupa request api call to export Invoices','Error Code = ' + errorcode + ' Error Description = '
 						+ errordetails);
 		throw error;
@@ -65,29 +65,41 @@ function scheduled(type) {
 		invoice_filter = context.getSetting('SCRIPT','custscript_coupa_invoice_filter')
 	}
 
-	var url = param_url + '/api/invoices?exported=false&status=approved'
-			+ invoice_filter;
+	var url = param_url + '/api/invoices?exported=false&status=approved'+ invoice_filter;
 
 	if (context.getSetting('SCRIPT', 'custscript_coupa_inv_use_updatedat_date') == 'T') {
 		if (context.getSetting('SCRIPT','custscript_coupa_inv_from_updatedat_date')) {
-			url = url+ '&updated-at[gt_or_eq]='+ netsuitedatetoCoupadate(context.getSetting('SCRIPT','custscript_coupa_inv_from_updatedat_date'));
+			url = url
+					+ '&updated-at[gt_or_eq]='
+					+ netsuitedatetoCoupadate(context.getSetting('SCRIPT',
+							'custscript_coupa_inv_from_updatedat_date'));
 		}
 
 		if (context.getSetting('SCRIPT','custscript_coupa_inv_to_updatedat_date')) {
-			url = url+ '&updated-at[lt_or_eq]='+ netsuitedatetoCoupadate(context.getSetting('SCRIPT','custscript_coupa_inv_to_updatedat_date'));
+			url = url
+					+ '&updated-at[lt_or_eq]='
+					+ netsuitedatetoCoupadate(context.getSetting('SCRIPT',
+							'custscript_coupa_inv_to_updatedat_date'));
 		}
 	} else {
 		if (context.getSetting('SCRIPT', 'custscript_coupa_inv_frominvdate')) {
-			url = url+ '&invoice-date[gt_or_eq]='+ netsuitedatetoCoupadate(context.getSetting('SCRIPT','custscript_coupa_inv_frominvdate'));
+			url = url
+					+ '&invoice-date[gt_or_eq]='
+					+ netsuitedatetoCoupadate(context.getSetting('SCRIPT',
+							'custscript_coupa_inv_frominvdate'));
 		}
 
 		if (context.getSetting('SCRIPT', 'custscript_coupa_inv_toinvdate')) {
-			url = url+ '&invoice-date[lt_or_eq]='+ netsuitedatetoCoupadate(context.getSetting('SCRIPT','custscript_coupa_inv_toinvdate'));
+			url = url
+					+ '&invoice-date[lt_or_eq]='
+					+ netsuitedatetoCoupadate(context.getSetting('SCRIPT',
+							'custscript_coupa_inv_toinvdate'));
 		}
 	}
 
 	if (context.getSetting('SCRIPT', 'custscript_coupa_inv_limit'))
-		url = url + '&limit='+ context.getSetting('SCRIPT', 'custscript_coupa_inv_limit');
+		url = url + '&limit='
+				+ context.getSetting('SCRIPT', 'custscript_coupa_inv_limit');
 
 	nlapiLogExecution('DEBUG', 'URL is ', url);
 
@@ -135,19 +147,22 @@ function scheduled(type) {
 
 		var responseXML = nlapiStringToXML(response.getBody());
 		nlapiLogExecution('DEBUG', 'response xml = ', response.getBody());
-		
+
 		var invoiceNode = nlapiSelectNode(responseXML, 'invoice-headers');
 		var invoiceHeaderNodes = new Array();
 
 		invoiceHeaderNodes = nlapiSelectNodes(invoiceNode, 'invoice-header');
 
-		nlapiLogExecution('AUDIT', 'Processing ' + invoiceHeaderNodes.length+ ' OK to Pay Invoices');
+		nlapiLogExecution('AUDIT', 'Processing ' + invoiceHeaderNodes.length
+				+ ' OK to Pay Invoices');
 
 		for (var i = 0; i < invoiceHeaderNodes.length; i++) {
 
 			var tranid = nlapiSelectValue(invoiceHeaderNodes[i],'invoice-number');
 			var externalid = nlapiSelectValue(invoiceHeaderNodes[i], 'id');
 			var entityid = nlapiSelectValue(invoiceHeaderNodes[i],'supplier/number');
+
+			nlapiLogExecution("DEBUG", "what is my obejct  " + entityid);
 
 			if (!nlapiSelectValue(invoiceHeaderNodes[i], 'supplier/number')) {
 				nlapiLogExecution(
@@ -196,19 +211,26 @@ function scheduled(type) {
 							'Invoice Number = '
 									+ tranid
 									+ ' Vendor = '
-									+ nlapiSelectValue(invoiceHeaderNodes[i],'supplier/name')
+									+ nlapiSelectValue(invoiceHeaderNodes[i],
+											'supplier/name')
 									+ ' Coupa Invoice Id = ' + externalid
 									+ ' Netsuite Vendor Bill id = '
 									+ invoiceexists);
-					nlapiLogExecution('ERROR', 'Error Creating Vendor Bill','Invoice Number = ' + tranid + ' Error = '+ e.getDetails());
+					nlapiLogExecution('ERROR', 'Error Creating Vendor Bill',
+							'Invoice Number = ' + tranid + ' Error = '
+									+ e.getDetails());
 					nlapiSendEmail(
 							-5,
-							nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),
-							nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
-									+ ' Invoice Integration:Processing Error - Error creating Vendor Bill','Invoice Number = '
+							nlapiGetContext().getSetting('SCRIPT',
+									'custscript_coupa_inv_email_notifications'),
+							nlapiGetContext().getSetting('SCRIPT',
+									'custscript_coupa_inv_acccountname')
+									+ ' Invoice Integration:Processing Error - Error creating Vendor Bill',
+							'Invoice Number = '
 									+ tranid
 									+ ' Vendor = '
-									+ nlapiSelectValue(invoiceHeaderNodes[i],'supplier/name')
+									+ nlapiSelectValue(invoiceHeaderNodes[i],
+											'supplier/name')
 									+ ' Netsuite Vendor Bill id = '
 									+ invoiceexists + ' Error = '
 									+ e.getDetails());
@@ -221,18 +243,23 @@ function scheduled(type) {
 						'Invoice Number = '
 								+ tranid
 								+ ' Vendor = '
-								+ nlapiSelectValue(invoiceHeaderNodes[i],'supplier/name')
+								+ nlapiSelectValue(invoiceHeaderNodes[i],
+										'supplier/name')
 								+ ' Coupa Invoice Id = ' + externalid
 								+ ' Netsuite Vendor Bill id = ' + invoiceexists);
 
 				nlapiSendEmail(
 						-5,
-						nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),
-						nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
-								+ ' Invoice Integration:Processing Error - Cannot create Vendor Bill as it already exists in Netsuite','Invoice Number = '
+						nlapiGetContext().getSetting('SCRIPT',
+								'custscript_coupa_inv_email_notifications'),
+						nlapiGetContext().getSetting('SCRIPT',
+								'custscript_coupa_inv_acccountname')
+								+ ' Invoice Integration:Processing Error - Cannot create Vendor Bill as it already exists in Netsuite',
+						'Invoice Number = '
 								+ tranid
 								+ ' Vendor = '
-								+ nlapiSelectValue(invoiceHeaderNodes[i],'supplier/name')
+								+ nlapiSelectValue(invoiceHeaderNodes[i],
+										'supplier/name')
 								+ ' Netsuite Vendor Bill id = ' + invoiceexists);
 
 				// UpdateVendorBill(invoiceHeaderNodes[i], invoiceexists);
@@ -253,17 +280,19 @@ function scheduled(type) {
 	}
 
 	if (enable_support_void == 1) {
-		
-		var today  = new Date();  
-		var yesterday = new Date(today);
-		yesterday.setDate(today.getDate() -1);
-		var dd = yesterday.getDate();
-		var mm = yesterday.getMonth()+1; //January is 0!
-		var yyyy = yesterday.getFullYear();
-	//if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} 
-		Voiddate = yyyy+'-'+mm+'-'+dd;
 
-		url = param_url + '/api/invoices?exported=false&status=voided&[updated-at][gt]='+Voiddate;
+		var today = new Date();
+		var yesterday = new Date(today);
+		yesterday.setDate(today.getDate() - 1);
+		var dd = yesterday.getDate();
+		var mm = yesterday.getMonth() + 1; // January is 0!
+		var yyyy = yesterday.getFullYear();
+		// if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm}
+		Voiddate = yyyy + '-' + mm + '-' + dd;
+
+		url = param_url
+				+ '/api/invoices?exported=false&status=voided&[updated-at][gt]='
+				+ Voiddate;
 
 		if (context.getSetting('SCRIPT', 'custscript_coupa_inv_frominvdate')) {
 			url = url
@@ -327,17 +356,13 @@ function scheduled(type) {
 			// nlapiLogExecution('DEBUG', 'Length of invoiceHeaderNodes.lenght',
 			// invoiceHeaderNodes.length);
 
-			nlapiLogExecution('AUDIT', 'Processing '
-					+ invoiceHeaderNodes.length + ' voided invoices');
+			nlapiLogExecution('AUDIT', 'Processing '+ invoiceHeaderNodes.length + ' voided invoices');
 
 			for (var i = 0; i < invoiceHeaderNodes.length; i++) {
 
-				var tranid = nlapiSelectValue(invoiceHeaderNodes[i],
-						'invoice-number');
-				var externalid = 'Coupa-VendorBill'
-						+ nlapiSelectValue(invoiceHeaderNodes[i], 'id');
-				var entityid = nlapiSelectValue(invoiceHeaderNodes[i],
-						'supplier/number');
+				var tranid = nlapiSelectValue(invoiceHeaderNodes[i],'invoice-number');
+				var externalid = 'Coupa-VendorBill'+ nlapiSelectValue(invoiceHeaderNodes[i], 'id');
+				var entityid = nlapiSelectValue(invoiceHeaderNodes[i],'supplier/number');
 
 				nlapiLogExecution('AUDIT',
 						'Processing Coupa Invoice - VOID in Netsuite',
@@ -385,24 +410,20 @@ function CreateVendorBillorVendorCredit(invoice) {
 	var creditMemoOption = 2; // by default option is 2
 
 	for (var x = 0; x < invoiceLineNodes.length; x++) {
-		invoicetotal = invoicetotal
-				+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
+		invoicetotal = invoicetotal+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 
 		if (parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total')) < 0) {
-			credit = true;
+			  credit = true;
 		} else {
-			bill = true;
+			  bill = true;
 		}
 	}
 
 	if (nlapiGetContext().getSetting('SCRIPT', 'custscript_creditmemooption'))
-		creditMemoOption = nlapiGetContext().getSetting('SCRIPT',
-				'custscript_creditmemooption');
+		creditMemoOption = nlapiGetContext().getSetting('SCRIPT','custscript_creditmemooption');
 
-	if (nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_inv_documenttype')) {
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_documenttype') == 'T') {
+	if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_documenttype')) {
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_documenttype') == 'T') {
 			var invoiceType = nlapiSelectValue(invoice, 'document-type');
 			if (invoiceType == 'Credit Note') {
 				credit = true;
@@ -437,13 +458,10 @@ function CreateVendorCredit(invoice) {
 	});
 
 	var supplierNode = nlapiSelectNode(invoice, 'supplier');
-	nlapiLogExecution('DEBUG', 'SupplierName', nlapiSelectValue(supplierNode,
-			'name'));
+	nlapiLogExecution('DEBUG', 'SupplierName', nlapiSelectValue(supplierNode,'name'));
 
 	if (nlapiSelectValue(supplierNode, 'number'))
-		record
-				.setFieldValue('entity', nlapiSelectValue(supplierNode,
-						'number'));
+		record.setFieldValue('entity', nlapiSelectValue(supplierNode,'number'));
 	else
 		// try setting supplier name instead on id
 		record.setFieldText('entity', nlapiSelectValue(supplierNode, 'name'));
@@ -474,12 +492,9 @@ function CreateVendorCredit(invoice) {
 
 	var totalheadercharges;
 	if (lineleveltaxation == 'false')
-		totalheadercharges = parseFloat(shippingamount)
-				+ parseFloat(handlingamount) + parseFloat(taxamount)
-				+ parseFloat(miscamount);
+		totalheadercharges = parseFloat(shippingamount)+ parseFloat(handlingamount) + parseFloat(taxamount)+ parseFloat(miscamount);
 	else
-		totalheadercharges = parseFloat(shippingamount)
-				+ parseFloat(handlingamount) + parseFloat(miscamount);
+		totalheadercharges = parseFloat(shippingamount)+ parseFloat(handlingamount) + parseFloat(miscamount);
 
 	var invoiceLine = nlapiSelectNode(invoice, 'invoice-lines');
 	var invoiceLineNodes = new Array();
@@ -491,15 +506,12 @@ function CreateVendorCredit(invoice) {
 	var taxabletotalamount = 0;
 	for (var x = 0; x < invoiceLineNodes.length; x++) {
 		if (nlapiSelectValue(invoiceLineNodes[x], 'nontaxable') != 'true')
-			taxabletotalamount = parseFloat(taxabletotalamount)
-					+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
+			taxabletotalamount = parseFloat(taxabletotalamount) + parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 
-		totalamount = parseFloat(totalamount)
-				+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
+		        totalamount = parseFloat(totalamount)+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 	}
 
-	var totalheaderamount = parseFloat(totalamount)
-			+ parseFloat(totalheadercharges);
+	var totalheaderamount = parseFloat(totalamount)+ parseFloat(totalheadercharges);
 	totalheaderamount = totalheaderamount.toFixed(3);
 	var totalcalcamount = 0;
 
@@ -509,22 +521,17 @@ function CreateVendorCredit(invoice) {
 		// memo field on the header of Netsuite Vendor Bill
 		if (x == 0) {
 			if (nlapiSelectValue(invoiceLineNodes[x], 'description'))
-				record.setFieldValue('memo', nlapiSelectValue(
-						invoiceLineNodes[x], 'description'));
+				record.setFieldValue('memo', nlapiSelectValue(invoiceLineNodes[x], 'description'));
 		}
 
-		var linetax = parseFloat(nlapiSelectValue(invoiceLineNodes[x],
-				'tax-amount'));
+		var linetax = parseFloat(nlapiSelectValue(invoiceLineNodes[x],'tax-amount'));
 
 		if (linetax)
-			totalheaderamount = parseFloat(totalheaderamount)
-					+ parseFloat(linetax);
+			totalheaderamount = parseFloat(totalheaderamount)+ parseFloat(linetax);
 
-		var invoicelineamount = parseFloat(nlapiSelectValue(
-				invoiceLineNodes[x], 'total'));
+		var invoicelineamount = parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 		var splitaccounting = 'FALSE';
-		var actalloc = nlapiSelectNode(invoiceLineNodes[x],
-				'account-allocations');
+		var actalloc = nlapiSelectNode(invoiceLineNodes[x],'account-allocations');
 		var accountallocations = new Array();
 		accountallocations = nlapiSelectNodes(actalloc, 'account-allocation');
 		if (accountallocations.length >= 1) {
@@ -535,14 +542,10 @@ function CreateVendorCredit(invoice) {
 
 		if (splitaccounting == 'TRUE') {
 			for (var i = 0; i < accountallocations.length; i++) {
-				var lineamount = parseFloat(nlapiSelectValue(
-						accountallocations[i], 'amount'));
-				var linecharge = (parseFloat(lineamount) / parseFloat(taxabletotalamount))
-						* totalheadercharges;
+				var lineamount = parseFloat(nlapiSelectValue(accountallocations[i], 'amount'));
+				var linecharge = (parseFloat(lineamount) / parseFloat(taxabletotalamount))* totalheadercharges;
 				var splitlinetax = 0.00;
-				if (linetax) {
-					splitlinetax = (parseFloat(lineamount) / parseFloat(invoicelineamount))
-							* linetax;
+				if (linetax) {splitlinetax = (parseFloat(lineamount) / parseFloat(invoicelineamount))* linetax;
 					// nlapiLogExecution('DEBUG', 'split line tax details ',
 					// 'splitline amount = ' + lineamount + ' splitlinetax = ' +
 					// splitlinetax);
@@ -550,45 +553,34 @@ function CreateVendorCredit(invoice) {
 				var adjlineamount;
 
 				if (linetax)
-					adjlineamount = parseFloat(lineamount)
-							+ parseFloat(linecharge) + parseFloat(splitlinetax);
+					adjlineamount = parseFloat(lineamount)+ parseFloat(linecharge) + parseFloat(splitlinetax);
 				else {
 					// customization for nontaxable
 					if (nlapiSelectValue(invoiceLineNodes[x], 'nontaxable') == 'true')
 						adjlineamount = parseFloat(lineamount);
 					else
-						adjlineamount = parseFloat(lineamount)
-								+ parseFloat(linecharge);
+						adjlineamount = parseFloat(lineamount)+ parseFloat(linecharge);
 				}
 				adjlineamount = adjlineamount.toFixed(2);
-				var accountNode = nlapiSelectNode(accountallocations[i],
-						'account');
+				var accountNode = nlapiSelectNode(accountallocations[i],'account');
 				record.selectNewLineItem('expense');
 				if (x == 0) {
 					nlapiLogExecution('DEBUG',
 							'Check for Subsidiary segment custom field',
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_subsseg'));
+							nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg'));
 
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_subsseg')) {
-						var subsidiaryId = nlapiSelectValue(
-								accountNode,
-								nlapiGetContext().getSetting('SCRIPT',
-										'custscript_coupa_inv_subsseg')).split(
-								':');
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')) {
+						var subsidiaryId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')).split(':');
+						
 						if (dynamicAccounting == 'T') {
-							nlapiLogExecution('DEBUG',
-									'Setting subsidiary ID to', subsidiaryId[1]);
+							nlapiLogExecution('DEBUG','Setting subsidiary ID to', subsidiaryId[1]);
 							record.setFieldValue('subsidiary', subsidiaryId);
 						} else {
-							nlapiLogExecution('DEBUG',
-									'Setting subsidiary ID to', subsidiaryId[1]);
+							nlapiLogExecution('DEBUG','Setting subsidiary ID to', subsidiaryId[1]);
 							record.setFieldValue('subsidiary', subsidiaryId[1]);
 						}
 					} else if (dynamicAccounting == 'T') {
-						var coaNode = nlapiSelectNode(accountNode,
-								'account-type');
+						var coaNode = nlapiSelectNode(accountNode,'account-type');
 						var subsidiaryName = nlapiSelectValue(coaNode, 'name');
 						var subsidiaryID = '';
 						try {
@@ -664,18 +656,12 @@ function CreateVendorCredit(invoice) {
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_deptseg')) {
-					var dept = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_deptseg')).split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')) {
+					var dept = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						record.setCurrentLineItemValue('expense', 'department',
-								dept);
+						record.setCurrentLineItemValue('expense', 'department',dept);
 					} else {
-						record.setCurrentLineItemValue('expense', 'department',
-								dept[1]);
+						record.setCurrentLineItemValue('expense', 'department',dept[1]);
 					}
 				}
 
@@ -740,28 +726,19 @@ function CreateVendorCredit(invoice) {
 				 */
 
 				// check for Coupa order line
-				if (nlapiSelectValue(invoiceLineNodes[x], 'order-header-num')
-						&& nlapiSelectValue(invoiceLineNodes[x],
-								'order-line-num')) {
-					var poheadernum = nlapiSelectValue(invoiceLineNodes[x],
-							'order-header-num');
-					var polinenum = nlapiSelectValue(invoiceLineNodes[x],
-							'order-line-num');
-					record
-							.setCurrentLineItemValue('expense',
-									'custcol_coupaponum', poheadernum + '-'
-											+ polinenum);
+				if (nlapiSelectValue(invoiceLineNodes[x], 'order-header-num')&& nlapiSelectValue(invoiceLineNodes[x],'order-line-num')) {
+					var poheadernum = nlapiSelectValue(invoiceLineNodes[x],'order-header-num');
+					var polinenum = nlapiSelectValue(invoiceLineNodes[x],'order-line-num');
+					record.setCurrentLineItemValue('expense','custcol_coupaponum', poheadernum + '-'+ polinenum);
 				}
 
-				record.setCurrentLineItemValue('expense', 'memo',
-						nlapiSelectValue(invoiceLineNodes[x], 'description'));
+				record.setCurrentLineItemValue('expense', 'memo',nlapiSelectValue(invoiceLineNodes[x], 'description'));
 				record.setCurrentLineItemValue('expense', 'isbillable', 'T');
 
 				if ((i == 0) && (x == 0))
 					totalcalcamount = parseFloat(adjlineamount);
 				else
-					totalcalcamount = parseFloat(totalcalcamount)
-							+ parseFloat(adjlineamount);
+					totalcalcamount = parseFloat(totalcalcamount)+ parseFloat(adjlineamount);
 
 				// nlapiLogExecution('DEBUG', 'Invoice Line details ', 'Invoice
 				// Line ' + x + ' SplitLine = ' + i + ' adjlineamount = ' +
@@ -777,31 +754,23 @@ function CreateVendorCredit(invoice) {
 					 * totalcalcamount);
 					 */
 					if (roundingerror) {
-						roundingerror = Math
-								.round(parseFloat(roundingerror) * 100) / 100;
-						adjlineamount = parseFloat(adjlineamount)
-								+ roundingerror;
+						roundingerror = Math.round(parseFloat(roundingerror) * 100) / 100;
+						adjlineamount = parseFloat(adjlineamount)+ roundingerror;
 					}
 				}
-				record.setCurrentLineItemValue('expense', 'amount', Math
-						.abs(parseFloat(adjlineamount)));
+				//
+				record.setCurrentLineItemValue('expense', 'amount', Math.abs(parseFloat(adjlineamount)));
 				// check for custom fields on line level
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_customfield_crdt_line_count')) {
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_customfield_crdt_line_count')) {
 					for (var y = 1; y <= nlapiGetContext().getSetting('SCRIPT',
 							'custscript_customfield_crdt_line_count'); y++) {
-						if (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_custfield_crdt_line' + y)) {
+						if (nlapiGetContext().getSetting('SCRIPT','custscript_custfield_crdt_line' + y)) {
 							var custfield;
 							var valuetoinsert = null;
 							var textOrValue;
-							if (nlapiGetContext().getSetting('SCRIPT',
-									'custscript_custfield_crdt_line' + y)
+							if (nlapiGetContext().getSetting('SCRIPT','custscript_custfield_crdt_line' + y)
 									.split(':')) {
-								custfield = nlapiGetContext().getSetting(
-										'SCRIPT',
-										'custscript_custfield_crdt_line' + y)
-										.split(':');
+								custfield = nlapiGetContext().getSetting('SCRIPT','custscript_custfield_crdt_line' + y).split(':');
 
 								if (custfield[4]) {
 									valuetoinsert = custfield[4];
@@ -879,7 +848,9 @@ function CreateVendorCredit(invoice) {
 										}
 									}
 									if (custfield[2] == 'Segment') {
-										valuetoinsert = nlapiSelectValue(accountallocations[i], 'account/' + custfield[0]);
+										valuetoinsert = nlapiSelectValue(
+												accountallocations[i],
+												'account/' + custfield[0]);
 									}
 
 								}
@@ -1131,8 +1102,7 @@ function CreateVendorCredit(invoice) {
 						poheadernum + '-' + polinenum);
 			}
 
-			record.setCurrentLineItemValue('expense', 'memo', nlapiSelectValue(
-					invoiceLineNodes[x], 'description'));
+			record.setCurrentLineItemValue('expense', 'memo', nlapiSelectValue(invoiceLineNodes[x], 'description'));
 			record.setCurrentLineItemValue('expense', 'isbillable', 'T');
 
 			if (x == 0)
@@ -1234,7 +1204,9 @@ function CreateVendorCredit(invoice) {
 														+ valuetoinsert);
 									}
 									if (custfield[2] == 'Segment') {
-										valuetoinsert = nlapiSelectValue(invoiceLineNodes[x], 'account/' + custfield[0]);
+										valuetoinsert = nlapiSelectValue(
+												invoiceLineNodes[x], 'account/'
+														+ custfield[0]);
 									}
 
 								}
@@ -1307,13 +1279,10 @@ function CreateVendorCredit(invoice) {
 
 		// set the posting period
 		var today = new Date();
-		var postingPeriod = getMonthShortName(today.getMonth()) + ' '
-				+ today.getFullYear();
+		var postingPeriod = getMonthShortName(today.getMonth()) + ' '+ today.getFullYear();
 		var cutoffday = 5;
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_cutoffdate'))
-			cutoffday = nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_cutoffdate');
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_cutoffdate'))
+			 cutoffday = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_cutoffdate');
 		if (today.getDate() < cutoffday) {
 			var nDate = nlapiSelectValue(invoice, 'invoice-date').split('T');
 			var datesplit = nDate[0].split('-');
@@ -1323,52 +1292,62 @@ function CreateVendorCredit(invoice) {
 
 			if (today.getFullYear() > Nyear) {
 				if (today.getMonth() == 0)
-					postingPeriod = getMonthShortName('11') + ' '
-							+ (today.getFullYear() - 1);
+					postingPeriod = getMonthShortName('11') + ' '+ (today.getFullYear() - 1);
 				else
-					postingPeriod = getMonthShortName(today.getMonth() - 1)
-							+ ' ' + today.getFullYear();
+					postingPeriod = getMonthShortName(today.getMonth() - 1)+ ' ' + today.getFullYear();
 			}
 
 			if (Nmonth < today.getMonth() && Nyear == today.getFullYear())
-				postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '
-						+ today.getFullYear();
+				postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '+ today.getFullYear();
 		}
 
-		nlapiLogExecution('DEBUG', 'Calculated Posting Period is ',
-				postingPeriod);
+		nlapiLogExecution('DEBUG', 'Calculated Posting Period is ',postingPeriod);
 
-		//var postingPeriodId = getAccoutingPeriodNetsuiteId('accountingperiod',
-			//	postingPeriod);
-		var NApostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_na_inv_posting_period');	
-		var IsraelpostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_israel_inv_posting_period');	
-		var EMEApostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_emea_inv_posting_period');	
-		var APACLACpostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_apaclac_inv_posting_period');	
-		//var postingPeriodId = 161;
-		
-		if (subsidiaryId == '1' || subsidiaryId == '41' || subsidiaryId == '35' || subsidiaryId == '43' || subsidiaryId == '27' || subsidiaryId == '24' || subsidiaryId == '44' || subsidiaryId == '2' || subsidiaryId == '40' || subsidiaryId == '8' || subsidiaryId == '26' || subsidiaryId == '30' || subsidiaryId == '25')
-		{
-		record.setFieldValue('postingperiod', NApostingPeriodId);
-		}		
-		if (subsidiaryId == '9' || subsidiaryId == '30')
-		{
-		record.setFieldValue('postingperiod', IsraelpostingPeriodId);
+		// var postingPeriodId =
+		// getAccoutingPeriodNetsuiteId('accountingperiod',
+		// postingPeriod);
+		var NApostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_na_inv_posting_period');
+		var IsraelpostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_israel_inv_posting_period');
+		var EMEApostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_emea_inv_posting_period');
+		var APACLACpostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_apaclac_inv_posting_period');
+		// var postingPeriodId = 161;
+
+		if (subsidiaryId == '1' || subsidiaryId == '41' || subsidiaryId == '35'
+				|| subsidiaryId == '43' || subsidiaryId == '27'
+				|| subsidiaryId == '24' || subsidiaryId == '44'
+				|| subsidiaryId == '2' || subsidiaryId == '40'
+				|| subsidiaryId == '8' || subsidiaryId == '26'
+				|| subsidiaryId == '30' || subsidiaryId == '25') {
+			record.setFieldValue('postingperiod', NApostingPeriodId);
 		}
-		if (subsidiaryId == '28' || subsidiaryId == '4' || subsidiaryId == '6' || subsidiaryId == '5' || subsidiaryId == '37' || subsidiaryId == '31' || subsidiaryId == '38' || subsidiaryId == '16' || subsidiaryId == '39' || subsidiaryId == '15' || subsidiaryId == '17')
-		{
-		record.setFieldValue('postingperiod', EMEApostingPeriodId);
-		}		
-		if (subsidiaryId == '32' || subsidiaryId == '34'  || subsidiaryId == '23'  || subsidiaryId == '11'  || subsidiaryId == '12'  || subsidiaryId == '21'  || subsidiaryId == '13'  || subsidiaryId == '19'  || subsidiaryId == '18'  || subsidiaryId == '45'  || subsidiaryId == '14'  || subsidiaryId == '29'  || subsidiaryId == '46'  || subsidiaryId == '36'  || subsidiaryId == '22'  || subsidiaryId == '33')
-		{
-		record.setFieldValue('postingperiod', APACLACpostingPeriodId);
-		}		
-		
-		//umesh updating the credit memo description
-		record.setFieldValue('custbodyvendor_credit_memo_description', nlapiSelectValue(invoice,'invoice-description'));
+		if (subsidiaryId == '9' || subsidiaryId == '30') {
+			record.setFieldValue('postingperiod', IsraelpostingPeriodId);
+		}
+		if (subsidiaryId == '28' || subsidiaryId == '4' || subsidiaryId == '6'
+				|| subsidiaryId == '5' || subsidiaryId == '37'
+				|| subsidiaryId == '31' || subsidiaryId == '38'
+				|| subsidiaryId == '16' || subsidiaryId == '39'
+				|| subsidiaryId == '15' || subsidiaryId == '17') {
+			      record.setFieldValue('postingperiod', EMEApostingPeriodId);
+		}
+		if (subsidiaryId == '32' || subsidiaryId == '34'
+				|| subsidiaryId == '23' || subsidiaryId == '11'
+				|| subsidiaryId == '12' || subsidiaryId == '21'
+				|| subsidiaryId == '13' || subsidiaryId == '19'
+				|| subsidiaryId == '18' || subsidiaryId == '45'
+				|| subsidiaryId == '14' || subsidiaryId == '29'
+				|| subsidiaryId == '46' || subsidiaryId == '36'
+				|| subsidiaryId == '22' || subsidiaryId == '33') {
+			record.setFieldValue('postingperiod', APACLACpostingPeriodId);
+		}
 
-		//record.setFieldValue('postingperiod', postingPeriodId);
-		//umesh month end hardcoding to this month (march)
-		//record.setFieldValue('postingperiod', 160);
+		// umesh updating the credit memo description
+		record.setFieldValue('custbodyvendor_credit_memo_description',
+				nlapiSelectValue(invoice, 'invoice-description'));
+
+		// record.setFieldValue('postingperiod', postingPeriodId);
+		// umesh month end hardcoding to this month (march)
+		// record.setFieldValue('postingperiod', 160);
 
 		// set currency
 		var curr = getNetsuiteCurrency('currency', nlapiSelectValue(invoice,
@@ -1520,47 +1499,35 @@ function CreateVendorBill(invoice) {
 	var record;
 	// vendorbill form config
 	// syntax: coa_name1-form1:coa_name2-form2
-	if (nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_inv_vendorbillFormcnfg')) {
-		var list = nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_vendorbillFormcnfg').split(':');
+	if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_vendorbillFormcnfg')) {
+		var list = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_vendorbillFormcnfg').split(':');
 		var vendorbillformhash = new Object();
 
 		for (var i = 0; i < list.length; i++) {
 			var keyvaluelist = list[i].split('-');
 			vendorbillformhash[keyvaluelist[0]] = keyvaluelist[1];
 		}
-		nlapiLogExecution('DEBUG', 'Form id for'
-				+ nlapiSelectValue(invoice, 'account-type/name'),
-				vendorbillformhash[nlapiSelectValue(invoice,
-						'account-type/name')]);
+		nlapiLogExecution('DEBUG', 'Form id for'+ nlapiSelectValue(invoice, 'account-type/name'),vendorbillformhash[nlapiSelectValue(invoice,'account-type/name')]);
 
 		if (vendorbillformhash[nlapiSelectValue(invoice, 'account-type/name')])
 			record = nlapiCreateRecord('vendorbill', {
-				customform : vendorbillformhash[nlapiSelectValue(invoice,
-						'account-type/name')],
+				customform : vendorbillformhash[nlapiSelectValue(invoice,'account-type/name')],
 				recordmode : 'dynamic'
 			});
 		else
-			record = nlapiCreateRecord('vendorbill', {
-				recordmode : 'dynamic'
-			});
+			record = nlapiCreateRecord('vendorbill', {recordmode : 'dynamic'});
 	}
 
 	else
-		record = nlapiCreateRecord('vendorbill', {
-			recordmode : 'dynamic'
-		});
+		record = nlapiCreateRecord('vendorbill', {recordmode : 'dynamic'});
 
 	var lineleveltaxation = 'false';
 
 	lineleveltaxation = nlapiSelectValue(invoice, 'line-level-taxation');
 	record.setFieldText('approvalstatus', 'Approved');
 	var dynamicAccounting = 'F';
-	if (nlapiGetContext().getSetting('SCRIPT',
-			'custscript_coupa_inv_dynamicaccts'))
-		dynamicAccounting = nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_dynamicaccts');
+	if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_dynamicaccts'))
+		dynamicAccounting = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_dynamicaccts');
 
 	var shippingamount = parseFloat(nlapiSelectValue(invoice, 'shipping-amount'));
 	var handlingamount = parseFloat(nlapiSelectValue(invoice, 'handling-amount'));
@@ -1568,39 +1535,28 @@ function CreateVendorBill(invoice) {
 	var miscamount = parseFloat(nlapiSelectValue(invoice, 'misc-amount'));
 
 	var supplierNode = nlapiSelectNode(invoice, 'supplier');
-	nlapiLogExecution('DEBUG', 'SupplierName', nlapiSelectValue(supplierNode,
-			'name'));
+	nlapiLogExecution('DEBUG', 'SupplierName', nlapiSelectValue(supplierNode,'name'));
 
 	if (nlapiSelectValue(supplierNode, 'number'))
-		record
-				.setFieldValue('entity', nlapiSelectValue(supplierNode,
-						'number'));
+		record.setFieldValue('entity', nlapiSelectValue(supplierNode,'number'));
 	else
 		// try setting supplier name instead on id
 		record.setFieldText('entity', nlapiSelectValue(supplierNode, 'name'));
 
 	var headercharges = false;
 	var totalheadercharges;
-	totalheadercharges = parseFloat(shippingamount)
-			+ parseFloat(handlingamount) + parseFloat(miscamount);
+	totalheadercharges = parseFloat(shippingamount)+ parseFloat(handlingamount) + parseFloat(miscamount);
 
 	if (lineleveltaxation == 'false') {
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_send_taxcode')) {
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_send_taxcode') == 'F')
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')) {
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'F')
 				totalheadercharges = parseFloat(totalheadercharges)
-						+ parseFloat(taxamount);
-			else if ((nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_send_taxcode') == 'T')
-					&& (nlapiSelectValue(invoice, 'tax-code/code') == null)) {
-				totalheadercharges = parseFloat(totalheadercharges)
-						+ parseFloat(taxamount);
+			else if ((nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T') && (nlapiSelectValue(invoice, 'tax-code/code') == null)) {
+				totalheadercharges = parseFloat(totalheadercharges)+ parseFloat(taxamount);
 			}
 
 		} else
-			totalheadercharges = parseFloat(totalheadercharges)
-					+ parseFloat(taxamount);
+			totalheadercharges = parseFloat(totalheadercharges) + parseFloat(taxamount);
 
 	}
 
@@ -1615,17 +1571,16 @@ function CreateVendorBill(invoice) {
 	// get total amount by adding the line amounts
 	var totalamount = 0;
 	var taxabletotalamount = 0;
+	var poNumber = '';
 	for (var x = 0; x < invoiceLineNodes.length; x++) {
+		// poNUmber = nlapiSelectValue(invoiceLineNodes[x], 'po-number')
 		if (nlapiSelectValue(invoiceLineNodes[x], 'nontaxable') != 'true')
-			taxabletotalamount = parseFloat(taxabletotalamount)
-					+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
+			taxabletotalamount = parseFloat(taxabletotalamount)+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 
-		totalamount = parseFloat(totalamount)
-				+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
+		totalamount = parseFloat(totalamount)+ parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 	}
 
-	var totalheaderamount = parseFloat(totalamount)
-			+ parseFloat(totalheadercharges);
+	var totalheaderamount = parseFloat(totalamount)+ parseFloat(totalheadercharges);
 	totalheaderamount = totalheaderamount.toFixed(3);
 	var totalcalcamount = 0;
 
@@ -1639,110 +1594,77 @@ function CreateVendorBill(invoice) {
 		var linetax = 0;
 
 		// check for the new tax feature
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_send_taxcode') == 'F') {
-			linetax = parseFloat(nlapiSelectValue(invoiceLineNodes[x],
-					'tax-amount'));
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'F') {
+			linetax = parseFloat(nlapiSelectValue(invoiceLineNodes[x],'tax-amount'));
 
 			if (linetax)
-				totalheaderamount = parseFloat(totalheaderamount)
-						+ parseFloat(linetax);
+				totalheaderamount = parseFloat(totalheaderamount)+ parseFloat(linetax);
 		}
 
-		var invoicelineamount = parseFloat(nlapiSelectValue(
-				invoiceLineNodes[x], 'total'));
+		var invoicelineamount = parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'total'));
 		var splitaccounting = 'FALSE';
-		var actalloc = nlapiSelectNode(invoiceLineNodes[x],
-				'account-allocations');
+		var actalloc = nlapiSelectNode(invoiceLineNodes[x],'account-allocations');
 		var accountallocations = new Array();
 		accountallocations = nlapiSelectNodes(actalloc, 'account-allocation');
 		if (accountallocations.length >= 1) {
 			splitaccounting = 'TRUE';
-			// nlapiLogExecution('DEBUG', 'Split accounting = ',
-			// splitaccounting);
 		}
 
 		if (splitaccounting == 'TRUE') {
 			for (var i = 0; i < accountallocations.length; i++) {
-				var accountNode = nlapiSelectNode(accountallocations[i],
-						'account');
+				var accountNode = nlapiSelectNode(accountallocations[i],'account');
 				// for each split line create a new expense line
 				record.selectNewLineItem('expense');
 				if (x == 0 && i == 0) {
-					nlapiLogExecution('DEBUG',
-							'Check for Subsidiary segment custom field',
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_subsseg'));
+					nlapiLogExecution('DEBUG','Check for Subsidiary segment custom field',nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg'));
 
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_subsseg')) {
-						var subsidiaryId = nlapiSelectValue(
-								accountNode,
-								nlapiGetContext().getSetting('SCRIPT',
-										'custscript_coupa_inv_subsseg')).split(
-								':');
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')) {
+						var subsidiaryId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')).split(':');
+
 						if (dynamicAccounting == 'T') {
-							nlapiLogExecution('DEBUG',
-									'Setting subsidiary ID to', subsidiaryId);
+							nlapiLogExecution('DEBUG','Setting subsidiary ID to', subsidiaryId);
 							record.setFieldValue('subsidiary', subsidiaryId);
 						} else {
-							nlapiLogExecution('DEBUG',
-									'Setting subsidiary ID to', subsidiaryId[1]);
+							nlapiLogExecution('DEBUG','Setting subsidiary ID to', subsidiaryId[1]);
 							record.setFieldValue('subsidiary', subsidiaryId[1]);
 						}
 					} else if (dynamicAccounting == 'T') {
-						var coaNode = nlapiSelectNode(accountNode,
-								'account-type');
+						var coaNode = nlapiSelectNode(accountNode,'account-type');
 						var subsidiaryName = nlapiSelectValue(coaNode, 'name');
 						var subsidiaryID = '';
 						try {
-							subsidiaryID = getNetSuiteId('subsidiary',
-									subsidiaryName);
+							subsidiaryID = getNetSuiteId('subsidiary',subsidiaryName);
 						} catch (e) {
 							var error = e.getDetails();
 							if (error
 									.indexOf("The feature 'Subsidiaries' required to access this page is not enabled in this account") > -1) {
-								nlapiLogExecution('DEBUG',
-										"Subsidiaries not enabled",
-										'Skipping subsidiary set');
+								nlapiLogExecution('DEBUG',"Subsidiaries not enabled",'Skipping subsidiary set');
 							} else {
-								nlapiLogExecution('ERROR',
-										"Error on Subsidiary set", e);
+								nlapiLogExecution('ERROR',"Error on Subsidiary set", e);
 							}
 						}
 						if (subsidiaryID != '') {
-							nlapiLogExecution('DEBUG',
-									'Setting subsidiary ID from COA name to',
-									subsidiaryID);
+							nlapiLogExecution('DEBUG','Setting subsidiary ID from COA name to',subsidiaryID);
 							record.setFieldValue('subsidiary', subsidiaryID);
 						}
 					}
 					if (nlapiSelectValue(invoiceLineNodes[x], 'description'))
-						record.setFieldValue('memo', nlapiSelectValue(
-								invoiceLineNodes[x], 'description'));
+						record.setFieldValue('memo', nlapiSelectValue(invoiceLineNodes[x], 'description'));
 				}
-				var lineamount = parseFloat(nlapiSelectValue(
-						accountallocations[i], 'amount'));
+				var lineamount = parseFloat(nlapiSelectValue(accountallocations[i], 'amount'));
 
-				var linecharge = (parseFloat(lineamount) / parseFloat(taxabletotalamount))
-						* totalheadercharges;
+				var linecharge = (parseFloat(lineamount) / parseFloat(taxabletotalamount))* totalheadercharges;
 				var splitlinetax;
 
 				var adjlineamount = parseFloat(lineamount);
-				var accountNode = nlapiSelectNode(accountallocations[i],
-						'account');
+				var accountNode = nlapiSelectNode(accountallocations[i],'account');
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_glactseg')) {
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_glactseg')) {
 					var account;
 					var accountId;
 					var accountnumber;
 					// var act;
-					account = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_glactseg'))
-							.split(':');
+					account = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_glactseg')).split(':');
 					// act = account[0].split(' ');
 					accountnumber = account[0];
 					if (dynamicAccounting == 'T') {
@@ -1751,99 +1673,60 @@ function CreateVendorBill(invoice) {
 						accountId = getNetsuiteAccountId(accountnumber);
 					}
 					if (accountId != 'INVALID_ACCOUNT')
-						record.setCurrentLineItemValue('expense', 'account',
-								accountId);
+						record.setCurrentLineItemValue('expense', 'account',accountId);
 					else {
-						nlapiLogExecution(
-								'ERROR',
-								'Processing Error - Invalid GL account',
-								'GL Account ='
+						nlapiLogExecution('ERROR','Processing Error - Invalid GL account','GL Account ='
 										+ accountnumber
 										+ ' Invoice Number = '
-										+ nlapiSelectValue(invoice,
-												'invoice-number')
+										+ nlapiSelectValue(invoice,'invoice-number')
 										+ ' Supplier Name = '
 										+ nlapiSelectValue(supplierNode, 'name'));
-						nlapiSendEmail(
-								-5,
-								nlapiGetContext()
-										.getSetting('SCRIPT',
-												'custscript_coupa_inv_email_notifications'),
-								nlapiGetContext().getSetting('SCRIPT',
-										'custscript_coupa_inv_acccountname')
-										+ ' Invoice Integration:Processing Error - Invalid GL account',
-								'GL Account ='
+						nlapiSendEmail(-5,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
+										+ ' Invoice Integration:Processing Error - Invalid GL account','GL Account ='
 										+ accountnumber
 										+ ' Invoice Number = '
-										+ nlapiSelectValue(invoice,
-												'invoice-number')
+										+ nlapiSelectValue(invoice,'invoice-number')
 										+ ' Supplier Name = '
 										+ nlapiSelectValue(supplierNode, 'name'));
 						return;
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_deptseg')) {
-					var dept = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_deptseg')).split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')) {
+					var dept = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						record.setCurrentLineItemValue('expense', 'department',
-								dept);
+						record.setCurrentLineItemValue('expense', 'department',dept);
 					} else {
-						record.setCurrentLineItemValue('expense', 'department',
-								dept[1]);
+						record.setCurrentLineItemValue('expense', 'department',dept[1]);
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_classseg')) {
-					var clss = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_classseg'))
-							.split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_classseg')) {
+					var clss = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_classseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						record
-								.setCurrentLineItemValue('expense', 'class',
-										clss);
+						record.setCurrentLineItemValue('expense', 'class',clss);
 					} else {
-						record.setCurrentLineItemValue('expense', 'class',
-								clss[1]);
+						record.setCurrentLineItemValue('expense', 'class',clss[1]);
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_locseg')) {
-					var locId = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_locseg')).split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_locseg')) {
+					var locId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_locseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						record.setCurrentLineItemValue('expense', 'location',
-								locId);
+						record.setCurrentLineItemValue('expense', 'location',locId);
 					} else {
-						record.setCurrentLineItemValue('expense', 'location',
-								locId[1]);
+						record.setCurrentLineItemValue('expense', 'location',locId[1]);
 					}
 				}
 
-				else if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_loccust')) {
-					var locId = getNetSuiteId('location', nlapiSelectValue(
-							invoiceLineNodes[x], nlapiGetContext().getSetting(
-									'SCRIPT', 'custscript_coupa_inv_loccust')));
+				else if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_loccust')) {
+					var locId = getNetSuiteId('location', nlapiSelectValue(invoiceLineNodes[x], nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_inv_loccust')));
 					if (locId != 'INVALID_NAME')
-						record.setCurrentLineItemValue('expense', 'location',
-								locId);
+						record.setCurrentLineItemValue('expense', 'location',locId);
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_send_taxcode') == 'T') {
-					nlapiLogExecution('DEBUG', 'if sendtaxcode set to true',
-							'lineamount = ' + adjlineamount);
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T') {
+					nlapiLogExecution('DEBUG', 'if sendtaxcode set to true','lineamount = ' + adjlineamount);
 
 					// for the new tax feature
 
@@ -1851,39 +1734,23 @@ function CreateVendorBill(invoice) {
 					// scenrio - header
 					// level tax only
 					{
-						nlapiLogExecution(
-								'DEBUG',
-								'if sendtaxcode set to true and header level tax only',
-								'lineamount = ' + adjlineamount);
+						nlapiLogExecution('DEBUG','if sendtaxcode set to true and header level tax only','lineamount = ' + adjlineamount);
 						if (nlapiSelectValue(invoice, 'tax-code/code')) {
-							var taxsplit = nlapiSelectValue(invoice,
-									'tax-code/code').split(':');
+							var taxsplit = nlapiSelectValue(invoice,'tax-code/code').split(':');
 							var taxstring = taxsplit[0].toString();
 							if (taxsplit[0] && subsidiaryId == '25') {
-								nlapiLogExecution(
-									'DEBUG', 'Canada Tax', taxsplit[0]);
-								record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxGroupId(taxstring));
-							} 
-							else if (taxsplit[0] && subsidiaryId != '25') {
-							nlapiLogExecution(
-									'DEBUG', 'Non Canada Tax', taxsplit[0]);
-							record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxCodeId(taxstring));
-							}							
-							else {
-								nlapiLogExecution(
-										'ERROR',
-										'Processing Error - Invalid Header taxcode 1875',
-										'TaxCode ='
-												+ nlapiSelectValue(invoice,
-														'tax-code/code')
+								nlapiLogExecution('DEBUG', 'Canada Tax',taxsplit[0]);
+								record.setCurrentLineItemValue('expense','taxcode', getTaxGroupId(taxstring));
+							} else if (taxsplit[0] && subsidiaryId != '25') {
+								nlapiLogExecution('DEBUG', 'Non Canada Tax',taxsplit[0]);
+								record.setCurrentLineItemValue('expense','taxcode', getTaxCodeId(taxstring));
+							} else {
+								nlapiLogExecution('ERROR','Processing Error - Invalid Header taxcode 1875','TaxCode ='
+												+ nlapiSelectValue(invoice,'tax-code/code')
 												+ ' Invoice Number = '
-												+ nlapiSelectValue(invoice,
-														'invoice-number')
+												+ nlapiSelectValue(invoice,'invoice-number')
 												+ ' Supplier Name = '
-												+ nlapiSelectValue(
-														supplierNode, 'name'));
+												+ nlapiSelectValue(supplierNode, 'name'));
 							}
 
 						}
@@ -1891,71 +1758,42 @@ function CreateVendorBill(invoice) {
 					// only
 					else // line level tax scenario
 					{
-						nlapiLogExecution(
-								'DEBUG',
-								'if sendtaxcode set to true and line level tax',
-								'lineamount = ' + adjlineamount);
+						nlapiLogExecution('DEBUG','if sendtaxcode set to true and line level tax','lineamount = ' + adjlineamount);
 
-						if (nlapiSelectValue(invoiceLineNodes[x],
-								'tax-code/code')) // line level tax and
+						if (nlapiSelectValue(invoiceLineNodes[x],'tax-code/code')) // line level tax and
 						// taxcode used
 						{
-							var taxsplit = nlapiSelectValue(
-									invoiceLineNodes[x], 'tax-code/code')
-									.split(':');
+							var taxsplit = nlapiSelectValue(invoiceLineNodes[x], 'tax-code/code').split(':');
 							var taxstring = taxsplit[0].toString();
-							if (taxsplit[0] && subsidiaryId == '25') {
-								nlapiLogExecution(
-									'DEBUG', 'Canada Tax', taxsplit[0]);
-								record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxGroupId(taxstring));
-								nlapiLogExecution(
-										'DEBUG',
-										'if sendtaxcode set to true and linelevel tax and setting tax code to',
-										'TaxCode = ' + taxsplit[0]
-												+ ' lineamount = '
-												+ adjlineamount);
-							} 
-							else if (taxsplit[0] && subsidiaryId != '25') {
-							nlapiLogExecution(
-									'DEBUG', 'Non Canada Tax', taxsplit[0]);
-							record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxCodeId(taxstring));
-							}
-							else {
+							if (taxsplit[0] && subsidiaryId == '25') {nlapiLogExecution('DEBUG', 'Canada Tax',taxsplit[0]);
+								record.setCurrentLineItemValue('expense','taxcode', getTaxGroupId(taxstring));
+								nlapiLogExecution('DEBUG','if sendtaxcode set to true and linelevel tax and setting tax code to','TaxCode = ' + taxsplit[0]+ ' lineamount = '+ adjlineamount);
+								
+							} else if (taxsplit[0] && subsidiaryId != '25') {
+								nlapiLogExecution('DEBUG', 'Non Canada Tax',taxsplit[0]);
+								record.setCurrentLineItemValue('expense','taxcode', getTaxCodeId(taxstring));
+							} else {
 								nlapiLogExecution('ERROR',
 										'Processing Error - Invalid taxcode',
 										'TaxCode ='
-												+ nlapiSelectValue(
-														invoiceLineNodes[x],
-														'tax-code/code')
+												+ nlapiSelectValue(invoiceLineNodes[x],'tax-code/code')
 												+ ' Invoice Number = '
-												+ nlapiSelectValue(invoice,
-														'invoice-number')
+												+ nlapiSelectValue(invoice,'invoice-number')
 												+ ' Supplier Name = '
-												+ nlapiSelectValue(
-														supplierNode, 'name'));
+												+ nlapiSelectValue(supplierNode, 'name'));
 							}
 						} // end of line level tax and taxcode used
 
-						else if (nlapiSelectValue(invoiceLineNodes[x],
-								'tax-amount')) // line level tax and only
+						else if (nlapiSelectValue(invoiceLineNodes[x],'tax-amount')) // line level tax and only
 						// taxamount no taxcode
 						{
-
-							linetax = parseFloat(nlapiSelectValue(
-									invoiceLineNodes[x], 'tax-amount'));
-
+							linetax = parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'tax-amount'));
 							if (linetax) {
-
-								splitlinetax = (parseFloat(lineamount) / parseFloat(invoicelineamount))
-										* linetax;
-								totalheaderamount = parseFloat(totalheaderamount)
-										+ parseFloat(splitlinetax);
+								splitlinetax = (parseFloat(lineamount) / parseFloat(invoicelineamount))* linetax;
+								totalheaderamount = parseFloat(totalheaderamount)+ parseFloat(splitlinetax);
 								// adjlineamount = parseFloat(lineamount) +
 								// parseFloat(linecharge) + parseFloat(linetax);
-								adjlineamount = parseFloat(lineamount)
-										+ parseFloat(splitlinetax);
+								adjlineamount = parseFloat(lineamount)+ parseFloat(splitlinetax);
 							}
 
 						} // end of line level tax and only taxamount no
@@ -1968,21 +1806,17 @@ function CreateVendorBill(invoice) {
 				else // Need to check for backward compatibility
 				{
 
-					nlapiLogExecution('DEBUG', 'if sendtaxcode set to false',
-							'lineamount = ' + adjlineamount);
+					nlapiLogExecution('DEBUG', 'if sendtaxcode set to false','lineamount = ' + adjlineamount);
 					if (linetax) {
-						splitlinetax = (parseFloat(lineamount) / parseFloat(invoicelineamount))
-								* linetax;
+						splitlinetax = (parseFloat(lineamount) / parseFloat(invoicelineamount))* linetax;
 						adjlineamount = parseFloat(lineamount)
 								+ parseFloat(linecharge)
 								+ parseFloat(splitlinetax);
 					} else {
 						// customization for nontaxable
-						if (nlapiSelectValue(invoiceLineNodes[x], 'nontaxable') == 'true')
-							adjlineamount = parseFloat(lineamount);
+						if (nlapiSelectValue(invoiceLineNodes[x], 'nontaxable') == 'true') adjlineamount = parseFloat(lineamount);
 						else
-							adjlineamount = parseFloat(lineamount)
-									+ parseFloat(linecharge);
+							adjlineamount = parseFloat(lineamount)+ parseFloat(linecharge);
 					}
 
 				}
@@ -2009,21 +1843,13 @@ function CreateVendorBill(invoice) {
 				 */
 
 				// check for Coupa order line
-				if (nlapiSelectValue(invoiceLineNodes[x], 'order-header-num')
-						&& nlapiSelectValue(invoiceLineNodes[x],
-								'order-line-num')) {
-					var poheadernum = nlapiSelectValue(invoiceLineNodes[x],
-							'order-header-num');
-					var polinenum = nlapiSelectValue(invoiceLineNodes[x],
-							'order-line-num');
-					record
-							.setCurrentLineItemValue('expense',
-									'custcol_coupaponum', poheadernum + '-'
-											+ polinenum);
+				if (nlapiSelectValue(invoiceLineNodes[x], 'order-header-num')&& nlapiSelectValue(invoiceLineNodes[x],'order-line-num')) {
+					var poheadernum = nlapiSelectValue(invoiceLineNodes[x],'order-header-num');
+					var polinenum = nlapiSelectValue(invoiceLineNodes[x],'order-line-num');
+					record.setCurrentLineItemValue('expense','custcol_coupaponum', poheadernum + '-'+ polinenum);
 				}
 
-				record.setCurrentLineItemValue('expense', 'memo',
-						nlapiSelectValue(invoiceLineNodes[x], 'description'));
+				record.setCurrentLineItemValue('expense', 'memo',nlapiSelectValue(invoiceLineNodes[x], 'description'));
 				record.setCurrentLineItemValue('expense', 'isbillable', 'T');
 
 				/***************************************************************
@@ -2036,25 +1862,15 @@ function CreateVendorBill(invoice) {
 				 **************************************************************/
 
 				if ((i == 0) && (x == 0)) {
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_send_taxcode')
-							&& (nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_send_taxcode') == 'T'))
-						totalcalcamount = parseFloat(adjlineamount)
-								+ parseFloat(linecharge);
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') && (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T'))
+						totalcalcamount = parseFloat(adjlineamount)+ parseFloat(linecharge);
 					else
 						totalcalcamount = parseFloat(adjlineamount);
 				} else {
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_send_taxcode')
-							&& (nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_send_taxcode') == 'T'))
-						totalcalcamount = parseFloat(totalcalcamount)
-								+ parseFloat(adjlineamount)
-								+ parseFloat(linecharge);
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')&& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T'))
+						totalcalcamount = parseFloat(totalcalcamount)+ parseFloat(adjlineamount)+ parseFloat(linecharge);
 					else
-						totalcalcamount = parseFloat(totalcalcamount)
-								+ parseFloat(adjlineamount);
+						totalcalcamount = parseFloat(totalcalcamount)+ parseFloat(adjlineamount);
 				}
 
 				totalcalcamount = totalcalcamount.toFixed(2);
@@ -2079,26 +1895,18 @@ function CreateVendorBill(invoice) {
 
 				var roundingerror = 0;
 
-				if ((x == invoiceLineNodes.length - 1)
-						&& (i == accountallocations.length - 1)) {
+				if ((x == invoiceLineNodes.length - 1) && (i == accountallocations.length - 1)) {
 
-					nlapiLogExecution('DEBUG', 'Total Header Amount = '
-							+ totalheaderamount + ' Calculated Amount = '
-							+ totalcalcamount);
+					nlapiLogExecution('DEBUG', 'Total Header Amount = '+ totalheaderamount + ' Calculated Amount = '+ totalcalcamount);
 					roundingerror = totalheaderamount - totalcalcamount;
 
 					if (roundingerror) {
-						roundingerror = Math
-								.round(parseFloat(roundingerror) * 100) / 100;
+						roundingerror = Math.round(parseFloat(roundingerror) * 100) / 100;
 
-						if (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_send_taxcode')
-								&& (nlapiGetContext().getSetting('SCRIPT',
-										'custscript_coupa_inv_send_taxcode') == 'T')) {
+						if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')&& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T')) {
 							linecharge = linecharge + roundingerror;
 						} else
-							adjlineamount = parseFloat(adjlineamount)
-									+ roundingerror;
+							adjlineamount = parseFloat(adjlineamount)+ roundingerror;
 					}
 
 					nlapiLogExecution('DEBUG', 'Rounding Error Details ',
@@ -2110,55 +1918,32 @@ function CreateVendorBill(invoice) {
 									+ adjlineamount);
 				}
 
-				nlapiLogExecution('DEBUG', 'before setting amount', 'amount = '
-						+ parseFloat(adjlineamount));
+				nlapiLogExecution('DEBUG', 'before setting amount', 'amount = '+ parseFloat(adjlineamount));
 
-				record.setCurrentLineItemValue('expense', 'amount',
-						parseFloat(adjlineamount));
+				record.setCurrentLineItemValue('expense', 'amount',parseFloat(adjlineamount));
 
 				// check for custom fields on line level
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_custfield_line_cnt')) {
-					for (var y = 1; y <= nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_custfield_line_cnt'); y++) {
-						if (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_custfieldline' + y)) {
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfield_line_cnt')) {
+					for (var y = 1; y <= nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfield_line_cnt'); y++) {
+						if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldline' + y)) {
 							var custfield;
 							var valuetoinsert = null;
 							var textOrValue;
-							if (nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_custfieldline' + y)
-									.split(':')) {
-								custfield = nlapiGetContext().getSetting(
-										'SCRIPT',
-										'custscript_coupa_inv_custfieldline'
-												+ y).split(':');
+							if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldline' + y).split(':')) {
+								custfield = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldline'+ y).split(':');
 
 								if (custfield[4])
 									valuetoinsert = custfield[4];
 
 								else {
 
-									if (nlapiSelectValue(invoiceLineNodes[x],
-											custfield[0]))
-										valuetoinsert = nlapiSelectValue(
-												invoiceLineNodes[x],
-												custfield[0]);
+									if (nlapiSelectValue(invoiceLineNodes[x],custfield[0]))
+										valuetoinsert = nlapiSelectValue(invoiceLineNodes[x],custfield[0]);
 
-									if (custfield[2]
-											&& nlapiSelectValue(
-													invoiceLineNodes[x],
-													custfield[0])) {
-										if (custfield[2] == 'Date')
-											valuetoinsert = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(
-													invoiceLineNodes[x],
-													custfield[0]));
+									if (custfield[2]&& nlapiSelectValue(invoiceLineNodes[x],custfield[0])) {
+										if (custfield[2] == 'Date')valuetoinsert = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoiceLineNodes[x],custfield[0]));
 
-										if (custfield[2] == 'Lookup') {
-											valuetoinsert = nlapiSelectValue(
-													invoiceLineNodes[x],
-													custfield[0]
-															+ '/external-ref-num');
+										if (custfield[2] == 'Lookup') {valuetoinsert = nlapiSelectValue(invoiceLineNodes[x],custfield[0]+ '/external-ref-num');
 										}
 
 									}
@@ -2177,7 +1962,9 @@ function CreateVendorBill(invoice) {
 										}
 									}
 									if (custfield[2] == 'Segment') {
-										valuetoinsert = nlapiSelectValue(accountallocations[i], 'account/' + custfield[0]);
+										valuetoinsert = nlapiSelectValue(
+												accountallocations[i],
+												'account/' + custfield[0]);
 									}
 								}
 
@@ -2213,15 +2000,8 @@ function CreateVendorBill(invoice) {
 
 				record.commitLineItem('expense');
 
-				if (headercharges
-						&& nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_send_taxcode')
-						&& (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_send_taxcode') == 'T')) {
-					SetHeaderChargesasExpenseLine(record, invoice,
-							invoiceLineNodes[x], linecharge.toFixed(2),
-							nlapiSelectNode(accountallocations[i], 'account'),
-							true);
+				if (headercharges&& nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')&& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T')) {
+					SetHeaderChargesasExpenseLine(record, invoice,invoiceLineNodes[x], linecharge.toFixed(2),nlapiSelectNode(accountallocations[i], 'account'),true);
 				}
 
 			} // end of the for loop for split lines
@@ -2229,29 +2009,19 @@ function CreateVendorBill(invoice) {
 
 		else {
 			var taxcodeexists = false;
-			if (nlapiSelectValue(invoice, 'tax-code/code')
-					|| nlapiSelectValue(invoiceLineNodes[x], 'tax-code/code'))
+			if (nlapiSelectValue(invoice, 'tax-code/code')|| nlapiSelectValue(invoiceLineNodes[x], 'tax-code/code'))
 				taxcodeexists = true;
 			var accountNode = nlapiSelectNode(invoiceLineNodes[x], 'account');
 			if (x == 0) {
-				nlapiLogExecution('DEBUG',
-						'Check for Subsidiary segment custom field',
-						nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_subsseg'));
+				nlapiLogExecution('DEBUG','Check for Subsidiary segment custom field',nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg'));
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_subsseg')) {
-					var subsidiaryId = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_subsseg')).split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')) {
+					var subsidiaryId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						nlapiLogExecution('DEBUG', 'Setting subsidiary ID to',
-								subsidiaryId);
+						nlapiLogExecution('DEBUG', 'Setting subsidiary ID to',subsidiaryId);
 						record.setFieldValue('subsidiary', subsidiaryId);
 					} else {
-						nlapiLogExecution('DEBUG', 'Setting subsidiary ID to',
-								subsidiaryId[1]);
+						nlapiLogExecution('DEBUG', 'Setting subsidiary ID to',subsidiaryId[1]);
 						record.setFieldValue('subsidiary', subsidiaryId[1]);
 					}
 				} else if (dynamicAccounting == 'T') {
@@ -2259,49 +2029,35 @@ function CreateVendorBill(invoice) {
 					var subsidiaryName = nlapiSelectValue(coaNode, 'name');
 					var subsidiaryID = '';
 					try {
-						subsidiaryID = getNetSuiteId('subsidiary',
-								subsidiaryName);
+						subsidiaryID = getNetSuiteId('subsidiary',subsidiaryName);
 					} catch (e) {
 						var error = e.getDetails();
-						if (error
-								.indexOf("The feature 'Subsidiaries' required to access this page is not enabled in this account") > -1) {
-							nlapiLogExecution('DEBUG',
-									"Subsidiaries not enabled",
-									'Skipping subsidiary set');
+						if (error.indexOf("The feature 'Subsidiaries' required to access this page is not enabled in this account") > -1) {
+							nlapiLogExecution('DEBUG',"Subsidiaries not enabled",'Skipping subsidiary set');
 						} else {
-							nlapiLogExecution('ERROR',
-									"Error on Subsidiary set", 'error');
+							nlapiLogExecution('ERROR',"Error on Subsidiary set", 'error');
 						}
 					}
 					if (subsidiaryID != '') {
-						nlapiLogExecution('DEBUG',
-								'Setting subsidiary ID from COA name to',
-								subsidiaryID);
+						nlapiLogExecution('DEBUG','Setting subsidiary ID from COA name to',subsidiaryID);
 						record.setFieldValue('subsidiary', subsidiaryID);
 					}
 				}
 				if (nlapiSelectValue(invoiceLineNodes[x], 'description'))
-					record.setFieldValue('memo', nlapiSelectValue(
-							invoiceLineNodes[x], 'description'));
+					record.setFieldValue('memo', nlapiSelectValue(invoiceLineNodes[x], 'description'));
 			}
 			record.selectNewLineItem('expense');
 
-			var lineamount = parseFloat(nlapiSelectValue(invoiceLineNodes[x],
-					'total'));
-			var linecharge = (parseFloat(lineamount) / parseFloat(taxabletotalamount))
-					* totalheadercharges;
+			var lineamount = parseFloat(nlapiSelectValue(invoiceLineNodes[x],'total'));
+			var linecharge = (parseFloat(lineamount) / parseFloat(taxabletotalamount))* totalheadercharges;
 			// var adjlineamount = parseFloat(lineamount) +
 
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_glactseg')) {
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_glactseg')) {
 				var account;
 				var accountnumber;
 				var accountId;
 				// var act;
-				account = nlapiSelectValue(
-						accountNode,
-						nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_glactseg')).split(':');
+				account = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_glactseg')).split(':');
 				// act = account[0].split(' ');
 				accountnumber = account[0];
 				if (dynamicAccounting == 'T') {
@@ -2310,57 +2066,36 @@ function CreateVendorBill(invoice) {
 					accountId = getNetsuiteAccountId(accountnumber);
 				}
 				if (accountId != 'INVALID_ACCOUNT')
-					record.setCurrentLineItemValue('expense', 'account',
-							accountId);
+					record.setCurrentLineItemValue('expense', 'account',accountId);
 				else {
-					nlapiLogExecution('ERROR',
-							'Processing Error - Invalid GL account',
-							'GL Account ='
+					nlapiLogExecution('ERROR','Processing Error - Invalid GL account','GL Account ='
 									+ accountnumber
 									+ ' Invoice Number = '
-									+ nlapiSelectValue(invoice,
-											'invoice-number')
+									+ nlapiSelectValue(invoice,'invoice-number')
 									+ ' Supplier Name = '
 									+ nlapiSelectValue(supplierNode, 'name'));
-					nlapiSendEmail(
-							-5,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_email_notifications'),
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_acccountname')
-									+ ' Invoice Integration:Processing Error - Invalid GL account',
-							'GL Account ='
+					nlapiSendEmail(-5,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
+									+ ' Invoice Integration:Processing Error - Invalid GL account','GL Account ='
 									+ accountnumber
 									+ ' Invoice Number = '
-									+ nlapiSelectValue(invoice,
-											'invoice-number')
+									+ nlapiSelectValue(invoice,'invoice-number')
 									+ ' Supplier Name = '
 									+ nlapiSelectValue(supplierNode, 'name'));
 					return;
 				}
 			}
 
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_deptseg')) {
-				var dept = nlapiSelectValue(
-						accountNode,
-						nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_deptseg')).split(':');
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')) {
+				var dept = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')).split(':');
 				if (dynamicAccounting == 'T') {
-					record.setCurrentLineItemValue('expense', 'department',
-							dept);
+					record.setCurrentLineItemValue('expense', 'department',dept);
 				} else {
-					record.setCurrentLineItemValue('expense', 'department',
-							dept[1]);
+					record.setCurrentLineItemValue('expense', 'department',dept[1]);
 				}
 			}
 
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_classseg')) {
-				var clss = nlapiSelectValue(
-						accountNode,
-						nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_classseg')).split(':');
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_classseg')) {
+				var clss = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_classseg')).split(':');
 				if (dynamicAccounting == 'T') {
 					record.setCurrentLineItemValue('expense', 'class', clss);
 				} else {
@@ -2368,71 +2103,47 @@ function CreateVendorBill(invoice) {
 				}
 			}
 
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_locseg')) {
-				var locId = nlapiSelectValue(
-						accountNode,
-						nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_locseg')).split(':');
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_locseg')) {
+				var locId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_locseg')).split(':');
 				if (dynamicAccounting == 'T') {
-					record
-							.setCurrentLineItemValue('expense', 'location',
-									locId);
+					record.setCurrentLineItemValue('expense', 'location',locId);
 				} else {
-					record.setCurrentLineItemValue('expense', 'location',
-							locId[1]);
+					record.setCurrentLineItemValue('expense', 'location',locId[1]);
 				}
 			}
 
-			else if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_loccust')) {
-				var locId = getNetSuiteId('location', nlapiSelectValue(
-						invoiceLineNodes[x], nlapiGetContext().getSetting(
-								'SCRIPT', 'custscript_coupa_inv_loccust')));
+			else if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_loccust')) {
+				var locId = getNetSuiteId('location', nlapiSelectValue(invoiceLineNodes[x], nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_inv_loccust')));
 				if (locId != 'INVALID_NAME')
-					record
-							.setCurrentLineItemValue('expense', 'location',
-									locId);
+					record.setCurrentLineItemValue('expense', 'location',locId);
 			}
 
 			// parseFloat(linecharge);
 			var adjlineamount = parseFloat(lineamount);
 
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_send_taxcode') == 'T') {
-				nlapiLogExecution('DEBUG', 'if sendtaxcode set to true',
-						'lineamount = ' + adjlineamount);
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T') {
+				nlapiLogExecution('DEBUG', 'if sendtaxcode set to true','lineamount = ' + adjlineamount);
 
 				// for the new tax feature
 
 				if (lineleveltaxation == 'false') // no line level tax scenrio
 				// - header level tax only
 				{
-					nlapiLogExecution(
-							'DEBUG',
-							'if sendtaxcode set to true and header level tax only',
-							'lineamount = ' + adjlineamount);
+					nlapiLogExecution('DEBUG','if sendtaxcode set to true and header level tax only','lineamount = ' + adjlineamount);
 					if (nlapiSelectValue(invoice, 'tax-code/code')) {
-						var taxsplit = nlapiSelectValue(invoice,
-								'tax-code/code').split(':');
+						var taxsplit = nlapiSelectValue(invoice,'tax-code/code').split(':');
 						nlapiLogExecution('DEBUG', 'taxsplit', taxsplit);
 						nlapiLogExecution('DEBUG', 'taxsplit0', taxsplit[0]);
-						//var subID = subsidiaryId[1].toString();
+						// var subID = subsidiaryId[1].toString();
 						var taxstring = taxsplit[0].toString();
 						nlapiLogExecution('DEBUG', 'taxstring', taxstring);
 						if (taxsplit[0] && subsidiaryId == '25') {
-							nlapiLogExecution(
-									'DEBUG', 'Canada Tax', taxsplit[0]);
-							record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxGroupId(taxstring));
-						} 
-						else if (taxsplit[0] && subsidiaryId != '25') {
-							nlapiLogExecution(
-									'DEBUG', 'Non Canada Tax', taxsplit[0]);
-							record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxCodeId(taxstring));
-						}
-						else {
+							nlapiLogExecution('DEBUG', 'Canada Tax',taxsplit[0]);
+							record.setCurrentLineItemValue('expense','taxcode', getTaxGroupId(taxstring));
+						} else if (taxsplit[0] && subsidiaryId != '25') {
+							nlapiLogExecution('DEBUG', 'Non Canada Tax',taxsplit[0]);
+							record.setCurrentLineItemValue('expense','taxcode', getTaxCodeId(taxstring));
+						} else {
 							nlapiLogExecution(
 									'ERROR',
 									'Processing Error - Invalid Header taxcode 2412',
@@ -2451,9 +2162,7 @@ function CreateVendorBill(invoice) {
 				} // end of no line level tax scenrio - header level tax only
 				else // line level tax scenario
 				{
-					nlapiLogExecution('DEBUG',
-							'if sendtaxcode set to true and line level tax',
-							'lineamount = ' + adjlineamount);
+					nlapiLogExecution('DEBUG','if sendtaxcode set to true and line level tax','lineamount = ' + adjlineamount);
 
 					if (nlapiSelectValue(invoiceLineNodes[x], 'tax-code/code')) // line
 					// level
@@ -2462,45 +2171,33 @@ function CreateVendorBill(invoice) {
 					// taxcode
 					// used
 					{
-						var taxsplit = nlapiSelectValue(invoiceLineNodes[x],
-								'tax-code/code').split(':');
+						var taxsplit = nlapiSelectValue(invoiceLineNodes[x],'tax-code/code').split(':');
 						var taxstring = taxsplit[0].toString();
 						if (taxsplit[0] && subsidiaryId == '25') {
-							nlapiLogExecution(
-									'DEBUG', 'Canada Tax', taxsplit[0]);
-							record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxGroupId(taxstring));
-							nlapiLogExecution(
-									'DEBUG',
-									'if sendtaxcode set to true and linelevel tax and setting tax code to',
-									'TaxCode = ' + taxsplit[0]
-											+ ' lineamount = ' + adjlineamount);
-						} 
-						
-						else if (taxsplit[0] && subsidiaryId != '25') {
-							nlapiLogExecution(
-									'DEBUG', 'Non Canada Tax', taxsplit[0]);
-							record.setCurrentLineItemValue('expense',
-									'taxcode', getTaxCodeId(taxstring));
+							nlapiLogExecution('DEBUG', 'Canada Tax',taxsplit[0]);
+							record.setCurrentLineItemValue('expense','taxcode', getTaxGroupId(taxstring));
 							nlapiLogExecution(
 									'DEBUG',
 									'if sendtaxcode set to true and linelevel tax and setting tax code to',
 									'TaxCode = ' + taxsplit[0]
 											+ ' lineamount = ' + adjlineamount);
 						}
-						else {
+
+						else if (taxsplit[0] && subsidiaryId != '25') {
+							nlapiLogExecution('DEBUG', 'Non Canada Tax',taxsplit[0]);
+							record.setCurrentLineItemValue('expense','taxcode', getTaxCodeId(taxstring));
+							nlapiLogExecution(
+									'DEBUG',
+									'if sendtaxcode set to true and linelevel tax and setting tax code to',
+									'TaxCode = ' + taxsplit[0]+ ' lineamount = ' + adjlineamount);
+						} else {
 							nlapiLogExecution('ERROR',
-									'Processing Error - Invalid taxcode',
-									'TaxCode ='
-											+ nlapiSelectValue(
-													invoiceLineNodes[x],
-													'tax-code/code')
+									'Processing Error - Invalid taxcode','TaxCode ='
+											+ nlapiSelectValue(invoiceLineNodes[x],'tax-code/code')
 											+ ' Invoice Number = '
-											+ nlapiSelectValue(invoice,
-													'invoice-number')
+											+ nlapiSelectValue(invoice,'invoice-number')
 											+ ' Supplier Name = '
-											+ nlapiSelectValue(supplierNode,
-													'name'));
+											+ nlapiSelectValue(supplierNode,'name'));
 						}
 					} // end of line level tax and taxcode used
 
@@ -2514,16 +2211,13 @@ function CreateVendorBill(invoice) {
 					// taxcode
 					{
 
-						linetax = parseFloat(nlapiSelectValue(
-								invoiceLineNodes[x], 'tax-amount'));
+						linetax = parseFloat(nlapiSelectValue(invoiceLineNodes[x], 'tax-amount'));
 
 						if (linetax) {
-							totalheaderamount = parseFloat(totalheaderamount)
-									+ parseFloat(linetax);
+							totalheaderamount = parseFloat(totalheaderamount)+ parseFloat(linetax);
 							// adjlineamount = parseFloat(lineamount) +
 							// parseFloat(linecharge) + parseFloat(linetax);
-							adjlineamount = parseFloat(lineamount)
-									+ parseFloat(linetax);
+							adjlineamount = parseFloat(lineamount)+ parseFloat(linetax);
 						}
 
 					} // end of line level tax and only taxamount no taxcode
@@ -2536,30 +2230,23 @@ function CreateVendorBill(invoice) {
 			// backward compatibility
 			{
 
-				nlapiLogExecution('DEBUG', 'if sendtaxcode set to false',
-						'lineamount = ' + adjlineamount);
+				nlapiLogExecution('DEBUG', 'if sendtaxcode set to false','lineamount = ' + adjlineamount);
 				if (linetax)
-					adjlineamount = parseFloat(lineamount)
-							+ parseFloat(linecharge) + parseFloat(linetax);
+					adjlineamount = parseFloat(lineamount)+ parseFloat(linecharge) + parseFloat(linetax);
 				else {
 					// customization for nontaxable
 					if (nlapiSelectValue(invoiceLineNodes[x], 'nontaxable') == 'true')
 						adjlineamount = parseFloat(lineamount);
 					else
-						adjlineamount = parseFloat(lineamount)
-								+ parseFloat(linecharge);
-					nlapiLogExecution('DEBUG',
-							'After adjusting lineamount for linecharges',
-							'lineamount = ' + adjlineamount + ' linecharge = '
-									+ linecharge);
+						adjlineamount = parseFloat(lineamount)+ parseFloat(linecharge);
+					nlapiLogExecution('DEBUG','After adjusting lineamount for linecharges','lineamount = ' + adjlineamount + ' linecharge = '+ linecharge);
 				}
 
 			}
 
 			adjlineamount = adjlineamount.toFixed(2);
 
-			nlapiLogExecution('DEBUG', 'Adjusted line amount is '
-					+ adjlineamount);
+			nlapiLogExecution('DEBUG', 'Adjusted line amount is '+ adjlineamount);
 			/*
 			 * if (x == 0) { //nlapiLogExecution('DEBUG', 'Check for Subsidiary
 			 * segment custom field', nlapiGetContext().getSetting('SCRIPT',
@@ -2581,42 +2268,27 @@ function CreateVendorBill(invoice) {
 			 */
 
 			/* check for Coupa order line */
-			if (nlapiSelectValue(invoiceLineNodes[x], 'order-header-num')
-					&& nlapiSelectValue(invoiceLineNodes[x], 'order-line-num')) {
-				var poheadernum = nlapiSelectValue(invoiceLineNodes[x],
-						'order-header-num');
-				var polinenum = nlapiSelectValue(invoiceLineNodes[x],
-						'order-line-num');
-				record.setCurrentLineItemValue('expense', 'custcol_coupaponum',
-						poheadernum + '-' + polinenum);
+			if (nlapiSelectValue(invoiceLineNodes[x], 'order-header-num')&& nlapiSelectValue(invoiceLineNodes[x], 'order-line-num')) {
+				var poheadernum = nlapiSelectValue(invoiceLineNodes[x],'order-header-num');
+				var polinenum = nlapiSelectValue(invoiceLineNodes[x],'order-line-num');
+				record.setCurrentLineItemValue('expense', 'custcol_coupaponum',poheadernum + '-' + polinenum);
 			}
 
-			record.setCurrentLineItemValue('expense', 'memo', nlapiSelectValue(
-					invoiceLineNodes[x], 'description'));
+			record.setCurrentLineItemValue('expense', 'memo', nlapiSelectValue(invoiceLineNodes[x], 'description'));
 			record.setCurrentLineItemValue('expense', 'isbillable', 'T');
 
 			// linecharge = linecharge.toFixed(2);
 
 			if (x == 0) {
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_send_taxcode')
-						&& (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_send_taxcode') == 'T'))
-					totalcalcamount = parseFloat(adjlineamount)
-							+ parseFloat(linecharge);
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')&& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T'))
+					totalcalcamount = parseFloat(adjlineamount)+ parseFloat(linecharge);
 				else
 					totalcalcamount = parseFloat(adjlineamount);
 			} else {
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_send_taxcode')
-						&& (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_send_taxcode') == 'T'))
-					totalcalcamount = parseFloat(totalcalcamount)
-							+ parseFloat(adjlineamount)
-							+ parseFloat(linecharge);
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')&& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T'))
+					totalcalcamount = parseFloat(totalcalcamount)+ parseFloat(adjlineamount)+ parseFloat(linecharge);
 				else
-					totalcalcamount = parseFloat(totalcalcamount)
-							+ parseFloat(adjlineamount);
+					totalcalcamount = parseFloat(totalcalcamount)+ parseFloat(adjlineamount);
 			}
 
 			totalcalcamount = totalcalcamount.toFixed(2);
@@ -2640,14 +2312,10 @@ function CreateVendorBill(invoice) {
 				if (roundingerror) {
 					roundingerror = Math.round(parseFloat(roundingerror) * 100) / 100;
 
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_send_taxcode')
-							&& (nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_send_taxcode') == 'T')) {
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')&& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T')) {
 						linecharge = linecharge + roundingerror;
 					} else
-						adjlineamount = parseFloat(adjlineamount)
-								+ roundingerror;
+						adjlineamount = parseFloat(adjlineamount)+ roundingerror;
 				}
 
 				nlapiLogExecution('DEBUG', 'Rounding Error Details ',
@@ -2657,91 +2325,61 @@ function CreateVendorBill(invoice) {
 								+ ' Adjusted line amount = ' + adjlineamount);
 			}
 
-			nlapiLogExecution('DEBUG', 'before setting amount', 'amount = '
-					+ parseFloat(adjlineamount));
-			record.setCurrentLineItemValue('expense', 'amount',
-					parseFloat(adjlineamount));
+			nlapiLogExecution('DEBUG', 'before setting amount', 'amount = '+ parseFloat(adjlineamount));
+			record.setCurrentLineItemValue('expense', 'amount',parseFloat(adjlineamount));
 
 			// check for custom fields on line level
-			if (nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_custfield_line_cnt')) {
-				for (var y = 1; y <= nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_custfield_line_cnt'); y++) {
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_custfieldline' + y)) {
+			if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfield_line_cnt')) {
+				for (var y = 1; y <= nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfield_line_cnt'); y++) {
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldline' + y)) {
 						var custfield;
 						var valuetoinsert = null;
 						var textOrValue;
-						if (nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_custfieldline' + y)
-								.split(':')) {
-							custfield = nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_custfieldline' + y)
-									.split(':');
+						if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldline' + y).split(':')) {
+							custfield = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldline' + y).split(':');
 
 							if (custfield[4]) {
 								valuetoinsert = custfield[4];
-								nlapiLogExecution('DEBUG', 'Valuetoinsert = ',
-										valuetoinsert);
+								nlapiLogExecution('DEBUG', 'Valuetoinsert = ',valuetoinsert);
 							}
 
 							else {
 
-								if (nlapiSelectValue(invoiceLineNodes[x],
-										custfield[0]))
-									valuetoinsert = nlapiSelectValue(
-											invoiceLineNodes[x], custfield[0]);
+								if (nlapiSelectValue(invoiceLineNodes[x],custfield[0]))
+									valuetoinsert = nlapiSelectValue(invoiceLineNodes[x], custfield[0]);
 
 								nlapiLogExecution('DEBUG', 'Line Custom ' + y,
 										'Coupa field = '
-												+ nlapiSelectValue(
-														invoiceLineNodes[x],
-														custfield[0])
+												+ nlapiSelectValue(invoiceLineNodes[x],custfield[0])
 												+ ' ValuetoInsert = '
 												+ valuetoinsert);
 
 								if (custfield[2]
-										&& nlapiSelectValue(
-												invoiceLineNodes[x],
-												custfield[0])) {
+										&& nlapiSelectValue(invoiceLineNodes[x],custfield[0])) {
 									if (custfield[2] == 'Date') {
-										valuetoinsert = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(
-												invoiceLineNodes[x],
-												custfield[0]));
-										nlapiLogExecution(
-												'DEBUG',
-												'Line Custom Inside coupatype = date'
-														+ y,
-												'Coupa field = '
-														+ nlapiSelectValue(
-																invoiceLineNodes[x],
-																custfield[0])
+										valuetoinsert = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoiceLineNodes[x],custfield[0]));
+										nlapiLogExecution('DEBUG','Line Custom Inside coupatype = date'+ y,'Coupa field = '
+														+ nlapiSelectValue(invoiceLineNodes[x],custfield[0])
 														+ ' ValuetoInsert = '
 														+ valuetoinsert);
 									}
 
 									if (custfield[2] == 'Lookup') {
 
-										valuetoinsert = nlapiSelectValue(
-												invoiceLineNodes[x],
-												custfield[0]
-														+ '/external-ref-num');
+										valuetoinsert = nlapiSelectValue(invoiceLineNodes[x],custfield[0]+ '/external-ref-num');
 										nlapiLogExecution(
 												'DEBUG',
 												'Line Custom Inside coupatype = lookup'
 														+ y,
 												'Coupa field = '
-														+ nlapiSelectValue(
-																invoiceLineNodes[x],
-																custfield[0])
+														+ nlapiSelectValue(invoiceLineNodes[x],custfield[0])
 														+ ' ValuetoInsert = '
 														+ valuetoinsert);
 									}
 
 								}
 								if (custfield[2] == 'Boolean') {
-									valuetoinsert = nlapiSelectValue(
-											invoiceLineNodes[x], custfield[0]);
+									valuetoinsert = nlapiSelectValue(invoiceLineNodes[x], custfield[0]);
 									if (valuetoinsert == 't'
 											|| valuetoinsert == 'yes'
 											|| valuetoinsert == 'y'
@@ -2754,9 +2392,8 @@ function CreateVendorBill(invoice) {
 								}
 
 								if (custfield[2] == 'Segment') {
-									valuetoinsert = nlapiSelectValue(invoiceLineNodes[x], 'account/' + custfield[0]);
+									valuetoinsert = nlapiSelectValue(invoiceLineNodes[x], 'account/'+ custfield[0]);
 								}
-
 
 							}
 
@@ -2777,11 +2414,9 @@ function CreateVendorBill(invoice) {
 									&& valuetoinsert != 'None') {
 
 								if (textOrValue == 'Text')
-									record.setCurrentLineItemText('expense',
-											custfield[1], valuetoinsert);
+									record.setCurrentLineItemText('expense',custfield[1], valuetoinsert);
 								else
-									record.setCurrentLineItemValue('expense',
-											custfield[1], valuetoinsert);
+									record.setCurrentLineItemValue('expense',custfield[1], valuetoinsert);
 							}
 
 						}
@@ -2802,28 +2437,19 @@ function CreateVendorBill(invoice) {
 			 * 
 			 */
 
-			if (headercharges
-					&& nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_send_taxcode')
-					&& (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_send_taxcode') == 'T')) {
-				SetHeaderChargesasExpenseLine(record, invoice,
-						invoiceLineNodes[x], linecharge.toFixed(2), null, false);
+			if (headercharges && nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode')& (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_send_taxcode') == 'T')) {
+				SetHeaderChargesasExpenseLine(record, invoice,invoiceLineNodes[x], linecharge.toFixed(2), null, false);
 			}
 
 		} // end of else --- i.e if not split accounting
 	} // end of main for loop that goes through each invoice line
 
 	try {
-		record.setFieldValue('externalid', 'Coupa-VendorBill'
-				+ nlapiSelectValue(invoice, 'id'));
+		record.setFieldValue('externalid', 'Coupa-VendorBill'+ nlapiSelectValue(invoice, 'id'));
 
-		record.setFieldValue('trandate',
-				ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoice,
-						'invoice-date')));
+		record.setFieldValue('trandate',ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoice,'invoice-date')));
 		// set currency
-		var curr = getNetsuiteCurrency('currency', nlapiSelectValue(invoice,
-				'currency/code'));
+		var curr = getNetsuiteCurrency('currency', nlapiSelectValue(invoice,'currency/code'));
 		record.setFieldValue('currency', curr);
 
 		var paymentTermNode = nlapiSelectNode(invoice, 'payment-term');
@@ -2840,10 +2466,8 @@ function CreateVendorBill(invoice) {
 		record.setFieldValue('terms', terms);
 
 		// set accounts payable account if passed as parameter to the script
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_actpayablenum')) {
-			var apAccountId = getNetsuiteAccountId(nlapiGetContext()
-					.getSetting('SCRIPT', 'custscript_coupa_inv_actpayablenum'));
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_actpayablenum')) {
+			var apAccountId = getNetsuiteAccountId(nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_inv_actpayablenum'));
 
 			if (apAccountId != 'INVALID_ACCOUNT')
 				record.setFieldValue('account', apAccountId);
@@ -2851,11 +2475,9 @@ function CreateVendorBill(invoice) {
 
 		// set the posting period
 		var today = new Date();
-		var postingPeriod = getMonthShortName(today.getMonth()) + ' '
-				+ today.getFullYear();
+		var postingPeriod = getMonthShortName(today.getMonth()) + ' '+ today.getFullYear();
 		var cutoffday = 5;
-		cutoffday = nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_cutoffdate');
+		cutoffday = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_cutoffdate');
 		if (today.getDate() < cutoffday) {
 			var nDate = nlapiSelectValue(invoice, 'invoice-date').split('T');
 			var datesplit = nDate[0].split('-');
@@ -2864,85 +2486,83 @@ function CreateVendorBill(invoice) {
 			var Nmonth = datesplit[1] - 1;
 
 			if (today.getFullYear() > Nyear) {
-				if (today.getMonth() == 0)
-					postingPeriod = getMonthShortName('11') + ' '
-							+ (today.getFullYear() - 1);
+				if (today.getMonth() == 0)postingPeriod = getMonthShortName('11') + ' '+ (today.getFullYear() - 1);
 				else
-					postingPeriod = getMonthShortName(today.getMonth() - 1)
-							+ ' ' + today.getFullYear();
+					postingPeriod = getMonthShortName(today.getMonth() - 1)+ ' ' + today.getFullYear();
 			}
 
-			if (Nmonth < today.getMonth() && Nyear == today.getFullYear())
-				postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '
-						+ today.getFullYear();
+			if (Nmonth < today.getMonth() && Nyear == today.getFullYear())postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '+ today.getFullYear();
 		}
 
-		nlapiLogExecution('DEBUG', 'Calculated Posting Period is ',
-				postingPeriod);
+		nlapiLogExecution('DEBUG', 'Calculated Posting Period is ',postingPeriod);
 
-		//var postingPeriodId = getAccoutingPeriodNetsuiteId('accountingperiod',
-			//	postingPeriod);
-		var NApostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_na_inv_posting_period');	
-		var IsraelpostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_israel_inv_posting_period');	
-		var EMEApostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_emea_inv_posting_period');	
-		var APACLACpostingPeriodId = nlapiGetContext().getSetting('SCRIPT', 'custscript_apaclac_inv_posting_period');	
-		//var postingPeriodId = 161;
-		
-		if (subsidiaryId == '1' || subsidiaryId == '41' || subsidiaryId == '35' || subsidiaryId == '43' || subsidiaryId == '27' || subsidiaryId == '24' || subsidiaryId == '44' || subsidiaryId == '2' || subsidiaryId == '40' || subsidiaryId == '8' || subsidiaryId == '26' || subsidiaryId == '30' || subsidiaryId == '25')
-		{
-		record.setFieldValue('postingperiod', NApostingPeriodId);
-		}		
-		if (subsidiaryId == '9' || subsidiaryId == '30')
-		{
-		record.setFieldValue('postingperiod', IsraelpostingPeriodId);
+		// var postingPeriodId =
+		// getAccoutingPeriodNetsuiteId('accountingperiod',
+		// postingPeriod);
+		var NApostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_na_inv_posting_period');
+		var IsraelpostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_israel_inv_posting_period');
+		var EMEApostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_emea_inv_posting_period');
+		var APACLACpostingPeriodId = nlapiGetContext().getSetting('SCRIPT','custscript_apaclac_inv_posting_period');
+		// var postingPeriodId = 161;
+
+		if (subsidiaryId == '1' || subsidiaryId == '41' || subsidiaryId == '35'
+				|| subsidiaryId == '43' || subsidiaryId == '27'
+				|| subsidiaryId == '24' || subsidiaryId == '44'
+				|| subsidiaryId == '2' || subsidiaryId == '40'
+				|| subsidiaryId == '8' || subsidiaryId == '26'
+				|| subsidiaryId == '30' || subsidiaryId == '25') {
+			record.setFieldValue('postingperiod', NApostingPeriodId);
 		}
-		if (subsidiaryId == '28' || subsidiaryId == '4' || subsidiaryId == '6' || subsidiaryId == '5' || subsidiaryId == '37' || subsidiaryId == '31' || subsidiaryId == '38' || subsidiaryId == '16' || subsidiaryId == '39' || subsidiaryId == '15' || subsidiaryId == '17')
-		{
-		record.setFieldValue('postingperiod', EMEApostingPeriodId);
-		}		
-		if (subsidiaryId == '32' || subsidiaryId == '34'  || subsidiaryId == '23'  || subsidiaryId == '11'  || subsidiaryId == '12'  || subsidiaryId == '21'  || subsidiaryId == '13'  || subsidiaryId == '19'  || subsidiaryId == '18'  || subsidiaryId == '45'  || subsidiaryId == '14'  || subsidiaryId == '29'  || subsidiaryId == '46'  || subsidiaryId == '36'  || subsidiaryId == '22'  || subsidiaryId == '33')
-		{
-		record.setFieldValue('postingperiod', APACLACpostingPeriodId);
-		}		
+		if (subsidiaryId == '9' || subsidiaryId == '30') {
+			record.setFieldValue('postingperiod', IsraelpostingPeriodId);
+		}
+		if (subsidiaryId == '28' || subsidiaryId == '4' || subsidiaryId == '6'
+				|| subsidiaryId == '5' || subsidiaryId == '37'
+				|| subsidiaryId == '31' || subsidiaryId == '38'
+				|| subsidiaryId == '16' || subsidiaryId == '39'
+				|| subsidiaryId == '15' || subsidiaryId == '17') {
+			record.setFieldValue('postingperiod', EMEApostingPeriodId);
+		}
+		if (subsidiaryId == '32' || subsidiaryId == '34'
+				|| subsidiaryId == '23' || subsidiaryId == '11'
+				|| subsidiaryId == '12' || subsidiaryId == '21'
+				|| subsidiaryId == '13' || subsidiaryId == '19'
+				|| subsidiaryId == '18' || subsidiaryId == '45'
+				|| subsidiaryId == '14' || subsidiaryId == '29'
+				|| subsidiaryId == '46' || subsidiaryId == '36'
+				|| subsidiaryId == '22' || subsidiaryId == '33') {
+			record.setFieldValue('postingperiod', APACLACpostingPeriodId);
+		}
 
 		// nlapiLogExecution('DEBUG', 'Posting Period: ', 'name = ' +
 		// postingPeriod + ' Id = ' + postingPeriodId);
 
-		//record.setFieldValue('postingperiod', postingPeriodId);
-		//umesh month end hardcoding to this month (march)
+		// record.setFieldValue('postingperiod', postingPeriodId);
+		// umesh month end hardcoding to this month (march)
 		record.setFieldText('approvalstatus', 'Approved');
-		record.setFieldValue('tranid', nlapiSelectValue(invoice,
-				'invoice-number'));
+		record.setFieldValue('tranid', nlapiSelectValue(invoice,'invoice-number'));
 		record.setFieldText('approvalstatus', 'Approved');
 		// add link back to invoice in Coupa
 		if (nlapiGetContext().getSetting('SCRIPT',
 				'custscript_coupa_inv_link_field')) {
-			record.setFieldValue(nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_link_field'), nlapiGetContext()
-					.getSetting('SCRIPT', 'custscript_coupa_inv_url')
-					+ '/invoices/' + nlapiSelectValue(invoice, 'id'));
+			record.setFieldValue(nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_link_field'), nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_inv_url')+ '/invoices/' + nlapiSelectValue(invoice, 'id'));
 		}
 
 		// add link back to invoiceimagescan in Coupa
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_image_link_field')
-				&& nlapiSelectValue(invoice, 'image-scan')) {
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_image_link_field')&& nlapiSelectValue(invoice, 'image-scan')) {
 			// first get the correct url
 			var imagescan = nlapiSelectValue(invoice, 'image-scan').split('/');
-			var imagescanurl = nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_url')
+			var imagescanurl = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_url')
 					+ '/invoice/'
 					+ nlapiSelectValue(invoice, 'id')
 					+ '/image_scan/' + imagescan[5];
-			record.setFieldValue(nlapiGetContext().getSetting('SCRIPT',
-					'custscript_coupa_inv_image_link_field'), imagescanurl);
+			record.setFieldValue(nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_image_link_field'), imagescanurl);
 		}
 		// nlapiLogExecution('DEBUG','checking for header custom field count',
 		// 'count = ' + nlapiGetContext().getSetting('SCRIPT',
 		// 'custscript_coupa_inv_custfield_header_ct'));
 		// check for custom fields on header level
-		if (nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_inv_custfield_header_ct')) {
+		if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfield_header_ct')) {
 			for (var y = 1; y <= nlapiGetContext().getSetting('SCRIPT',
 					'custscript_coupa_inv_custfield_header_ct'); y++) {
 
@@ -2956,30 +2576,22 @@ function CreateVendorBill(invoice) {
 					var custfield;
 					var valuetoinsert = 'None';
 					var textOrValue;
-					if (nlapiGetContext().getSetting('SCRIPT',
-							'custscript_coupa_inv_custfieldheader' + y).split(
-							':')) {
-						custfield = nlapiGetContext().getSetting('SCRIPT',
-								'custscript_coupa_inv_custfieldheader' + y)
-								.split(':');
+					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldheader' + y).split(':')) {
+						custfield = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_custfieldheader' + y).split(':');
 
 						if (custfield[4])
 							valuetoinsert = custfield[4];
 						else {
 
 							if (nlapiSelectValue(invoice, custfield[0]))
-								valuetoinsert = nlapiSelectValue(invoice,
-										custfield[0]);
+								valuetoinsert = nlapiSelectValue(invoice,custfield[0]);
 
-							if (custfield[2]
-									&& nlapiSelectValue(invoice, custfield[0])) {
+							if (custfield[2] && nlapiSelectValue(invoice, custfield[0])) {
 								if (custfield[2] == 'Date')
-									valuetoinsert = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(
-											invoice, custfield[0]));
+									valuetoinsert = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoice, custfield[0]));
 
 								if (custfield[2] == 'Lookup') {
-									valuetoinsert = nlapiSelectValue(invoice,
-											custfield[0] + '/external-ref-num');
+									valuetoinsert = nlapiSelectValue(invoice,custfield[0] + '/external-ref-num');
 								}
 
 							}
@@ -3013,36 +2625,27 @@ function CreateVendorBill(invoice) {
 						if (valuetoinsert && valuetoinsert != 'None') {
 
 							if (textOrValue == 'Text')
-								record
-										.setFieldText(custfield[1],
-												valuetoinsert);
+								record.setFieldText(custfield[1],valuetoinsert);
 							else
-								record.setFieldValue(custfield[1],
-										valuetoinsert);
+								record.setFieldValue(custfield[1],valuetoinsert);
 						}
 
 					}
 				}
 			}
 		}
+		// record.setFieldText('custbody_coupa_po_number', poNumber);
+		// rf for poNumber
 		record.setFieldText('approvalstatus', 'Approved');
 		nlapiSubmitRecord(record, true);
 	} catch (e) {
-		nlapiLogExecution('ERROR',
-				'Processing Error - Unable to create vendor bill',
-				' Invoice Number = '
+		nlapiLogExecution('ERROR','Processing Error - Unable to create vendor bill',' Invoice Number = '
 						+ nlapiSelectValue(invoice, 'invoice-number')
 						+ ' Supplier Name = '
 						+ nlapiSelectValue(supplierNode, 'name')
 						+ ' Error Description = ' + e.message);
-		nlapiSendEmail(
-				-5,
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_email_notifications'),
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_acccountname')
-						+ ' Invoice Integration:Processing Error - Unable to create vendor bill',
-				'Invoice Number = '
+		nlapiSendEmail(-5,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_email_notifications'),nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_acccountname')
+						+ ' Invoice Integration:Processing Error - Unable to create vendor bill','Invoice Number = '
 						+ nlapiSelectValue(invoice, 'invoice-number')
 						+ ' Supplier Name = '
 						+ nlapiSelectValue(supplierNode, 'name')
@@ -3054,7 +2657,7 @@ function CreateVendorBill(invoice) {
 			' Invoice Number = ' + nlapiSelectValue(invoice, 'invoice-number')
 					+ ' Supplier Name = '
 					+ nlapiSelectValue(supplierNode, 'name'));
-	Setexportedtotrue(nlapiSelectValue(invoice, 'id'));
+	// Setexportedtotrue(nlapiSelectValue(invoice, 'id'));
 }
 
 function VoidVendorBill(invoice, id) {
@@ -3152,8 +2755,7 @@ function SetHeaderChargesasExpenseLine(record, invoice, invoiceline,
 	if (nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_inv_deptseg')) {
 		var dept = nlapiSelectValue(
 				accountNode,
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_deptseg')).split(':');
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_deptseg')).split(':');
 		if (dynamicAccounting == 'T') {
 			record.setCurrentLineItemValue('expense', 'department', dept);
 		} else {
@@ -3364,8 +2966,7 @@ function UpdateVendorBill(invoice, id) {
 
 	// set the posting period - see customization for coupa
 	var today = new Date();
-	var postingPeriod = getMonthShortName(today.getMonth()) + ' '
-			+ today.getFullYear();
+	var postingPeriod = getMonthShortName(today.getMonth()) + ' '+ today.getFullYear();
 
 	// nlapiLogExecution('DEBUG', 'Today date day = ', today.getDate());
 
@@ -3382,18 +2983,15 @@ function UpdateVendorBill(invoice, id) {
 		 */
 		if (today.getFullYear() > Nyear) {
 			if (today.getMonth() == 0)
-				postingPeriod = getMonthShortName('11') + ' '
-						+ (today.getFullYear() - 1);
+				postingPeriod = getMonthShortName('11') + ' '+ (today.getFullYear() - 1);
 			else
-				postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '
-						+ today.getFullYear();
+				postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '+ today.getFullYear();
 		}
 
 		if (Nmonth < today.getMonth() && Nyear == today.getFullYear())
-			postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '
-					+ today.getFullYear();
+			postingPeriod = getMonthShortName(today.getMonth() - 1) + ' '+ today.getFullYear();
 	}
-	
+
 	record.setFieldText('postingperiod', postingPeriod);
 
 	// set accounts payable account if passed as parameter to the script
@@ -3785,6 +3383,7 @@ function UpdateVendorBill(invoice, id) {
 }
 
 function vendorBillExists(tranid, externalid, entity) {
+
 	// nlapiLogExecution('DEBUG','in vendorBillExists', 'tranid = ' + tranid + '
 	// externalid = ' + externalid);
 	var filters = new Array();
@@ -3882,13 +3481,10 @@ function getNetSuiteId(objectinternalid, objectname) {
 
 function getAccoutingPeriodNetsuiteId(objectinternalid, objectname) {
 
-	var searchresults = nlapiSearchRecord(objectinternalid, null,
-			nlobjSearchFilter('periodname', null, 'is', objectname));
+	var searchresults = nlapiSearchRecord(objectinternalid, null,nlobjSearchFilter('periodname', null, 'is', objectname));
 
 	if (!searchresults) {
-		nlapiLogExecution('DEBUG', 'Error getting ID for',
-				'internalobjectid = ' + objectinternalid + ' objectname =  '
-						+ objectname);
+		nlapiLogExecution('DEBUG', 'Error getting ID for','internalobjectid = ' + objectinternalid + ' objectname =  '+ objectname);
 		return 'INVALID_PERIOD_NAME';
 	}
 
@@ -4025,14 +3621,11 @@ function getNetsuiteCurrency(objectinternalid, objectname) {
 	// objectname);
 	var searchresults;
 	try {
-		searchresults = nlapiSearchRecord(objectinternalid, null,
-				nlobjSearchFilter('symbol', null, 'is', objectname));
+		searchresults = nlapiSearchRecord(objectinternalid, null,nlobjSearchFilter('symbol', null, 'is', objectname));
 	} catch (e) {
 		var error = e.getDetails();
-		if (error
-				.indexOf("The feature 'Multiple Currencies' required to access this page is not enabled in this account") > -1) {
-			nlapiLogExecution('DEBUG', "multiple currencys not enabled",
-					'Defaulting currency ID to 1');
+		if (error.indexOf("The feature 'Multiple Currencies' required to access this page is not enabled in this account") > -1) {
+			nlapiLogExecution('DEBUG', "multiple currencys not enabled",'Defaulting currency ID to 1');
 			return 1;
 		}
 	}
@@ -4041,9 +3634,7 @@ function getNetsuiteCurrency(objectinternalid, objectname) {
 
 	// if (searchresults.length !=1)
 	if (!searchresults) {
-		nlapiLogExecution('Error', 'Error getting ID for',
-				'internalobjectid = ' + objectinternalid + ' objectname =  '
-						+ objectname);
+		nlapiLogExecution('Error', 'Error getting ID for','internalobjectid = ' + objectinternalid + ' objectname =  '+ objectname);
 		return 'INVALID_NAME';
 	}
 	// nlapiLogExecution('DEBUG', 'in getNetsuitetermid after calling Search
@@ -4053,8 +3644,7 @@ function getNetsuiteCurrency(objectinternalid, objectname) {
 }
 
 function getTaxId(taxcode) {
-	var searchresults = nlapiSearchRecord(null, 'customsearch_taxitemidsearch',
-			nlobjSearchFilter('name', null, 'anyof', taxcode), null);
+	var searchresults = nlapiSearchRecord(null, 'customsearch_taxitemidsearch',nlobjSearchFilter('name', null, 'anyof', taxcode), null);
 
 	nlapiLogExecution('DEBUG', 'After calling nlapiSearchrecord');
 
@@ -4064,10 +3654,8 @@ function getTaxId(taxcode) {
 	}
 
 	else {
-		nlapiLogExecution('DEBUG', 'After searching to tax ids ',
-				'TAX ID results = ', searchresults[0]);
-		nlapiLogExecution('DEBUG', 'After searching to tax ids ', 'TAX ID = ',
-				searchresults[0].getId());
+		nlapiLogExecution('DEBUG', 'After searching to tax ids ','TAX ID results = ', searchresults[0]);
+		nlapiLogExecution('DEBUG', 'After searching to tax ids ', 'TAX ID = ',searchresults[0].getId());
 	}
 
 	return searchresults[0].getId();
@@ -4098,39 +3686,35 @@ function readFormConfig() {
 function getTaxGroupId(taxName) {
 	var filters = new Array();
 	var columns = new Array();
-	
+
 	filters[0] = new nlobjSearchFilter('name', null, 'is', taxName);
-	nlapiLogExecution("DEBUG","taxName",taxName);
+	nlapiLogExecution("DEBUG", "taxName", taxName);
 	columns[0] = new nlobjSearchColumn('internalid');
 	var results = nlapiSearchRecord('taxgroup', null, filters, columns);
-	if (!results) 
-		{
-		nlapiLogExecution('Error', 'Error getting ID for tax group under function getTaxGroupId', taxName);
+	if (!results) {
+		nlapiLogExecution('Error','Error getting ID for tax group under function getTaxGroupId',taxName);
 		return 'INVALID_TAXCODE';
-	}	
-	else {
+	} else {
 		internalid = results[0].getValue('internalid');
-		nlapiLogExecution("DEBUG","internalid",internalid);
+		nlapiLogExecution("DEBUG", "internalid", internalid);
 		return internalid;
-	}	
+	}
 }
 
 function getTaxCodeId(taxName) {
 	var filters = new Array();
 	var columns = new Array();
-	
+
 	filters[0] = new nlobjSearchFilter('name', null, 'is', taxName);
-	nlapiLogExecution("DEBUG","TaxCode",taxName);
+	nlapiLogExecution("DEBUG", "TaxCode", taxName);
 	columns[0] = new nlobjSearchColumn('internalid');
 	var results = nlapiSearchRecord('salestaxitem', null, filters, columns);
-	if (!results) 
-		{
-		nlapiLogExecution('Error', 'Error getting ID for tax Code under function getTaxGroupId', taxName);
+	if (!results) {
+		nlapiLogExecution('Error','Error getting ID for tax Code under function getTaxGroupId',taxName);
 		return 'INVALID_TAXCODE';
-	}	
-	else {
+	} else {
 		internalid = results[0].getValue('internalid');
-		nlapiLogExecution("DEBUG","internalid",internalid);
+		nlapiLogExecution("DEBUG", "internalid", internalid);
 		return internalid;
-	}	
+	}
 }
