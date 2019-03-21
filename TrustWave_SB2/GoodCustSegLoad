@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<soapenv:Header>
+<platformMsg:preferences xmlns:platformMsg="urn:messages_2017_2.platform.webservices.netsuite.com" soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0">
+<platformMsg:useConditionalDefaultsOnAdd>true</platformMsg:useConditionalDefaultsOnAdd>
+<platformMsg:ignoreReadOnlyFields>true</platformMsg:ignoreReadOnlyFields>
+<platformMsg:warningAsError>false</platformMsg:warningAsError>
+</platformMsg:preferences>
+<ns2:tokenPassport soapenv:actor="http://schemas.xmlsoap.org/soap/actor/next" soapenv:mustUnderstand="0" xmlns:ns2="urn:messages_2017_2.platform.webservices.netsuite.com">
+<ns1:account xmlns:ns1="urn:core_2017_2.platform.webservices.netsuite.com">1137235_SB2</ns1:account>
+<ns3:consumerKey xmlns:ns3="urn:core_2017_2.platform.webservices.netsuite.com">****************************************************************</ns3:consumerKey>
+<ns4:token xmlns:ns4="urn:core_2017_2.platform.webservices.netsuite.com">****************************************************************</ns4:token>
+<ns5:nonce xmlns:ns5="urn:core_2017_2.platform.webservices.netsuite.com">BNZqPX5PptHsT3gW6mTD</ns5:nonce>
+<ns6:timestamp xmlns:ns6="urn:core_2017_2.platform.webservices.netsuite.com">1545162700</ns6:timestamp>
+<ns7:signature xmlns:ns7="urn:core_2017_2.platform.webservices.netsuite.com" algorithm="HMAC_SHA256">********************************************</ns7:signature>
+</ns2:tokenPassport>
+</soapenv:Header>
+<soapenv:Body>
+<platformMsg:add xmlns:platformMsg="urn:messages_2017_2.platform.webservices.netsuite.com">
+<platformMsg:record xmlns:ns2="urn:core_2017_2.platform.webservices.netsuite.com" xmlns:ns1="urn:sales_2017_2.transactions.webservices.netsuite.com" xmlns:ns3="urn:common_2017_2.platform.webservices.netsuite.com" xsi:type="ns1:SalesOrder">
+<ns1:entity xsi:type="platformCore:RecordRef" internalId="916315"/>
+<ns1:department xsi:type="platformCore:RecordRef" internalId="238"/>
+<ns1:subsidiary xsi:type="platformCore:RecordRef" internalId="11"/>
+<ns1:itemList>
+<ns1:item>
+<ns1:item xsi:type="platformCore:RecordRef" internalId="987"/>
+<ns1:quantity>5.0</ns1:quantity>
+<ns1:rate>7144.22</ns1:rate>
+<ns1:amount>35721.09</ns1:amount>
+<ns1:customFieldList>
+<ns2:customField xsi:type="ns2:SelectCustomFieldRef" internalId="2979" scriptId="custcol_cseg_tw_rev_seg">
+<ns2:value internalId="36" typeId="281"/>
+</ns2:customField>
+</ns1:customFieldList>
+</ns1:item>
+<ns1:item>
+<ns1:item xsi:type="platformCore:RecordRef" internalId="21685"/>
+<ns1:quantity>16.0</ns1:quantity>
+<ns1:rate>305.00</ns1:rate>
+<ns1:amount>4880.0</ns1:amount>
+<ns1:customFieldList>
+<ns2:customField xsi:type="ns2:SelectCustomFieldRef" internalId="2979" scriptId="custcol_cseg_tw_rev_seg">
+<ns2:value internalId="36" typeId="281"/>
+</ns2:customField>
+</ns1:customFieldList>
+</ns1:item>
+<ns1:item>
+<ns1:item xsi:type="platformCore:RecordRef" internalId="21585"/>
+<ns1:quantity>1.0</ns1:quantity>
+<ns1:rate>54718.48</ns1:rate>
+<ns1:amount>54718.48</ns1:amount>
+<ns1:customFieldList>
+<ns2:customField xsi:type="ns2:SelectCustomFieldRef" internalId="2979" scriptId="custcol_cseg_tw_rev_seg">
+<ns2:value internalId="36" typeId="281"/>
+</ns2:customField>
+</ns1:customFieldList>
+</ns1:item>
+<ns1:item>
+<ns1:item xsi:type="platformCore:RecordRef" internalId="21698"/>
+<ns1:quantity>1.0</ns1:quantity>
+<ns1:rate>11907.03</ns1:rate>
+<ns1:amount>11907.03</ns1:amount>
+<ns1:customFieldList>
+<ns2:customField xsi:type="ns2:SelectCustomFieldRef" internalId="2979" scriptId="custcol_cseg_tw_rev_seg">
+<ns2:value internalId="36" typeId="281"/>
+</ns2:customField>
+</ns1:customFieldList>
+</ns1:item>
+<ns1:item>
+<ns1:item xsi:type="platformCore:RecordRef" internalId="20152"/>
+<ns1:quantity>1.0</ns1:quantity>
+<ns1:rate>19233.97</ns1:rate>
+<ns1:amount>19233.97</ns1:amount>
+<ns1:customFieldList>
+<ns2:customField xsi:type="ns2:SelectCustomFieldRef" internalId="2979" scriptId="custcol_cseg_tw_rev_seg">
+<ns2:value internalId="36" typeId="281"/>
+</ns2:customField>
+</ns1:customFieldList>
+</ns1:item>
+<ns1:item>
+<ns1:item xsi:type="platformCore:RecordRef" internalId="20197"/>
+<ns1:quantity>1.0</ns1:quantity>
+<ns1:rate>4808.49</ns1:rate>
+<ns1:amount>4808.49</ns1:amount>
+<ns1:customFieldList>
+<ns2:customField xsi:type="ns2:SelectCustomFieldRef" internalId="2979" scriptId="custcol_cseg_tw_rev_seg">
+<ns2:value internalId="36" typeId="281"/>
+</ns2:customField>
+</ns1:customFieldList>
+</ns1:item>
+</ns1:itemList>
+</platformMsg:record>
+</platformMsg:add>
+</soapenv:Body>
+</soapenv:Envelope>

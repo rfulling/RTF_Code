@@ -1,0 +1,1 @@
+jdbc:ns://odbcserver.na2.netsuite.com:1708;ServerDataSource=NetSuite.com;Encrypted=1;CipherSuites=TLS_RSA_WITH_AES_128_CBC_SHA;CustomProperties=(AccountID=1137235;RoleID=3);
