@@ -11,7 +11,7 @@ function scheduled(type){
 	*/
 	
 	var results = nlapiSearchRecord('invoice', 2289, null, null);
-		
+	
 	//if no results
 	if (!results)
 				{

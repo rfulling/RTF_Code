@@ -8,7 +8,8 @@ var ExpenseReportID;
 function scheduled(type) {
 	// Variable Declaration
 	var param_url = context.getSetting('SCRIPT', 'custscript_coupa_er_url');
-	var param_APIKey = context.getSetting('SCRIPT','custscript_coupa_er_apikey');
+	var param_APIKey = context.getSetting('SCRIPT',
+			'custscript_coupa_er_apikey');
 	var iTimeOutCnt = 0;
 	var headers = new Array();
 	var tranid = '';
@@ -17,14 +18,12 @@ function scheduled(type) {
 
 	var response = '';
 
-	var url = param_url + '/api/expense_reports?status=approved_for_payment&exported=false';
-	//var url = param_url + '/api/expense_reports?id=31099'
-
+	var url = param_url+ '/api/expense_reportsstatus=approved_for_payment&exported=false';
 	if (context.getSetting('SCRIPT' , 'custscript_er_filter')) {
-	url = url + context.getSetting('SCRIPT' , 'custscript_er_filter');
+		url = url + context.getSetting('SCRIPT' , 'custscript_er_filter');
 	}
 	
-	var thisEnv = 'PRODUCTION'; //context.getEnvironment();
+var thisEnv = 'PRODUCTION'; //context.getEnvironment();
 	var url_test_contains = [ "-dev", "-demo", "-dmo", "-qa", "-sandbox",
 			"-sbx", "-stage", "-staging", "-stg", "-support", "-test", "-uat",
 			"coupacloud.com", "coupadev.com" ];
@@ -57,18 +56,22 @@ function scheduled(type) {
 						+ errordetails);
 		nlapiSendEmail(
 				-5,
-				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_email_addr_notify'),nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_acccountname')
-						+ ' Expense Report Integration:Processing Error - Unable to do Coupa request api call to export Expense Reports','Error Code = ' + errorcode + ' Error Description = '+ errordetails);
+				nlapiGetContext().getSetting('SCRIPT',
+						'custscript_coupa_er_email_addr_notify'),
+				nlapiGetContext().getSetting('SCRIPT',
+						'custscript_coupa_er_acccountname')
+						+ ' Expense Report Integration:Processing Error - Unable to do Coupa request api call to export Expense Reports',
+				'Error Code = ' + errorcode + ' Error Description = '
+						+ errordetails);
 		throw error;
 	}
 	
 	if (context.getSetting('SCRIPT' , 'custscript_exprpts_limit'))
-    		url = url + '&limit=' + context.getSetting('SCRIPT' , 'custscript_exprpts_limit');
-	
-var url = param_url+'/api/expense_reports?&id=23563';//+ invoice_filter;
-LogMsg('url: ' + url);
+		url = url + '&limit=' + context.getSetting('SCRIPT' , 'custscript_exprpts_limit');
 
-  try {
+	LogMsg('url: ' + url);
+var url = param_url+'/api/expense_reports?&id=23563';//+ invoice_filter;
+	try {
 		response = nlapiRequestURL(url, null, headers);
 	} catch (error) {
 		if (error instanceof nlobjError) {
@@ -111,23 +114,17 @@ LogMsg('url: ' + url);
 
 	if (response.getCode() == 200) {
 		LogMsg('response.getCode() is ' + response.getCode());
-		//var responseXML = nlapiStringToXML(response.getBody());
-        var file = nlapiCreateFile('searchresults_23563.xml', 'XMLDOC', response.getBody());
-		file.setFolder(25257);
-		nlapiSubmitFile(file);
-		//responseXML = nlapiStringToXML(nlapiLoadFile(4549373));
-		
-		var xmlFile = nlapiLoadFile('4549373');
-		var xmlDocument = nlapiStringToXML(xmlFile.getValue());
-		
-		responseXML=xmlDocument
-		
+		var responseXML = nlapiStringToXML(response.getBody());
+   //   var file = nlapiCreateFile('searchresults.xml', 'XMLDOC', response.getBody());
+//		file.setFolder(25257);
+//nlapiSubmitFile(file);
 //nlapiLogExecution('DEBUG', 'response xml = ', response.getBody());
 //		LogMsg('body is ' + response.getBody());
 
 		var expenseHeaderNode = nlapiSelectNode(responseXML, 'expense-reports');
 		var expenseHeaderHeaderNode = new Array();
-		expenseHeaderHeaderNode = nlapiSelectNodes(expenseHeaderNode,'expense-report');
+		expenseHeaderHeaderNode = nlapiSelectNodes(expenseHeaderNode,
+				'expense-report');
 
 		LogMsg('Expense Report to Process :' + expenseHeaderHeaderNode.length);
 
@@ -158,37 +155,49 @@ LogMsg('url: ' + url);
 			expenseExists = findExpenseReport(tranid);
 			LogMsg('Coupa Expense ID is ' + expenseExists);
 
-			if (context.getSetting('SCRIPT','custscript_coupa_er_creditcardskip')) {
-				if (context.getSetting('SCRIPT','custscript_coupa_er_creditcardskip') == 'T') {
+			if (context.getSetting('SCRIPT',
+					'custscript_coupa_er_creditcardskip')) {
+				if (context.getSetting('SCRIPT',
+						'custscript_coupa_er_creditcardskip') == 'T') {
 
-					var expenseLinesNode = nlapiSelectNodes(expenseHeaderHeaderNode[i], 'expense-lines');
-					var expenseLinesLineNode = nlapiSelectNodes(expenseLinesNode[0], 'expense-line');
-					var importedNode = nlapiSelectNode(expenseLinesLineNode[0],'expense-line-imported-data');
+					var expenseLinesNode = nlapiSelectNodes(
+							expenseHeaderHeaderNode[i], 'expense-lines');
+					var expenseLinesLineNode = nlapiSelectNodes(
+							expenseLinesNode[0], 'expense-line');
+					var importedNode = nlapiSelectNode(expenseLinesLineNode[0],
+							'expense-line-imported-data');
 					if (importedNode != null)
 						creditCardExpense = 'true';
 				}
 			}
 
 			if (expenseExists == 'false' && creditCardExpense == 'false') {
-				LogMsg('Expense Report ' + tranid+ ' is not existing in NetSuite');
+				LogMsg('Expense Report ' + tranid
+						+ ' is not existing in NetSuite');
 				var expensecreatereturn = createExpenseReport(expenseHeaderHeaderNode[i], tranid, ERamount);
 				if (!expensecreatereturn){					
 					nlapiSendEmail(
 					-5,
-					nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_email_addr_notify'),
-					nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_acccountname')
-							+ ' Invoice Integration:Processing Error - Unable to do Coupa request api call to export Expense Report','Error Code = ' + errorcode + ' Error Description = '
-							+ errordetails);
-					LogAudit('Error Creating ER: ' + tranid + ', ' + errmsg);
+					nlapiGetContext().getSetting('SCRIPT',
+							'custscript_coupa_er_email_addr_notify'),
+					nlapiGetContext().getSetting('SCRIPT',
+							'custscript_coupa_er_acccountname')
+							+ ' Invoice Integration:Processing Error - Unable to do Coupa request api call to export Expense Report',
+					'Error Code = ' + 'error.errorcode' + ' Error Description = '
+							+ 'errordetails');
+					LogAudit('Error Creating ER: ' + tranid + ', ' + 'errmsg');
 				}
 				else {
-					LogAudit('Successfully created NetSuite Expense Report: '+ ExpenseReportID + ' for Coupa #: ' + tranid);
+					LogAudit('Successfully created NetSuite Expense Report: '
+							+ ExpenseReportID + ' for Coupa #: ' + tranid);
 				}
 			} else {
 				if (creditCardExpense) {
-					LogMsg('Skipping Expense Report: ' + tranid+ ' as it is a Credit Card Transaction');
+					LogMsg('Skipping Expense Report: ' + tranid
+							+ ' as it is a Credit Card Transaction');
 				} else {
-					LogMsg('Editing is not feasible in Coupa. You are trying to Update Expense Report #:'+ expenseExists);
+					LogMsg('Editing is not feasible in Coupa. You are trying to Update Expense Report #:'
+							+ expenseExists);
 				}
 			}
 		}
@@ -205,7 +214,8 @@ function setExportedToTrue(id) {
 			'custscript_coupa_er_apikey');
 
 	// getting transaction list
-	var url = nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_er_url')+ '/api/expense_reports/' + id + '?exported=true';
+	var url = nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_er_url')
+			+ '/api/expense_reports/' + id + '?exported=true';
 	var postData = "<?xml version='1.0' encoding='UTF-8'?><expense-report><exported type='boolean'>true</exported></expense-report>";
 	var response = '';
 	var iTimeOutCnt = 0;
@@ -300,10 +310,13 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 
 		var record = nlapiCreateRecord('expensereport');
 		// var x = 0;
-		var testparam_url = context.getSetting('SCRIPT','custscript_coupa_er_url');
-		var testparam_APIKey = context.getSetting('SCRIPT','custscript_coupa_er_apikey');
+		var testparam_url = context.getSetting('SCRIPT',
+				'custscript_coupa_er_url');
+		var testparam_APIKey = context.getSetting('SCRIPT',
+				'custscript_coupa_er_apikey');
 		// Get Custom Body Parameter value
-		var coupaERCustomBody = context.getSetting('SCRIPT','custscript_coupa_er_body');
+		var coupaERCustomBody = context.getSetting('SCRIPT',
+				'custscript_coupa_er_body');
 		// var arrCustBodyList = new Array();
 		// var arrTempList = new Array();
 
@@ -322,45 +335,37 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 		}
 
 		var expenseLinesNode = new Array();
-		expenseLinesNode = nlapiSelectNodes(expenseHeaderHeaderNode,'expense-lines');
+		expenseLinesNode = nlapiSelectNodes(expenseHeaderHeaderNode,
+				'expense-lines');
 
 		var expenseLinesLineNode = new Array();
 		var expensedByNode = new Array();
 
 		// Expense Nodes
 		for (var xx = 0; xx < expenseLinesNode.length; xx++) {
-			expenseLinesLineNode = nlapiSelectNodes(expenseLinesNode[xx],'expense-line');
+			expenseLinesLineNode = nlapiSelectNodes(expenseLinesNode[xx],
+					'expense-line');
 
-			expensedByNode = nlapiSelectNode(expenseHeaderHeaderNode,'expensed-by');
+			expensedByNode = nlapiSelectNode(expenseHeaderHeaderNode,
+					'expensed-by');
 															
-			var coupaEmployee = nlapiSelectValue(expensedByNode,'employee-number');
+			var coupaEmployee = nlapiSelectValue(expensedByNode,
+					'employee-number');
 			LogMsg('entered for coupaEmployee ' + coupaEmployee);
 
 			// Get custom columns
-			var coupaPOCustomCols = context.getSetting('SCRIPT','custscript_coupa_er_column');
+			var coupaPOCustomCols = context.getSetting('SCRIPT',
+					'custscript_coupa_er_column');
 
 			if (coupaPOCustomCols) {
 				getCustomColumn(coupaPOCustomCols, expenseLinesLineNode);
 			}
 			var customColumnsLen = customColumns.length;
 			var customColumnsToSetLen = customColumnsToSet.length;
-			
-			//This path can be varialbe.   if the are no account allocations then the path =
-			//path = '/account-allocations/account'
-			//if there are allocations the path is this
-			//path = '/account-allocations/account-allocation'
-			
-			
-			
-			var path ='/account-allocations/account';
+
 			for (var yy = 0; yy < expenseLinesLineNode.length; yy++) {
-				//get the account allocation subNode 
-				//if(nlapiSelectNode(nlapiSelectNode(expenseLinesLineNode[yy],'/account-allocations'))){
-					//path ='/account-allocations/account-allocation/account';
-				//}
-					
+				// var accountNode = nlapiSelectNode(expenseLinesLineNode[yy],'account-allocations/account-allocation/account');
 				var accountNode = nlapiSelectNode(expenseLinesLineNode[yy],'account');
-				//var accountNode = nlapiSelectNode(expenseLinesLineNode[yy],path);
 
 				if (accountNode) {
 					coupaDept = getCoupaDept(accountNode);
@@ -400,7 +405,8 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 
 				// Title for Memo
 				if (nlapiSelectValue(expenseHeaderHeaderNode, 'title')) {
-					var coupaTitle = nlapiSelectValue(expenseHeaderHeaderNode,'title');
+					var coupaTitle = nlapiSelectValue(expenseHeaderHeaderNode,
+							'title');
 					record.setFieldValue('memo', coupaTitle);
 				} else {
 					errmsg = 'No value for coupaTitle for ER#: ' + tranid;
@@ -449,13 +455,15 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					}
 
 					// Setting posting period
-					var eventHeader = nlapiSelectNode(expenseHeaderHeaderNode,'events');
+					var eventHeader = nlapiSelectNode(expenseHeaderHeaderNode,
+							'events');
 					var events = new Array();
 					events = nlapiSelectNodes(eventHeader, 'event');
 					var approved_date = nlapiSelectValue(expenseHeaderHeaderNode, 'submitted-at');
 					for (var w = 0; w < events.length; w++) {
 						if (nlapiSelectValue(events[w], 'status') == 'accounting_review') {
-							approved_date = nlapiSelectValue(events[w],'created-at');
+							approved_date = nlapiSelectValue(events[w],
+									'created-at');
 						}
 					}
 					var formattedDate = ConvertCoupaDateToNetSuiteDate(approved_date);
@@ -516,8 +524,10 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 				
 
 					// Setting approvals
-					var expenseApproval = context.getSetting('SCRIPT','custscript_coupa_er_approval');
-					if (context.getSetting('SCRIPT','custscript_coupa_er_approval')) {
+					var expenseApproval = context.getSetting('SCRIPT',
+							'custscript_coupa_er_approval');
+					if (context.getSetting('SCRIPT',
+							'custscript_coupa_er_approval')) {
 
 						if (expenseApproval == 'true') {
 							expenseApproval = 'T';
@@ -528,7 +538,8 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						}
 
 						if (expenseApproval != null && expenseApproval != "") {
-							record.setFieldValue('accountingapproval',expenseApproval);
+							record.setFieldValue('accountingapproval',
+									expenseApproval);
 						} else {
 							LogMsg('No Expense Approval Setup.');
 						}
@@ -548,22 +559,29 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					// Set Custom Field Values
 					if (customFieldsLen != null && customFieldsToSetLen != null) {
 						for (var y = 0; y < parseInt(customFieldsLen); y++) {
-							record.setFieldValue(customFieldsToSet[y],customFields[y]);
+							record.setFieldValue(customFieldsToSet[y],
+									customFields[y]);
 						}
 					}
 
 				} // End of yy == 0
 
-				expenseCategoryNode = nlapiSelectNode(expenseLinesLineNode[yy],'expense-category');				
-				expenseCategoryLine = nlapiSelectValue(expenseCategoryNode,'name');
-				expenseCategoryId = nlapiSelectValue(expenseCategoryNode,'id');
-				projectNode = nlapiSelectNode(expenseLinesLineNode[yy],'project-code');
-				projectNodeId = nlapiSelectValue(projectNode,'external-ref-num');			
+				expenseCategoryNode = nlapiSelectNode(expenseLinesLineNode[yy],
+						'expense-category');				
+				expenseCategoryLine = nlapiSelectValue(expenseCategoryNode,
+						'name');
+				expenseCategoryId = nlapiSelectValue(expenseCategoryNode,
+						'id');
+				projectNode = nlapiSelectNode(expenseLinesLineNode[yy],
+						'project-code');
+				projectNodeId = nlapiSelectValue(projectNode,
+						'external-ref-num');			
 				LogMsg('entered for expenseCategoryLine ' + expenseCategoryLine);
 
 				var expenseReason = "";
 				if (nlapiSelectValue(expenseLinesLineNode[yy], 'reason')) {
-					expenseReason = nlapiSelectValue(expenseLinesLineNode[yy],'reason');
+					expenseReason = nlapiSelectValue(expenseLinesLineNode[yy],
+							'reason');
 					LogMsg('expenseReason: ' + expenseReason);
 				} else {
 					errmsg = 'No expense reason in Coupa.';
@@ -571,19 +589,24 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					LogMsg(errmsg);
 				}
 				var lineID = nlapiSelectValue(expenseLinesLineNode[yy], 'id');
-				var coupaExpDescription = nlapiSelectValue(expenseLinesLineNode[yy], 'description');
-				var billable = nlapiSelectValue(expenseLinesLineNode[yy], 'billable');
-				var itemizedLine = nlapiSelectValue(expenseLinesLineNode[yy], 'type');
+				var coupaExpDescription = nlapiSelectValue(
+						expenseLinesLineNode[yy], 'description');
+				var billable = nlapiSelectValue(
+						expenseLinesLineNode[yy], 'billable');
+				var itemizedLine = nlapiSelectValue(
+						expenseLinesLineNode[yy], 'type');
 				
 				LogMsg(lineID);
 								
 			//tax umesh
-				var TaxNode = nlapiSelectNode(expenseLinesLineNode[yy],'expense-line-taxes');	
+				var TaxNode = nlapiSelectNode(expenseLinesLineNode[yy],
+					'expense-line-taxes');	
 			
 				if (TaxNode)
 				{
 				LogMsg(lineID);
-				var TaxCodeNode = nlapiSelectNodes(TaxNode, 'expense-line-tax');
+				var TaxCodeNode = nlapiSelectNodes(TaxNode, 
+					'expense-line-tax');
 				}		
 		
 			//setting to zero												
@@ -640,9 +663,11 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 				var splitaccounting = 'FALSE';
 				// var actalloc = nlapiSelectNode(expenseLinesLineNode[yy],
 				// 'account-allocations');
-				var actalloc = nlapiSelectNode(expenseLinesLineNode[yy],'account-allocations');
+				var actalloc = nlapiSelectNode(expenseLinesLineNode[yy],
+						'account-allocations');
 				var accountallocations = new Array();
-				accountallocations = nlapiSelectNodes(actalloc,'account-allocation');
+				accountallocations = nlapiSelectNodes(actalloc,
+						'account-allocation');
 				if (accountallocations.length >= 1) {
 					splitaccounting = 'TRUE';
 
@@ -651,24 +676,33 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 
 				if (splitaccounting == 'TRUE') {
 					for (var i = 0; i < accountallocations.length; i++) {
-						var splitLineAmount = parseFloat(nlapiSelectValue(accountallocations[i], 'amount'));
+						var splitLineAmount = parseFloat(nlapiSelectValue(
+								accountallocations[i], 'amount'));
 						var acctAllocNode = new Array();
 						var accountType;
 						var splitConvertedCurr;
-						acctAllocNode = nlapiSelectNode(accountallocations[i],'account');
+						acctAllocNode = nlapiSelectNode(accountallocations[i],
+								'account');
 
 						var splitCoupaDept = getCoupaDept(acctAllocNode);
 						var splitCoupaClass = getCoupaClass(acctAllocNode);
 						var splitCoupaLocation = getCoupaLocation(acctAllocNode);
 
 						if (acctAllocNode.length) {
-							accountType = nlapiSelectNode(acctAllocNode,'account-type');
+							accountType = nlapiSelectNode(acctAllocNode,
+									'account-type');
 							splitConvertedCurr = getCoupaCurrency(accountType);
-							LogMsg('entered for splitConvertedCurr '+ splitConvertedCurr);
+							LogMsg('entered for splitConvertedCurr '
+									+ splitConvertedCurr);
 						}
 				
 						record.selectNewLineItem('expense');
-						record.setCurrentLineItemValue('expense','expensedate',ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(expenseLinesLineNode[yy],'expense-date')));
+						record.setCurrentLineItemValue(
+										'expense',
+										'expensedate',
+										ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(
+												expenseLinesLineNode[yy],
+												'expense-date')));
 						//umesh updating amount net of VAT						
 					if (splitLineAmount == '0')
 					{	
@@ -840,7 +874,8 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						if (nlapiGetContext().getSetting('SCRIPT',
 								'custscript_coupa_er_deptseg')) {
 							if (coupaDept != null && coupaDept != "") {
-								record.setCurrentLineItemValue('expense','department', splitCoupaDept);
+								record.setCurrentLineItemValue('expense',
+										'department', splitCoupaDept);
 							} else {
 								LogMsg('Coupa Department not found.');
 							}
@@ -1111,9 +1146,11 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					}
 
 					// dept
-					if (context.getSetting('SCRIPT','custscript_coupa_er_deptseg')) {
+					if (context.getSetting('SCRIPT',
+							'custscript_coupa_er_deptseg')) {
 						if (coupaDept != null && coupaDept != "") {
-							record.setCurrentLineItemValue('expense','department', coupaDept);
+							record.setCurrentLineItemValue('expense',
+									'department', coupaDept);
 						} else {
 							LogMsg('Coupa Department not found.');
 						}
@@ -1366,10 +1403,12 @@ function calculatePostingPeriod(invoiceDate) {
 }
 
 function getCoupaDept(accountNode) {
-	var deptsegment = nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_deptseg');
+	var deptsegment = nlapiGetContext().getSetting('SCRIPT',
+			'custscript_coupa_er_deptseg');
 	if (deptsegment) {
 		var split_dept = nlapiSelectValue(accountNode, deptsegment);
 		var dept = split_dept.split(':');
+
 		if (!dept[1]) {
 			LogMsg('Coupa Department NOT Found');
 			return null;
