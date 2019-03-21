@@ -188,9 +188,10 @@ define(['N/http',
             }
             
             function showResults(context, requstedPeriod, legalEntity) {
-            	log.debug('customerid ', intCustName);
+            	log.debug('customerid ', legalEntity);
                 //Conditional filter here 
-                if (intCustName) {
+              /*
+            	if (intCustName) {
                     var cusFilter = search.createFilter({
                         name: 'entity',
                         operator: search.Operator.ANYOF,
@@ -201,7 +202,7 @@ define(['N/http',
                         name: 'entity',
                         operator: search.Operator.ISNOTEMPTY
                     });
-                }
+                }*/
                 var objForm = ui.createForm({title: 'DSO by Entity'});
                               
                 var actPeriodStart = objForm.addField({
@@ -241,7 +242,7 @@ define(['N/http',
 
 
               var arrPeriods =[];
-              var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Payments', tab: null })
+              var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'DSO', tab: null })
                
 
               //get the revenue search  build an array of accounting periods
@@ -254,14 +255,15 @@ define(['N/http',
               var srcTrans ='';
               var amt ='';
                     //go through the result set and build an array of accounting period names 
-              for (var a = 0; a < revenueRec.length ; a++) {
-            	  if (actPeriodNames.indexOf(revenueRec[a].getText({name: 'srctranpostperiod',summary: 'group'}))==-1){
-            	        actPeriodNames.push(revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}));
-            	        name =revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'})
-            	        nameId=revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}).replace(/\s+/g, '');
-            	        amt = revenueRec[a].getValue({name: 'recurfxamount', summary: 'sum'});
-            	        srcTrans = revenueRec[a].getValue({name: 'srctran', summary: 'group'});
-            	         seaActPeriodNames.push({gridname: name, gridid: nameId , gridamount : amt , gridsource: srcTrans});
+              for (var a = 0; a < dsoData.length ; a++) {
+            	  if (actPeriodNames.indexOf(dsoData[a].getText({name: 'custrecord_tw_dso_period',summary: 'group'}))==-1){
+            	        actPeriodNames.push(dsoData[a].getText({name: 'custrecord_tw_dso_period', summary: 'group'}));
+            	        name =dsoData[a].getText({name: 'custrecord_tw_dso_period', summary: 'group'})
+            	        nameId=dsoData[a].getText({name: 'custrecord_tw_dso_period', summary: 'group'}).replace(/\s+/g, '');
+            	        amt = dsoData[a].getValue({name: 'custrecord_tw_dso_amount', summary: 'sum'});
+            	        amtAR = dsoData[a].getValue({name: 'custrecord_tw_dso_amount_ar', summary: 'sum'});
+            	        calDSO = dsoData[a].getValue({name: 'custrecord_tw_dso_dso', summary: 'MAX'});
+            	        seaActPeriodNames.push({gridname: name, gridid: nameId , gridamount : amt , gridsource: amt, gridsource: amtAR, gridsource: calDSO});
             	 }
               }
               log.debug('Revenue Periods ', actPeriodNames);
@@ -275,7 +277,7 @@ define(['N/http',
                 	  for (var i = 0; i < seaActPeriodNames.length ; i++) {
                 		 var extraId = seaActPeriodNames[i].gridid.toLowerCase();
                 		 var actPeriodname = seaActPeriodNames[i].gridname
-                		 paySublist.addField({id: 'custpage_select_actperiod_'+extraId,label: actPeriodname, type: ui.FieldType.TEXT});
+                		 paySublist.addField({id: 'custpage_select_actperiod_'+ extraId,label: actPeriodname, type: ui.FieldType.TEXT});
                 		 
                       	 arrPeriods.push({'periodId':parseInt(extraId) ,'periodName': actPeriodname });
                       	 }
@@ -324,7 +326,23 @@ define(['N/http',
             			         sort: search.Sort.ASC,
             			         label: "Internal ID"
             			      }),
-            			      search.createColumn({name: "periodname", label: "Name"})
+            			      search.createColumn({name: "periodname", label: "Name"}),
+            			      search.createColumn({
+            			          name: "custrecord_tw_dso_amount",
+            			          summary: "SUM",
+            			          label: "Amount"
+            			       }),
+            			       search.createColumn({
+            			          name: "custrecord_tw_dso_amount_ar",
+            			          summary: "SUM",
+            			          label: "Amount AR"
+            			       }),
+            			       search.createColumn({
+            			          name: "custrecord_tw_dso_dso",
+            			          summary: "MAX",
+            			          label: "DSO"
+            			       })
+            			      
             			   ]
             		});
             	 
@@ -337,46 +355,42 @@ define(['N/http',
 
             }
 
-            function dsoData(startDate, endDate ){
-            	var revRec = search.create({
-            		   type: "revrecschedule",
+            function dsoData(startDate, endDate){
+            	//get the DSO Data from the custom record. 
+            	var customrecord_tw_dso_ratioSearchObj = search.create({
+            		   type: "customrecord_tw_dso_ratio",
             		   filters:
             		   [
-            		      ["customer.internalid","anyof",custId] 
-            		     
+            		      ["custrecord_tw_dso_period.startdate","onorafter",startDate]
             		   ],
             		   columns:
             		   [
             		      search.createColumn({
-            		         name: "srctran",
+            		         name: "startdate",
+            		         join: "CUSTRECORD_TW_DSO_PERIOD",
             		         summary: "GROUP",
             		         sort: search.Sort.ASC,
-            		         label: "Source Transaction"
+            		         label: "Start Date"
             		      }),
             		      search.createColumn({
-            		         name: "srctranpostperiod",
+            		         name: "custrecord_tw_dso_period",
             		         summary: "GROUP",
-            		         sort: search.Sort.ASC,
-            		         label: "Posting Period"
-            		      }),
-            		      search.createColumn({
-            		         name: "recurfxamount",
-            		         summary: "SUM",
-            		         label: "Amount (Foreign Currency)"
-            		      }),
-            		      search.createColumn({
-            		         name: "amount",
-            		         summary: "SUM",
-            		         label: "Amount (Schedule Total)"
+            		         label: "Period"
             		      })
             		   ]
             		});
+            		var searchResultCount = customrecord_tw_dso_ratioSearchObj.runPaged().count;
+            		log.debug("customrecord_tw_dso_ratioSearchObj result count",searchResultCount);
+            		customrecord_tw_dso_ratioSearchObj.run().each(function(result){
+            		   // .run().each has a limit of 4,000 results
+            		   return true;
+            		});
             
-  			var myRevRecs = revRec.run().getRange({
+  			var myPeriods = customrecord_tw_dso_ratioSearchObj.run().getRange({
                      start: 0,
                      end: 1000
                  });
-             return myRevRecs;
+             return myPeriods;
 
            }
             

@@ -370,6 +370,60 @@ jeRec.commitLineItem('line');
 nlapiSubmitRecord(jeRec);
 record.setFieldValue('custbody_is_corp_card', 'T');
 }
+  
+if ((purpose.indexOf("WHITNEY ENGLE") >=0 && purpose.indexOf("VISA") >=0) && isCorpCard !='T')
+{
+//create je
+nlapiLogExecution('DEBUG', 'Message', 'Creating JE');
+var jeRec = nlapiCreateRecord('journalentry');
+jeRec.setFieldValue('subsidiary', 1);
+jeRec.setFieldValue('memo', purpose);
+jeRec.setFieldValue('createdfrom', recordid);
+jeRec.setFieldValue('approved', 'F');
+jeRec.setFieldValue('custbody_journal_entry_description', 'Updating Accounts for Corprate Card Employees');
+// debit line
+jeRec.selectNewLineItem('line');
+jeRec.setCurrentLineItemValue('line', 'account', 296);
+jeRec.setCurrentLineItemValue('line','department', 238);
+jeRec.setCurrentLineItemValue('line', 'debit', amount);
+jeRec.setCurrentLineItemValue('line', 'entity', 6259);
+jeRec.commitLineItem('line');
+// credit line
+jeRec.selectNewLineItem('line');
+jeRec.setCurrentLineItemValue('line', 'account', 12969);
+jeRec.setCurrentLineItemValue('line','department', 238);
+jeRec.setCurrentLineItemValue('line', 'credit', amount);
+jeRec.commitLineItem('line');
+nlapiSubmitRecord(jeRec);
+record.setFieldValue('custbody_is_corp_card', 'T');
+}
+  
+if ((purpose.indexOf("PURDY") >=0 && purpose.indexOf("VISA") >=0) && isCorpCard !='T')
+{
+//create je
+nlapiLogExecution('DEBUG', 'Message', 'Creating JE');
+var jeRec = nlapiCreateRecord('journalentry');
+jeRec.setFieldValue('subsidiary', 1);
+jeRec.setFieldValue('memo', purpose);
+jeRec.setFieldValue('createdfrom', recordid);
+jeRec.setFieldValue('approved', 'F');
+jeRec.setFieldValue('custbody_journal_entry_description', 'Updating Accounts for Corprate Card Employees');
+// debit line
+jeRec.selectNewLineItem('line');
+jeRec.setCurrentLineItemValue('line', 'account', 296);
+jeRec.setCurrentLineItemValue('line','department', 238);
+jeRec.setCurrentLineItemValue('line', 'debit', amount);
+jeRec.setCurrentLineItemValue('line', 'entity', 5976);
+jeRec.commitLineItem('line');
+// credit line
+jeRec.selectNewLineItem('line');
+jeRec.setCurrentLineItemValue('line', 'account', 12968);
+jeRec.setCurrentLineItemValue('line','department', 238);
+jeRec.setCurrentLineItemValue('line', 'credit', amount);
+jeRec.commitLineItem('line');
+nlapiSubmitRecord(jeRec);
+record.setFieldValue('custbody_is_corp_card', 'T');
+}
 
 nlapiLogExecution('DEBUG', 'Message', 'Creating JE Successful!');
 nlapiSubmitRecord(record, true);

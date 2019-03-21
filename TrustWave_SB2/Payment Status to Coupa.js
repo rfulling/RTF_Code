@@ -53,12 +53,8 @@ function scheduled(type) {
 				'Processing Error - Unable to do Coupa request api call to export Invoices',
 				'Error Code = ' + errorcode + ' Error Description = '
 						+ errordetails);
-		nlapiSendEmail(-5, nlapiGetContext().getSetting('SCRIPT',
-				'custscript_coupa_send_pay_email_notifications'), nlapiGetContext()
-				.getSetting('SCRIPT', 'custscript_coupa_send_pay_acccountname')
-				+ ' Invoice Payment Integration:Processing Error - Exception',
-				'Error Code = ' + errorcode + ' Error Description = '
-						+ errordetails);
+		nlapiSendEmail(-5, nlapiGetContext().getSetting('SCRIPT','custscript_coupa_send_pay_email_notifications'), nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_send_pay_acccountname')
+				+ ' Invoice Payment Integration:Processing Error - Exception','Error Code = ' + errorcode + ' Error Description = '+ errordetails);
 		throw error;
 	}
 
@@ -71,8 +67,7 @@ function scheduled(type) {
 	filters[2] = new nlobjSearchFilter('custbody_coupa_er_number', null, 'isnotempty');
 	filters[3] = new nlobjSearchFilter('status', null, 'is', 'ExpRept:I');
 	filters[4] = new nlobjSearchFilter('custbody_status_sent_to_coupa', null, 'is', 'F');
-	filters[5] = new nlobjSearchFilter('datecreated', 'applyingtransaction', 'onOrAfter',
-				'daysAgo1');
+	filters[5] = new nlobjSearchFilter('datecreated', 'applyingtransaction', 'onOrAfter','daysAgo1');
 	//columns
 	columns[0] = new nlobjSearchColumn('custbody_coupa_er_number');
 	columns[1] = new nlobjSearchColumn('datecreated', 'applyingtransaction');
@@ -81,13 +76,11 @@ function scheduled(type) {
 	var results = nlapiSearchRecord('transaction', null, filters, columns);
 	
 	if (results) {
-		nlapiLogExecution('AUDIT', 'Processing ' + results.length
-				+ ' Expense Reports');
+		nlapiLogExecution('AUDIT', 'Processing ' + results.length+ ' Expense Reports');
 	//headers
 	var headers = new Array();
 		headers['Accept'] = 'text/xml';
-		headers['X-COUPA-API-KEY'] = nlapiGetContext().getSetting('SCRIPT',
-				'custscript_send_pay_apikey');
+		headers['X-COUPA-API-KEY'] = nlapiGetContext().getSetting('SCRIPT','custscript_send_pay_apikey');
 				
 		nlapiLogExecution('DEBUG','after getting api key');
 
@@ -118,7 +111,7 @@ function scheduled(type) {
 					nlapiLogExecution('DEBUG', 'after setting ID', postData);
 					nlapiLogExecution('DEBUG', 'after setting ID', url);
 					
-						var response;
+					var response;
 					response = nlapiRequestURL(url, postData, headers, 'PUT');
 					
 					nlapiLogExecution('DEBUG', 'response code = ',response.getCode());
@@ -135,7 +128,7 @@ function scheduled(type) {
 					else {
 						nlapiLogExecution('ERROR', 'Error updating payments in Coupa');
 						//var id = nlapiSubmitRecord(record, true);					
-						}
+				}
 		}
 	}
 	

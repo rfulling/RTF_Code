@@ -36,12 +36,15 @@ define(['N/search','N/ui/message'],
 				break;
 			}
 			
+		
+          //here if there is no class we cannot validate.  Class is not currently required.
 			
-			//log.debug('here on the valide what is the record type ',curRec.type )
-          
-			var deptId = curRec.getCurrentSublistValue({sublistId:sublistID,fieldId:'department'});
+			
+		  var deptId = curRec.getCurrentSublistValue({sublistId:sublistID,fieldId:'department'});
           var ccId = curRec.getCurrentSublistValue({sublistId:sublistID,fieldId:'class'});
-			//log.debug('here on the validate  line ', deptId);
+		 	if(!ccId){
+		 		return true;
+		 	}
 			if(validateDept(deptId,ccId)==false){
 				alert('Class Department do not match ')
 				return false;

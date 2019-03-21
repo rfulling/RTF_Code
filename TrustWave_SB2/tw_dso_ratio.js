@@ -79,7 +79,7 @@ define([
         var contents = '';
         summary.output.iterator().each(function (key, value) {
             contents += (key + ' ' + value + '\n');
-            log.debug('in teh each ', contents);
+            log.debug('Summary ', contents);
             return true;
         });
 
@@ -97,17 +97,19 @@ define([
 
     function getInputData() {
     	//get all accounting periods
-    	 deleteAll();
+    	 
     	
     	var accountingperiodSearchObj = search.create({
     		   type: "accountingperiod",
     		   filters:
     		   [
-    		      ["isquarter","is","F"], 
-    		      "AND", 
-    		      ["isyear","is","F"], 
-    		      "AND", 
-    		      ["periodname","contains","2018"]
+    			   ["enddate","after","1/31/2018"], 
+    			      "AND", 
+    			      ["startdate","before","2/1/2019"], 
+    			      "AND", 
+    			      ["isyear","is","F"], 
+    			      "AND", 
+    			      ["isquarter","is","F"]
     		   ],
     		   columns:
     		   [
@@ -145,12 +147,14 @@ define([
      * @since 2015.1
      */
     function reduce(context) {
-    	
-         createDSORatio(context.key);
+    	deleteAll();
+        // createDSORatio(context.key);
     }
 
     function createDSORatio(acPeriod){
-    	  	 var acDates = search.lookupFields({
+    	//log.debug('process ac period ', acPeriod);
+      
+      var acDates = search.lookupFields({
              type: 'accountingperiod',
              id: acPeriod,
              columns: ['startdate', 'enddate']
@@ -158,9 +162,12 @@ define([
     	//do REC search
     	//create Ratio Record 
     	
-    	 createARbyPeriod(acPeriod,acDates.startdate,acDates.enddate);
-    	 createRevenueByPeriod(acPeriod,acDates.startdate,acDates.enddate);
-    	 calcDSOPeriodSubsidiary(acPeriod);
+    	createARbyPeriod(acPeriod,acDates.startdate,acDates.enddate);
+    	createRevenueByPeriod(acPeriod,acDates.startdate,acDates.enddate);
+    	calcDSOPeriodSubsidiary(acPeriod);
+    	 // 	 log.debug('create endDate ', acDates.enddate);
+    	  //	createAPbyPeriod(acPeriod,acDates.startdate, acDates.enddate);
+    	  //	createCogsbyPeriod(acPeriod,acDates.startdate, acDates.enddate);
       }
       
       function createARbyPeriod(apId,startDate,endDate){
@@ -169,15 +176,71 @@ define([
     		   type: "transaction",
     		   filters:
     		   [
-    		      ["trandate","onorbefore",endDate], 
-    		      "AND", 
-    		      ["account","anyof","227","123","1790","626"], 
-    		      "AND", 
-    		      ["posting","is","T"], 
-    		      "AND", 
-    		      ["accountingperiod.closed","is","T"],
-    		      "AND", 
-    		      ["subsidiary.isinactive","is","F"]
+    			   ["accountingperiod.enddate","onorbefore",endDate], 
+    			   "AND", 
+    			   ["account","anyof","227","123","627","1790","626"], 
+    			   "AND", 
+    			   ["posting","is","T"], 
+    			   "AND", 
+    			   ["subsidiary.isinactive","is","F"]
+    		   ],
+    		   columns:
+    		   [
+    		      search.createColumn({
+    		         name: "custbody_deal_type",
+    		         summary: "GROUP",
+    		         label: "dealtype"
+    		      }),
+    		      search.createColumn({
+     		         name: "subsidiary",
+     		         summary: "GROUP",
+     		         label: "Legal Entity"
+     		      }),
+    			  search.createColumn({
+    		         name: "account",
+    		         summary: "GROUP",
+    		         label: "Account"
+    		      }),
+    			  
+    		      search.createColumn({
+    		          name: "amount",
+    		          summary: "SUM",
+    		          label: "Amount"
+    		       }),
+    		      
+    		   ]
+    		});
+    		var searchResultCount = transactionSearchObj.runPaged().count;
+    		//log.debug("transactionSearchObj result count",searchResultCount);
+    		
+    		
+    		transactionSearchObj.run().each(function(result){
+    		 var newRatio= record.create({type:'customrecord_tw_dso_ratio',isDynamic: true});
+    		   // log.debug('running results ', 'Account result'+ result.getValue({name: 'account',summary: 'group'})) ;  	
+    		  
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_gl_act' ,value: result.getValue({name: 'account',summary: 'group'})});
+	    		    newRatio.setValue({fieldId: 'custrecord_tw_dso_period',value:apId });
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_legal_entity' ,value: result.getValue({name: 'subsidiary',summary: 'group'})});
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_deal_type' ,value: result.getValue({name: 'custbody_deal_type',summary: 'group'})});
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_amount_ar' ,value:result.getValue({name: 'amount',summary: 'sum'})});
+	    		    var myRecId = newRatio.save({enableSourcing : true, ignoreMandatoryFields: true});
+    		   return true;
+    		});
+    		
+      } 
+      function createAPbyPeriod(apId,startDate,endDate){
+    	  log.debug('accounting perido start end ', apId +' - '+startDate + ' - '+ endDate );
+    	  var transactionSearchObj = search.create({
+    		   type: "transaction",
+    		   filters:
+    		   [
+    			   ["accountingperiod.enddate","onorbefore", endDate], 
+    			      "AND", 
+    			      ["accounttype","anyof","AcctPay"], 
+    			      "AND", 
+    			      ["account","anyof","294","295","296"], 
+    			      "AND", 
+    			      ["subsidiary.isinactive","is","F"]
     		   ],
     		   columns:
     		   [
@@ -186,6 +249,11 @@ define([
     		         summary: "GROUP",
     		         label: "Legal Entity"
     		      }),
+    		      search.createColumn({
+     		         name: "custbody_deal_type",
+     		         summary: "GROUP",
+     		         label: "Legal Entity"
+     		      }),
     			  search.createColumn({
     		         name: "account",
     		         summary: "GROUP",
@@ -206,12 +274,13 @@ define([
     		
     		transactionSearchObj.run().each(function(result){
     		 var newRatio= record.create({type:'customrecord_tw_dso_ratio',isDynamic: true});
-    		    log.debug('running results ', 'Account result'+ result.getValue({name: 'account',summary: 'group'})) ;  	
+    		    log.debug('running results ', 'Account result'+ result.getValue({name: 'account ',summary: 'group'})) ;  	
     		  
 	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_gl_act' ,value: result.getValue({name: 'account',summary: 'group'})});
-	    		    newRatio.setValue({fieldId: 'custrecord_tw_dso_period',value:apId });
+	    		    newRatio.setValue({fieldId: 'custrecord_tw_dso_period',value: parseInt(apId) });
 	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_legal_entity' ,value: result.getValue({name: 'subsidiary',summary: 'group'})});
-	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_amount_ar' ,value:result.getValue({name: 'amount',summary: 'sum'})});
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_deal_type' ,value: result.getValue({name: 'custbody_deal_type',summary: 'group'})});
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_amount_ap' ,value:result.getValue({name: 'amount',summary: 'sum'})});
 	    		    var myRecId = newRatio.save({enableSourcing : true, ignoreMandatoryFields: true});
     		   return true;
     		});
@@ -220,26 +289,30 @@ define([
       
   function createRevenueByPeriod(apId,startDate,endDate){    
      
-	  log.debug('accounting perido start end ', apId +' - '+startDate + ' - '+ endDate );
-	  
 	  var transactionSearchObj = search.create({
     	   type: "transaction",
     	   filters:
     	   [
-    		   ["accounttype","anyof","OthIncome","Income"], 
-    	      "AND", 
+    		  ["accounttype","anyof","OthIncome","Income"], 
+    	       "AND", 
     	      ["type","anyof","CustCred","Journal","CustInvc","CustPymt"],
-    	     
     	      "AND", 
-    	      ["postingperiod","abs",apId],
+    	      ["postingperiod","is",apId],
+    	      "AND", 
+		      ["subsidiary.isinactive","is","F"]
     	   ],
     	   columns:
     	   [
     	      search.createColumn({
-    	         name: "subsidiary",
+    	         name: "custbody_deal_type",
     	         summary: "GROUP",
-    	         label: "Legal Entity"
+    	         label: "DealType"
     	      }),
+    	      search.createColumn({
+  		         name: "subsidiary",
+  		         summary: "GROUP",
+  		         label: "Legal Entity"
+  		      }),
     	      
     	      search.createColumn({
     	          name: "amount",
@@ -260,6 +333,7 @@ define([
     	   // .run().each has a limit of 4,000 results
     		 var newRatio= record.create({type:'customrecord_tw_dso_ratio',isDynamic: true});
     		 newRatio.setValue({fieldId: 'custrecord_tw_dso_period',value:apId });
+    		 newRatio.setValue({fieldId:'custrecord_tw_dso_deal_type' ,value: result.getValue({name: 'custbody_deal_type',summary: 'group'})});
     		 newRatio.setValue({fieldId:'custrecord_tw_dso_legal_entity' ,value: result.getValue({name: 'subsidiary',summary: 'group'})});
     		 newRatio.setValue({fieldId:'custrecord_tw_dso_amount' ,value:result.getValue({name: 'amount',summary: 'sum'})});
     		 // newRatio.setValue({fieldId:'custrecord_tw_dso_amount' ,value:result.getValue({name: 'formulacurrency',summary: 'sum',
@@ -267,6 +341,64 @@ define([
     		 var myRecId = newRatio.save({enableSourcing : true, ignoreMandatoryFields: true});
     		return true;
     	});
+  }
+  
+  function createCogsbyPeriod(apId,startDate,endDate){
+	  var transactionSearchObj = search.create({
+   	   type: "transaction",
+   	   filters:
+   	   [
+   		  ["mainline","is","T"], 
+   	      "AND", 
+   	      ["postingperiod","abs",apId],
+   	      "AND", 
+	      ["subsidiary.isinactive","is","F"],
+	      "AND", 
+	      ["account","anyof","294"]
+   	   ],
+   	   columns:
+   	   [
+   	      search.createColumn({
+   	         name: "subsidiary",
+   	         summary: "GROUP",
+   	         label: "Legal Entity"
+   	      }),
+   	      
+   	   search.createColumn({
+	         name: "custbody_deal_type",
+	         summary: "GROUP",
+	         label: "Legal Entity"
+	      }),
+   	      
+   	      search.createColumn({
+   	          name: "amount",
+   	          summary: "SUM",
+   	          label: "Amount"
+   	       })
+   	      //search.createColumn({
+   	      //   name: "formulacurrency",
+   	      //   summary: "SUM",
+   	      //   formula: "CASE WHEN ({accountingperiod.internalid}=" +apId + ")  THEN CASE  WHEN {custbody_billable_expenses}='T' THEN {netamountnotax}  ELSE {amount}   END  END ",
+   	      //}),
+   	      
+   	   ]
+   	});
+   	var searchResultCount = transactionSearchObj.runPaged().count;
+   	log.debug("transactionSearchObj result count",searchResultCount);
+   	transactionSearchObj.run().each(function(result){
+   	   // .run().each has a limit of 4,000 results
+   		 var newRatio= record.create({type:'customrecord_tw_dso_ratio',isDynamic: true});
+   		 newRatio.setValue({fieldId: 'custrecord_tw_dso_period',value:apId });
+   		 newRatio.setValue({fieldId:'custrecord_tw_dso_legal_entity' ,value: result.getValue({name: 'subsidiary',summary: 'group'})});
+   		newRatio.setValue({fieldId:'custrecord_tw_dso_deal_type' ,value: result.getValue({name: 'custbody_deal_type',summary: 'group'})});
+   		 newRatio.setValue({fieldId:'custrecord_tw_dso_amount_cogs' ,value:result.getValue({name: 'amount',summary: 'sum'})});
+   		 // newRatio.setValue({fieldId:'custrecord_tw_dso_amount' ,value:result.getValue({name: 'formulacurrency',summary: 'sum',
+   		//	 formula : "CASE WHEN ({accountingperiod.internalid}=" +apId + ")  THEN CASE  WHEN {custbody_billable_expenses}='T' THEN {netamountnotax}  ELSE {amount}   END  END "})});
+   		 var myRecId = newRatio.save({enableSourcing : true, ignoreMandatoryFields: true});
+   		return true;
+   	});
+	  
+	  
   }
   
   function calcDSOPeriodSubsidiary(acPeriod, subSidiary){

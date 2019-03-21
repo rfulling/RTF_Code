@@ -142,8 +142,17 @@ define([
 		
     	var folderId = scriptObj.getParameter({name: 'custscript_tw_invoice_folder'});
 		var templateId = scriptObj.getParameter({name: 'custscript_tw_mass_email_template_id'});
-     toEmail='russell.fulling@trustwave.com';
+    
+		var toEmail='russell.fulling@trustwave.com';
      try{
+    	 
+    	    transType = transType.trim();
+    	    invRec = record.load({type:transType,id:transId});
+            var docNumber=invRec.getValue({fieldId: 'tranid'});
+    	   //Load template and populate with record
+    	  log.debug('transaction Loaded ', invRec);
+    	  toEmail = invRec.getValue({fieldId: 'custbody_to_email'});
+    	  
      var primaryEmail =toEmail;
      if (toEmail)
       	{
@@ -162,11 +171,7 @@ define([
  	   log.debug('here is the transId ' , transId);
  	   log.debug('here is the transType ' , transType);
 
- 	   transType = transType.trim();
- 	   var invRec = record.load({type:transType,id:transId});
-      var docNumber=invRec.getValue({fieldId: 'tranid'});
- 	   //Load template and populate with record
- 	  log.debug('transaction Loaded ', invRec);
+ 	 
  	   
  	  var transactionFile = render.transaction({entityId: parseInt(transId), printMode: render.PrintMode.PDF,inCustLocale: true});
  	   transactionFile.name='Customer Invoice - '+ docNumber +'.pdf';
@@ -174,7 +179,7 @@ define([
  	   
  	   var fileID = transactionFile.save();
  	   var fileAttach = file.load({id:fileID});
- 	  var mergeResult = render.mergeEmail({templateId: templateId, transactionId: transId,custmRecord: null});
+ 	  var mergeResult = render.mergeEmail({templateId: templateId, transactionId: parseInt(transId), custmRecord: null});
  	  renderSubj=mergeResult.subject;
  	  renderBody=mergeResult.body;
  	  

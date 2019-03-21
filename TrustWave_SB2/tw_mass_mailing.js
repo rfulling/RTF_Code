@@ -81,6 +81,7 @@ define(['N/http',
                     context.request.parameters.custpage_method ="GET";
                   var emailToSend = [];
                     for (var i = 0; i < intLineItemCount; i++){
+                      log.debug('What is checked ',req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_process',line: i}));
                 	   var toProc = req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_process',line: i});
                 	     if(toProc=='T'){
                 	    	   var intTranid = parseInt(req.getSublistValue({group: 'custpage_mysublist',name: 'custpage_inv_internal',line: i}));

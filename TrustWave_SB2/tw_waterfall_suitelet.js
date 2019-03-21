@@ -251,7 +251,7 @@ define(['N/http',
               log.debug('revrec  ', revenueRec);
               var name =''
               var nameId =''
-              var srdTrans ='';
+              var srcTrans ='';
               var amt ='';
                     //go through the result set and build an array of accounting period names 
               for (var a = 0; a < revenueRec.length ; a++) {
@@ -260,7 +260,7 @@ define(['N/http',
             	        name =revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'})
             	        nameId=revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}).replace(/\s+/g, '');
             	        amt = revenueRec[a].getValue({name: 'recurfxamount', summary: 'sum'});
-            	        srcTrans = revenueRec[a].getText({name: 'srctran', summary: 'group'});
+            	        srcTrans = revenueRec[a].getValue({name: 'srctran', summary: 'group'});
             	         seaActPeriodNames.push({gridname: name, gridid: nameId , gridamount : amt , gridsource: srcTrans});
             	 }
               }
