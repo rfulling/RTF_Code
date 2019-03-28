@@ -8,8 +8,7 @@ var ExpenseReportID;
 function scheduled(type) {
 	// Variable Declaration
 	var param_url = context.getSetting('SCRIPT', 'custscript_coupa_er_url');
-	var param_APIKey = context.getSetting('SCRIPT',
-			'custscript_coupa_er_apikey');
+	var param_APIKey = context.getSetting('SCRIPT','custscript_coupa_er_apikey');
 	var iTimeOutCnt = 0;
 	var headers = new Array();
 	var tranid = '';
@@ -56,12 +55,9 @@ var thisEnv = 'PRODUCTION'; //context.getEnvironment();
 						+ errordetails);
 		nlapiSendEmail(
 				-5,
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_er_email_addr_notify'),
-				nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_er_acccountname')
-						+ ' Expense Report Integration:Processing Error - Unable to do Coupa request api call to export Expense Reports',
-				'Error Code = ' + errorcode + ' Error Description = '
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_email_addr_notify'),
+				nlapiGetContext().getSetting('SCRIPT','custscript_coupa_er_acccountname')
+						+ ' Expense Report Integration:Processing Error - Unable to do Coupa request api call to export Expense Reports','Error Code = ' + errorcode + ' Error Description = '
 						+ errordetails);
 		throw error;
 	}
@@ -133,8 +129,7 @@ var url = param_url+'/api/expense_reports?&id=23563';//+ invoice_filter;
 			LogAudit('current Usage at: ' + usage);
 			if (usage < 1000) {
 				LogAudit('Usage Exceeded at: ' + i);
-				var status = nlapiScheduleScript(context.getScriptId(), context
-						.getDeploymentId());
+				var status = nlapiScheduleScript(context.getScriptId(), context.getDeploymentId());
 				if (status == 'QUEUED')
 					break;
 			}
@@ -349,8 +344,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 			expensedByNode = nlapiSelectNode(expenseHeaderHeaderNode,
 					'expensed-by');
 															
-			var coupaEmployee = nlapiSelectValue(expensedByNode,
-					'employee-number');
+			var coupaEmployee = nlapiSelectValue(expensedByNode,'employee-number');
 			LogMsg('entered for coupaEmployee ' + coupaEmployee);
 
 			// Get custom columns
@@ -405,8 +399,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 
 				// Title for Memo
 				if (nlapiSelectValue(expenseHeaderHeaderNode, 'title')) {
-					var coupaTitle = nlapiSelectValue(expenseHeaderHeaderNode,
-							'title');
+					var coupaTitle = nlapiSelectValue(expenseHeaderHeaderNode,'title');
 					record.setFieldValue('memo', coupaTitle);
 				} else {
 					errmsg = 'No value for coupaTitle for ER#: ' + tranid;
@@ -462,8 +455,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					var approved_date = nlapiSelectValue(expenseHeaderHeaderNode, 'submitted-at');
 					for (var w = 0; w < events.length; w++) {
 						if (nlapiSelectValue(events[w], 'status') == 'accounting_review') {
-							approved_date = nlapiSelectValue(events[w],
-									'created-at');
+							approved_date = nlapiSelectValue(events[w],'created-at');
 						}
 					}
 					var formattedDate = ConvertCoupaDateToNetSuiteDate(approved_date);
@@ -524,10 +516,8 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 				
 
 					// Setting approvals
-					var expenseApproval = context.getSetting('SCRIPT',
-							'custscript_coupa_er_approval');
-					if (context.getSetting('SCRIPT',
-							'custscript_coupa_er_approval')) {
+					var expenseApproval = context.getSetting('SCRIPT','custscript_coupa_er_approval');
+					if (context.getSetting('SCRIPT','custscript_coupa_er_approval')) {
 
 						if (expenseApproval == 'true') {
 							expenseApproval = 'T';
@@ -538,8 +528,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						}
 
 						if (expenseApproval != null && expenseApproval != "") {
-							record.setFieldValue('accountingapproval',
-									expenseApproval);
+							record.setFieldValue('accountingapproval',expenseApproval);
 						} else {
 							LogMsg('No Expense Approval Setup.');
 						}
@@ -551,8 +540,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 
 					// Set Field Values From Coupa Expense record
 					record.setFieldValue('trandate', formattedDate);
-					record.setFieldValue('externalid', 'Coupa-expensereport'
-							+ tranid);
+					record.setFieldValue('externalid', 'Coupa-expensereport'+ tranid);
 					record.setFieldValue('customform', 46);
 					
 										
@@ -566,22 +554,16 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 
 				} // End of yy == 0
 
-				expenseCategoryNode = nlapiSelectNode(expenseLinesLineNode[yy],
-						'expense-category');				
-				expenseCategoryLine = nlapiSelectValue(expenseCategoryNode,
-						'name');
-				expenseCategoryId = nlapiSelectValue(expenseCategoryNode,
-						'id');
-				projectNode = nlapiSelectNode(expenseLinesLineNode[yy],
-						'project-code');
-				projectNodeId = nlapiSelectValue(projectNode,
-						'external-ref-num');			
+				expenseCategoryNode = nlapiSelectNode(expenseLinesLineNode[yy],'expense-category');				
+				expenseCategoryLine = nlapiSelectValue(expenseCategoryNode,'name');
+				expenseCategoryId = nlapiSelectValue(expenseCategoryNode,'id');
+				projectNode = nlapiSelectNode(expenseLinesLineNode[yy],'project-code');
+				projectNodeId = nlapiSelectValue(projectNode,'external-ref-num');			
 				LogMsg('entered for expenseCategoryLine ' + expenseCategoryLine);
 
 				var expenseReason = "";
 				if (nlapiSelectValue(expenseLinesLineNode[yy], 'reason')) {
-					expenseReason = nlapiSelectValue(expenseLinesLineNode[yy],
-							'reason');
+					expenseReason = nlapiSelectValue(expenseLinesLineNode[yy],'reason');
 					LogMsg('expenseReason: ' + expenseReason);
 				} else {
 					errmsg = 'No expense reason in Coupa.';
@@ -589,24 +571,19 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					LogMsg(errmsg);
 				}
 				var lineID = nlapiSelectValue(expenseLinesLineNode[yy], 'id');
-				var coupaExpDescription = nlapiSelectValue(
-						expenseLinesLineNode[yy], 'description');
-				var billable = nlapiSelectValue(
-						expenseLinesLineNode[yy], 'billable');
-				var itemizedLine = nlapiSelectValue(
-						expenseLinesLineNode[yy], 'type');
+				var coupaExpDescription = nlapiSelectValue(expenseLinesLineNode[yy], 'description');
+				var billable = nlapiSelectValue(expenseLinesLineNode[yy], 'billable');
+				var itemizedLine = nlapiSelectValue(expenseLinesLineNode[yy], 'type');
 				
 				LogMsg(lineID);
 								
 			//tax umesh
-				var TaxNode = nlapiSelectNode(expenseLinesLineNode[yy],
-					'expense-line-taxes');	
+				var TaxNode = nlapiSelectNode(expenseLinesLineNode[yy],'expense-line-taxes');	
 			
 				if (TaxNode)
 				{
 				LogMsg(lineID);
-				var TaxCodeNode = nlapiSelectNodes(TaxNode, 
-					'expense-line-tax');
+				var TaxCodeNode = nlapiSelectNodes(TaxNode, 'expense-line-tax');
 				}		
 		
 			//setting to zero												
@@ -663,11 +640,9 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 				var splitaccounting = 'FALSE';
 				// var actalloc = nlapiSelectNode(expenseLinesLineNode[yy],
 				// 'account-allocations');
-				var actalloc = nlapiSelectNode(expenseLinesLineNode[yy],
-						'account-allocations');
+				var actalloc = nlapiSelectNode(expenseLinesLineNode[yy],'account-allocations');
 				var accountallocations = new Array();
-				accountallocations = nlapiSelectNodes(actalloc,
-						'account-allocation');
+				accountallocations = nlapiSelectNodes(actalloc,'account-allocation');
 				if (accountallocations.length >= 1) {
 					splitaccounting = 'TRUE';
 
@@ -681,28 +656,21 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						var acctAllocNode = new Array();
 						var accountType;
 						var splitConvertedCurr;
-						acctAllocNode = nlapiSelectNode(accountallocations[i],
-								'account');
+						acctAllocNode = nlapiSelectNode(accountallocations[i],'account');
 
 						var splitCoupaDept = getCoupaDept(acctAllocNode);
 						var splitCoupaClass = getCoupaClass(acctAllocNode);
 						var splitCoupaLocation = getCoupaLocation(acctAllocNode);
 
 						if (acctAllocNode.length) {
-							accountType = nlapiSelectNode(acctAllocNode,
-									'account-type');
+							accountType = nlapiSelectNode(acctAllocNode,'account-type');
 							splitConvertedCurr = getCoupaCurrency(accountType);
 							LogMsg('entered for splitConvertedCurr '
 									+ splitConvertedCurr);
 						}
 				
 						record.selectNewLineItem('expense');
-						record.setCurrentLineItemValue(
-										'expense',
-										'expensedate',
-										ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(
-												expenseLinesLineNode[yy],
-												'expense-date')));
+						record.setCurrentLineItemValue('expense','expensedate',ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(expenseLinesLineNode[yy],'expense-date')));
 						//umesh updating amount net of VAT						
 					if (splitLineAmount == '0')
 					{	
@@ -717,21 +685,18 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					(expenseCategoryId == '11' || expenseCategoryId == '13'  || expenseCategoryId == '6'   ||expenseCategoryId == '14'   || expenseCategoryId == '66'  || expenseCategoryId ==	'69' || expenseCategoryId == '51'  || expenseCategoryId == '12' || expenseCategoryId == '33' || expenseCategoryId == '74')
 					{
 						//var TaxMinusVat = splitLineAmount - TaxAmount;												
-						nlapiLogExecution(
-									'DEBUG', 'Tax Category Amount 691', splitLineAmount);
+						nlapiLogExecution('DEBUG', 'Tax Category Amount 691', splitLineAmount);
 						if (TaxAmount){		
 						var TaxVat = splitLineAmount - TaxAmount						
 						var netAmount = TaxVat * 0.13;
 						var n = netAmount.toFixed(2);
 						var TaxMinusVat = splitLineAmount - n;												
 						//var ItemizedTax = netAmount * netTax;	
-						nlapiLogExecution(
-									'DEBUG', 'Net Amount Amount 699', n);						
+						nlapiLogExecution('DEBUG', 'Net Amount Amount 699', n);						
 						record.setCurrentLineItemValue('expense','amount', TaxMinusVat.toFixed(2));						
 						}
 						else if (!TaxAmount){																		
-						nlapiLogExecution(
-									'DEBUG', 'No Tax Amount', splitLineAmount);						
+						nlapiLogExecution('DEBUG', 'No Tax Amount', splitLineAmount);						
 						record.setCurrentLineItemValue('expense','amount', splitLineAmount);
 							
 						}							
@@ -739,14 +704,11 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					else if ((expenseCategoryId != '11' || expenseCategoryId != '13'  || expenseCategoryId != '6'   ||expenseCategoryId != '14'   || expenseCategoryId != '66'  || expenseCategoryId !=	'69' || expenseCategoryId != '51'  || expenseCategoryId != '12' || expenseCategoryId != '33') || expenseCategoryId != '74' &&  (TaxAmount))						
 						 {
 							var TaxNetVat = splitLineAmount - TaxAmount;
-							nlapiLogExecution(
-									'DEBUG', 'TaxNetVat713', TaxNetVat);					
-							record.setCurrentLineItemValue('expense',
-									'amount', TaxNetVat);						
+							nlapiLogExecution('DEBUG', 'TaxNetVat713', TaxNetVat);					
+							record.setCurrentLineItemValue('expense','amount', TaxNetVat);						
 						}
 						else {																		
-						nlapiLogExecution(
-									'DEBUG', 'No Tax Amount 719', splitLineAmount);						
+						nlapiLogExecution('DEBUG', 'No Tax Amount 719', splitLineAmount);						
 						record.setCurrentLineItemValue('expense','amount', splitLineAmount);							
 						}					
 					}
@@ -759,21 +721,18 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					(expenseCategoryId == '11' || expenseCategoryId == '13'  || expenseCategoryId == '6'   ||expenseCategoryId == '14'   || expenseCategoryId == '66'  || expenseCategoryId ==	'69' || expenseCategoryId == '51'  || expenseCategoryId == '12' || expenseCategoryId == '33' || expenseCategoryId == '74')
 					{
 						//var TaxMinusVat = splitLineAmount - TaxAmount;												
-						nlapiLogExecution(
-									'DEBUG', 'Tax Category Amount 733', splitLineAmount);
+						nlapiLogExecution('DEBUG', 'Tax Category Amount 733', splitLineAmount);
 						if (TaxAmount){		
 						var TaxVat = splitLineAmount - TaxAmount						
 						var netAmount = TaxVat * 0.10;
 						var n = netAmount.toFixed(2);
 						var TaxMinusVat = splitLineAmount - n;												
 						//var ItemizedTax = netAmount * netTax;	
-						nlapiLogExecution(
-									'DEBUG', 'Net Amount Amount 741', n);						
+						nlapiLogExecution('DEBUG', 'Net Amount Amount 741', n);						
 						record.setCurrentLineItemValue('expense','amount', TaxMinusVat.toFixed(2));						
 						}
 						else if (!TaxAmount){																		
-						nlapiLogExecution(
-									'DEBUG', 'No Tax Amount Australia 746', splitLineAmount);						
+						nlapiLogExecution('DEBUG', 'No Tax Amount Australia 746', splitLineAmount);						
 						record.setCurrentLineItemValue('expense','amount', splitLineAmount);
 							
 						}							
@@ -781,29 +740,23 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 					else if ((expenseCategoryId != '11' || expenseCategoryId != '13'  || expenseCategoryId != '6'   ||expenseCategoryId != '14'   || expenseCategoryId != '66'  || expenseCategoryId !=	'69' || expenseCategoryId != '51'  || expenseCategoryId != '12' || expenseCategoryId != '33') || expenseCategoryId != '74'&&  (TaxAmount))						
 						 {
 							var TaxNetVat = splitLineAmount - TaxAmount;
-							nlapiLogExecution(
-									'DEBUG', 'TaxNetVat755', TaxNetVat);					
-							record.setCurrentLineItemValue('expense',
-									'amount', TaxNetVat);						
+							nlapiLogExecution('DEBUG', 'TaxNetVat755', TaxNetVat);					
+							record.setCurrentLineItemValue('expense','amount', TaxNetVat);						
 						}
 						else {																		
-						nlapiLogExecution(
-									'DEBUG', 'No Tax Amount Australia 761', splitLineAmount);						
+						nlapiLogExecution('DEBUG', 'No Tax Amount Australia 761', splitLineAmount);						
 						record.setCurrentLineItemValue('expense','amount', splitLineAmount);							
 						}					
 					}					
 					
 					if(splitLineAmount && (coupaSub == '1' || coupaSub == '44' || coupaSub == '40' || coupaSub == '27' || coupaSub == '24' || coupaSub == '43')){
 						
-							record.setCurrentLineItemValue('expense',
-									'foreignamount', splitLineAmount);
+							record.setCurrentLineItemValue('expense','foreignamount', splitLineAmount);
 					}				
 					
 					else if (splitLineAmount && (!taxstring)) {
-						record.setCurrentLineItemValue('expense',
-								'foreignamount', splitLineAmount);
-						record.setCurrentLineItemValue('expense', 'amount',
-								splitLineAmount);						
+						record.setCurrentLineItemValue('expense','foreignamount', splitLineAmount);
+						record.setCurrentLineItemValue('expense', 'amount',splitLineAmount);						
 					}
 				
 					else {
@@ -811,8 +764,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						}
 
 						if (expenseCategoryLine) {
-							record.setCurrentLineItemText('expense',
-									'category', expenseCategoryLine);
+							record.setCurrentLineItemText('expense','category', expenseCategoryLine);
 						} else {
 							LogMsg('No Category in Coupa.');
 						}
@@ -820,8 +772,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						// if(splitConvertedCurr){
 						if (convertedcurr) {
 							// record.setCurrentLineItemValue('expense','currency',splitConvertedCurr);
-							record.setCurrentLineItemValue('expense',
-									'currency', convertedcurr);
+							record.setCurrentLineItemValue('expense','currency', convertedcurr);
 						} else {
 							LogMsg('No Currency in Coupa.');
 						}
@@ -1097,8 +1048,7 @@ function createExpenseReport(expenseHeaderHeaderNode, tranid, ERamount) {
 						LogMsg('No Category in Coupa.');
 					}
 					if (convertedcurr) {
-						record.setCurrentLineItemValue('expense', 'currency',
-								convertedcurr);
+						record.setCurrentLineItemValue('expense', 'currency',convertedcurr);
 					} else {
 						LogMsg('No Currency in Coupa.');
 					}

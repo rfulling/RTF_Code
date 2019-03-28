@@ -580,39 +580,29 @@ function CreateVendorCredit(invoice) {
 						var subsidiaryName = nlapiSelectValue(coaNode, 'name');
 						var subsidiaryID = '';
 						try {
-							subsidiaryID = getNetSuiteId('subsidiary',
-									subsidiaryName);
+							subsidiaryID = getNetSuiteId('subsidiary',subsidiaryName);
 						} catch (e) {
 							var error = e.getDetails();
 							if (error
 									.indexOf("The feature 'Subsidiaries' required to access this page is not enabled in this account") > -1) {
-								nlapiLogExecution('DEBUG',
-										"Subsidiaries not enabled",
-										'Skipping subsidiary set');
+								nlapiLogExecution('DEBUG',"Subsidiaries not enabled",'Skipping subsidiary set');
 							} else {
 								nlapiLogExecution('ERROR',
 										"Error on Subsidiary set", 'error');
 							}
 						}
 						if (subsidiaryID != '') {
-							nlapiLogExecution('DEBUG',
-									'Setting subsidiary ID from COA name to',
-									subsidiaryID);
+							nlapiLogExecution('DEBUG','Setting subsidiary ID from COA name to',subsidiaryID);
 							record.setFieldValue('subsidiary', subsidiaryID);
 						}
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_glactseg')) {
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_glactseg')) {
 					var account;
 					var accountnumber;
 					var accountId;
-					account = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_glactseg'))
-							.split(':');
+					account = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_glactseg')).split(':');
 					accountnumber = account[0];
 					if (dynamicAccounting == 'T') {
 						accountId = getNetsuiteAccountId(account);
@@ -620,8 +610,7 @@ function CreateVendorCredit(invoice) {
 						accountId = getNetsuiteAccountId(accountnumber);
 					}
 					if (accountId != 'INVALID_ACCOUNT')
-						record.setCurrentLineItemValue('expense', 'account',
-								accountId);
+						record.setCurrentLineItemValue('expense', 'account',accountId);
 					else {
 						nlapiLogExecution(
 								'ERROR',
@@ -661,46 +650,28 @@ function CreateVendorCredit(invoice) {
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_classseg')) {
-					var clss = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_classseg'))
-							.split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_classseg')) {
+					var clss = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_classseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						record
-								.setCurrentLineItemValue('expense', 'class',
-										clss);
+						record.setCurrentLineItemValue('expense', 'class',clss);
 					} else {
-						record.setCurrentLineItemValue('expense', 'class',
-								clss[1]);
+						record.setCurrentLineItemValue('expense', 'class',clss[1]);
 					}
 				}
 
-				if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_locseg')) {
-					var locId = nlapiSelectValue(
-							accountNode,
-							nlapiGetContext().getSetting('SCRIPT',
-									'custscript_coupa_inv_locseg')).split(':');
+				if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_locseg')) {
+					var locId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_locseg')).split(':');
 					if (dynamicAccounting == 'T') {
-						record.setCurrentLineItemValue('expense', 'location',
-								locId);
+						record.setCurrentLineItemValue('expense', 'location',locId);
 					} else {
-						record.setCurrentLineItemValue('expense', 'location',
-								locId[1]);
+						record.setCurrentLineItemValue('expense', 'location',locId[1]);
 					}
 				}
 
-				else if (nlapiGetContext().getSetting('SCRIPT',
-						'custscript_coupa_inv_loccust')) {
-					var locId = getNetSuiteId('location', nlapiSelectValue(
-							invoiceLineNodes[x], nlapiGetContext().getSetting(
-									'SCRIPT', 'custscript_coupa_inv_loccust')));
+				else if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_loccust')) {
+					var locId = getNetSuiteId('location', nlapiSelectValue(invoiceLineNodes[x], nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_inv_loccust')));
 					if (locId != 'INVALID_NAME')
-						record.setCurrentLineItemValue('expense', 'location',
-								locId);
+						record.setCurrentLineItemValue('expense', 'location',locId);
 				}
 				/*
 				 * if (x == 0) { nlapiLogExecution('DEBUG', 'Check for

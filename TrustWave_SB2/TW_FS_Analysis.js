@@ -102,14 +102,15 @@ define([
     	//get all accounting periods
     	var customrecord284SearchObj = search.create({
     		   type: "customrecord284",
-    		   filters:
-    		   [
+    		 
+    		   filters:[
     		      ["custrecord_tw_rs_trans_type","anyof","7"],
     		    //  "AND",
     		    //  ["custrecordts_fs_crm_id" ,"is", "AHMA-I2PWTV"]
     		    //  "AND", 
     		    //  ["internalidnumber","equalto","13711"]
     		   ],
+    		   
     		   columns:
     		   [
     		      search.createColumn({
@@ -117,7 +118,7 @@ define([
     		         sort: search.Sort.ASC,
     		         label: "Script ID"
     		      }),
-    		      search.createColumn({name: "custrecordts_fs_crm_id", label: "Contract ID"}),
+    		      search.createColumn({name: "custrecord_tw_fs_unique_w", label: "Contract ID"}),
     		      search.createColumn({name: "custrecord_tw_fs_transaction_id", label: "Transaction ID"}),
     		      search.createColumn({name: "custrecord_tw_rs_trans_type", label: "Transaction Type"}),
     		     ]
@@ -142,7 +143,7 @@ define([
     	
     	var searchResult = JSON.parse(context.value);
     	var invId  = searchResult.values.custrecord_tw_fs_transaction_id.value;
-    	var crmId = searchResult.values.custrecordts_fs_crm_id;
+    	var crmId = searchResult.values.custrecord_tw_fs_unique_w;
     	//var crmId2 = searchResult.values.custrecord_tw_fs_unique_w
          
     	log.debug('crmId ', crmId);
@@ -150,13 +151,13 @@ define([
         //log.debug('crmId2 ', crmId2);
          
     	getGlForInvoice(context.key,invId)
-   // updateCustRec(crmId,context.key);
-      //createNewCR(crmId);
-    	//addPayments(context.key,crmId,invId);
-    //	var custRec = record.delete({
+     //updateCustRec(crmId,context.key);
+     // createNewCR(crmId);
+    //	addPayments(context.key,crmId,invId);
+    	//var custRec = record.delete({
     	//       type: 'customrecord284',
-    	  //    id: context.key,
-    	  //  });
+    	//      id: context.key,
+    	//    });
     	    
         
     //	context.write({
@@ -204,7 +205,7 @@ define([
     		      "AND", 
     		      ["mainline","is","T"], 
     		      "AND", 
-    		      ["custbody_crm_contract_id","is",crmId]
+    		      ["custbody_opportunity_name","is",crmId]
     		   ],
     		   columns:
     		   [
@@ -231,6 +232,7 @@ define([
     			    values: {
     			    	custrecord_tw_fs_transaction_id: result.getValue({name: 'internalid'}),
     			    	custrecord_tw_rs_tran_amount:result.getValue({name: 'amount'}),
+    			    	custrecord_tw_rs_trans_type:result.getValue({name: 'type'}),
     			    },
     			    options: {
     			        enableSourcing: false,
@@ -288,7 +290,7 @@ define([
    		      "AND", 
    		       ["mainline","is","T"], 
    		       "AND", 
-   		       ["custbody_crm_contract_id","is",crmId]
+   		       ["custbody_opportunity_name","is",crmId]
    		   ],
    		   columns:
    		   [
@@ -301,8 +303,9 @@ define([
    		      search.createColumn({name: "internalid", label: "Internal ID"}),
    		      search.createColumn({name: "amount", label: "amount"}),
    		      search.createColumn({name: "type", label: "type"}),
-   		       search.createColumn({name: "tranid", label: "tranid"}),
-   		    search.createColumn({name: "trandate", label: "trdate"}),
+   		      search.createColumn({name: "tranid", label: "tranid"}),
+   		      search.createColumn({name: "trandate", label: "trdate"}),
+   		      search.createColumn({name: "type", label: "trdate"}),
    		   ]
    		});
     	  
@@ -311,13 +314,13 @@ define([
     	  salesorderSearchObj.run().each(function(result){
   		    //here submit the field with the soId	
     		  var objRecord = record.create({type: 'customrecord284',isDynamic: true});
-    	  	    //log.debug("tran id ", result.getValue({name: 'tranid'}));
-    		  objRecord.setValue({fieldId: 'externalid',value: result.getValue({name: 'tranid'})});
+    	  	    log.debug("tran Date ", result.getValue({name: 'trandate'}));
+    		  objRecord.setValue({fieldId: 'externalid',value: result.getValue({name: 'internalid'})});
     		  objRecord.setValue({fieldId: 'custrecord_tw_fs_transaction_id',value: result.getValue({name: 'internalid'})});
     	  	  
     	  	  objRecord.setValue({fieldId:'custrecordts_fs_crm_id',value: crmId});
     	  	  objRecord.setValue({fieldId:'custrecord_tw_rs_tran_amount',value: result.getValue({name: 'amount'})});
-    	  	  objRecord.setValue({fieldId:'custrecord_tw_fs_transaction_date',value: result.getValue({name: 'trandate'})});
+    	  	 // objRecord.setValue({fieldId:'custrecord_tw_fs_transaction_date',value: result.getValue({name: 'trandate'})});
     	  	  //objRecord.setValue({fieldId:'custrecord_tw_rs_trans_type',value: result.getValue({name: 'type'})});
     	          
 				    	  	var recordId = objRecord.save({
