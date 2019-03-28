@@ -22,7 +22,7 @@
    type: "invoice",
    filters:
    [
-      ["type","anyof","CustInvc"], 
+        ["type","anyof","CustInvc"], 
       "AND", 
       ["mainline","is","T"], 
          "AND", 
