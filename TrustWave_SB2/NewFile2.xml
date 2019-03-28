@@ -1,0 +1,914 @@
+<expense-line>
+<id type="integer">129765</id>
+<created-at type="dateTime">2018-07-16T22:58:15-05:00</created-at>
+<updated-at type="dateTime">2019-02-19T12:03:49-06:00</updated-at>
+<expense-report-id type="integer">23563</expense-report-id>
+<status nil="true"/>
+<description>GRUBHUBPORTILLOSHOTDO</description>
+<merchant>GRUBHUBPORTILLOSHOTDO</merchant>
+<reason>Working Late</reason>
+<amount type="decimal">31.67</amount>
+<approved-amount type="decimal">31.67</approved-amount>
+<reporting-total type="decimal">31.67</reporting-total>
+<accounting-total type="decimal">31.67</accounting-total>
+<order-line-id nil="true"/>
+<expense-date type="dateTime">2018-07-12T00:00:00-05:00</expense-date>
+<external-src-name>corporate_credit_card_vcf4</external-src-name>
+<external-src-data>Trustwave_Holdings_Inc_20180717013105.txt</external-src-data>
+<external-src-ref>************9323-07132018-24492158193717491902315-0000000124</external-src-ref>
+<parent-external-src-name nil="true"/>
+<parent-external-src-data nil="true"/>
+<parent-external-src-ref nil="true"/>
+<type nil="true"/>
+<parent-expense-line-id nil="true"/>
+<receipt-total-amount nil="true"/>
+<receipt-total-currency-id nil="true"/>
+<start-date type="dateTime">2018-07-11T00:00:00-05:00</start-date>
+<divisor type="decimal">1.0</divisor>
+<end-date nil="true"/>
+<frugality type="symbol">shame</frugality>
+<over-limit type="boolean">false</over-limit>
+<requires-receipt type="boolean">true</requires-receipt>
+<custom-field-1>
+<id type="integer">40649</id>
+<created-at type="dateTime">2017-01-17T18:43:57-06:00</created-at>
+<updated-at type="dateTime">2017-02-28T12:17:30-06:00</updated-at>
+<active type="boolean">true</active>
+<name>Internal- Finance</name>
+<description>Internal- Finance</description>
+<external-ref-num>23798</external-ref-num>
+<external-ref-code>23798</external-ref-code>
+<parent-id nil="true"/>
+<lookup-id type="integer">121</lookup-id>
+<depth type="integer">0</depth>
+<is-default type="boolean">false</is-default>
+<lookup>
+<id type="integer">121</id>
+<created-at type="dateTime">2017-01-16T15:50:30-06:00</created-at>
+<updated-at type="dateTime">2017-01-16T15:50:30-06:00</updated-at>
+<active type="boolean">true</active>
+<name>Project</name>
+<description nil="true"/>
+<fixed-depth type="boolean">false</fixed-depth>
+<level-1-name nil="true"/>
+<level-2-name nil="true"/>
+<level-3-name nil="true"/>
+<level-4-name nil="true"/>
+<level-5-name nil="true"/>
+<level-6-name nil="true"/>
+<level-7-name nil="true"/>
+<level-8-name nil="true"/>
+<level-9-name nil="true"/>
+<level-10-name nil="true"/>
+<content-groups type="array">
+<content-group>
+<id type="integer">1</id>
+<created-at type="dateTime">2006-08-27T21:40:04-05:00</created-at>
+<updated-at type="dateTime">2012-11-19T23:08:02-06:00</updated-at>
+<name>Everyone</name>
+<description>All users can see documents assigned to this group</description>
+<updated-by>
+<id type="integer">1</id>
+<login>coupasupport</login>
+<email>coupasupport@coupa.com</email>
+<employee-number/>
+<firstname>Coupa</firstname>
+<lastname>Support</lastname>
+<fullname>Coupa Support</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</content-group>
+</content-groups>
+</lookup>
+<created-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">28</id>
+<login>NetSuite Integrations</login>
+<email>netsuite@integration.com</email>
+<employee-number nil="true"/>
+<firstname>NetSuite</firstname>
+<lastname>Integration</lastname>
+<fullname>NetSuite Integration</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</custom-field-1>
+<custom-field-2>F</custom-field-2>
+<custom-field-3 nil="true"/>
+<custom-field-4 nil="true"/>
+<custom-field-5 nil="true"/>
+<custom-field-6 nil="true"/>
+<custom-field-7 nil="true"/>
+<custom-field-8 nil="true"/>
+<custom-field-9 nil="true"/>
+<custom-field-10 nil="true"/>
+<custom-field-11 nil="true"/>
+<custom-field-12 nil="true"/>
+<custom-field-13 nil="true"/>
+<custom-field-14 nil="true"/>
+<custom-field-15 nil="true"/>
+<custom-field-16 nil="true"/>
+<custom-field-17 nil="true"/>
+<custom-field-18 nil="true"/>
+<custom-field-19 nil="true"/>
+<custom-field-20 nil="true"/>
+<expense-category-custom-field-1>An</expense-category-custom-field-1>
+<expense-category-custom-field-2 nil="true"/>
+<expense-category-custom-field-3 nil="true"/>
+<expense-category-custom-field-4 nil="true"/>
+<expense-category-custom-field-5 nil="true"/>
+<expense-category-custom-field-6 nil="true"/>
+<expense-category-custom-field-7 nil="true"/>
+<expense-category-custom-field-8 nil="true"/>
+<expense-category-custom-field-9 nil="true"/>
+<expense-category-custom-field-10 nil="true"/>
+<line-number type="integer">35</line-number>
+<last-send-back-reason nil="true"/>
+<last-send-back-comment nil="true"/>
+<project-code>
+<id type="integer">40649</id>
+<created-at type="dateTime">2017-01-17T18:43:57-06:00</created-at>
+<updated-at type="dateTime">2017-02-28T12:17:30-06:00</updated-at>
+<active type="boolean">true</active>
+<name>Internal- Finance</name>
+<description>Internal- Finance</description>
+<external-ref-num>23798</external-ref-num>
+<external-ref-code>23798</external-ref-code>
+<parent-id nil="true"/>
+<lookup-id type="integer">121</lookup-id>
+<depth type="integer">0</depth>
+<is-default type="boolean">false</is-default>
+<lookup>
+<id type="integer">121</id>
+<created-at type="dateTime">2017-01-16T15:50:30-06:00</created-at>
+<updated-at type="dateTime">2017-01-16T15:50:30-06:00</updated-at>
+<active type="boolean">true</active>
+<name>Project</name>
+<description nil="true"/>
+<fixed-depth type="boolean">false</fixed-depth>
+<level-1-name nil="true"/>
+<level-2-name nil="true"/>
+<level-3-name nil="true"/>
+<level-4-name nil="true"/>
+<level-5-name nil="true"/>
+<level-6-name nil="true"/>
+<level-7-name nil="true"/>
+<level-8-name nil="true"/>
+<level-9-name nil="true"/>
+<level-10-name nil="true"/>
+<content-groups type="array">
+<content-group>
+<id type="integer">1</id>
+<created-at type="dateTime">2006-08-27T21:40:04-05:00</created-at>
+<updated-at type="dateTime">2012-11-19T23:08:02-06:00</updated-at>
+<name>Everyone</name>
+<description>All users can see documents assigned to this group</description>
+<updated-by>
+<id type="integer">1</id>
+<login>coupasupport</login>
+<email>coupasupport@coupa.com</email>
+<employee-number/>
+<firstname>Coupa</firstname>
+<lastname>Support</lastname>
+<fullname>Coupa Support</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</content-group>
+</content-groups>
+</lookup>
+</project-code>
+<billable>F</billable>
+<expense-category-attendees>An</expense-category-attendees>
+<expense-category>
+<id type="integer">80</id>
+<created-at type="dateTime">2017-01-24T12:15:47-06:00</created-at>
+<updated-at type="dateTime">2018-09-13T21:33:43-05:00</updated-at>
+<active type="boolean">true</active>
+<name>Meals  Entertainment - Group (Internal)</name>
+<type nil="true"/>
+<attendee-tracking-enabled type="boolean">false</attendee-tracking-enabled>
+<gl-code>81600</gl-code>
+<expense-policy>
+<id type="integer">80</id>
+<created-at type="dateTime">2017-01-24T12:15:47-06:00</created-at>
+<updated-at type="dateTime">2018-01-06T20:32:48-06:00</updated-at>
+<requires-receipt type="boolean">true</requires-receipt>
+<summary>Meals  Entertainment Policy</summary>
+<text>Trustwave reimburses for a business lunch or dinner expense only when a business meeting is conducted at that meal. Business meals or entertainment expenses involving only Trustwave employees must be pre-approved by a member of management and not exceed $60 per employee attending. The most senior person attending should submit the expense claim. A detailed itemized receipt must be submitted, summary receipts will not be accepted.</text>
+<active nil="true"/>
+<limit-amount type="decimal">60.00</limit-amount>
+<limit-type>line_rate</limit-type>
+<allow-itemization type="boolean">false</allow-itemization>
+<restrict-itemization-categories nil="true"/>
+<expense-category-ids type="array"/>
+<allow-divisor type="boolean">true</allow-divisor>
+<divisor-start-name/>
+<divisor-end-name nil="true"/>
+<divisor-uom-name>Number of Attendees</divisor-uom-name>
+<allow-divisor-end-date type="boolean">false</allow-divisor-end-date>
+<created-by>
+<id type="integer">12</id>
+<login>nsouthfield@trustwave.com</login>
+<email>nsouthfield@trustwave.com</email>
+<employee-number>56932</employee-number>
+<firstname>Nolan</firstname>
+<lastname>Southfield</lastname>
+<fullname>Nolan Southfield</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>333</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">1</id>
+<login>coupasupport</login>
+<email>coupasupport@coupa.com</email>
+<employee-number/>
+<firstname>Coupa</firstname>
+<lastname>Support</lastname>
+<fullname>Coupa Support</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</expense-policy>
+</expense-category>
+<account>
+<id type="integer">3206</id>
+<created-at type="dateTime">2017-06-01T14:44:21-05:00</created-at>
+<updated-at type="dateTime">2019-02-19T11:23:52-06:00</updated-at>
+<name>Trustwave Holdings, Inc.-81600 Meals  Entertainment Expense-Finance-BAU : Revenue Accounting</name>
+<code>1-81600-103-328</code>
+<active type="boolean">true</active>
+<segment-1>1</segment-1>
+<segment-2>81600</segment-2>
+<segment-3>103</segment-3>
+<segment-4>328</segment-4>
+<segment-5 nil="true"/>
+<segment-6 nil="true"/>
+<segment-7 nil="true"/>
+<segment-8 nil="true"/>
+<segment-9 nil="true"/>
+<segment-10 nil="true"/>
+<segment-11 nil="true"/>
+<segment-12 nil="true"/>
+<segment-13 nil="true"/>
+<segment-14 nil="true"/>
+<segment-15 nil="true"/>
+<segment-16 nil="true"/>
+<segment-17 nil="true"/>
+<segment-18 nil="true"/>
+<segment-19 nil="true"/>
+<segment-20 nil="true"/>
+<account-type>
+<id type="integer">1</id>
+<created-at type="dateTime">2011-11-08T10:06:29-06:00</created-at>
+<updated-at type="dateTime">2018-10-28T15:22:36-05:00</updated-at>
+<name>Trustwave Holdings, Inc.</name>
+<active type="boolean">true</active>
+<currency>
+<id type="integer">1</id>
+<code>USD</code>
+<decimals type="integer">2</decimals>
+</currency>
+<primary-contact>
+<id type="integer">6</id>
+<created-at type="dateTime">2017-01-16T17:32:21-06:00</created-at>
+<updated-at type="dateTime">2017-01-17T11:46:28-06:00</updated-at>
+<email>trustwaveap@trustwave.com</email>
+<name-prefix nil="true"/>
+<name-suffix nil="true"/>
+<name-additional nil="true"/>
+<name-given/>
+<name-family/>
+<name-fullname nil="true"/>
+<notes nil="true"/>
+<purposes type="array"/>
+<created-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</primary-contact>
+<primary-address>
+<id type="integer">8</id>
+<created-at type="dateTime">2017-01-16T17:32:21-06:00</created-at>
+<updated-at type="dateTime">2017-01-16T17:32:21-06:00</updated-at>
+<name>Trustwave Holdings, Inc.</name>
+<location-code nil="true"/>
+<street1>70 W. Madison St.</street1>
+<street2>Suite 600</street2>
+<city>Chicago</city>
+<state>IL</state>
+<postal-code>60602</postal-code>
+<attention nil="true"/>
+<active type="boolean">true</active>
+<business-group-name nil="true"/>
+<vat-number/>
+<local-tax-number/>
+<country>
+<id type="integer">223</id>
+<code>US</code>
+<name>United States</name>
+</country>
+<vat-country>
+<id type="integer">223</id>
+<code>US</code>
+<name>United States</name>
+</vat-country>
+<content-groups type="array"/>
+<purposes type="array"/>
+<created-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</primary-address>
+<created-by>
+<id type="integer">1</id>
+<login>coupasupport</login>
+<email>coupasupport@coupa.com</email>
+<employee-number/>
+<firstname>Coupa</firstname>
+<lastname>Support</lastname>
+<fullname>Coupa Support</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">160</id>
+<login>upokhrel@trustwave.com</login>
+<email>upokhrel@trustwave.com</email>
+<employee-number>940164</employee-number>
+<firstname>Umesh</firstname>
+<lastname>Pokhrel</lastname>
+<fullname>Umesh Pokhrel</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>333</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</account-type>
+<created-by>
+<id type="integer">38</id>
+<login>MSullivan@trustwave.com</login>
+<email>MSullivan@trustwave.com</email>
+<employee-number>586660</employee-number>
+<firstname>Marilyn</firstname>
+<lastname>Sullivan</lastname>
+<fullname>Marilyn Sullivan</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>78</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">38</id>
+<login>MSullivan@trustwave.com</login>
+<email>MSullivan@trustwave.com</email>
+<employee-number>586660</employee-number>
+<firstname>Marilyn</firstname>
+<lastname>Sullivan</lastname>
+<fullname>Marilyn Sullivan</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>78</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</account>
+<period>
+<id type="integer">27</id>
+<created-at type="dateTime">2017-02-01T21:20:00-06:00</created-at>
+<updated-at type="dateTime">2017-02-01T21:22:46-06:00</updated-at>
+<start-date type="dateTime">2018-04-01T00:00:00-05:00</start-date>
+<end-date type="dateTime">2019-03-31T00:00:00-05:00</end-date>
+<is-open type="boolean">true</is-open>
+<segment-1 type="boolean">false</segment-1>
+<segment-2 type="boolean">true</segment-2>
+<segment-3 type="boolean">true</segment-3>
+<segment-4 type="boolean">true</segment-4>
+<segment-5 type="boolean">false</segment-5>
+<segment-6 type="boolean">false</segment-6>
+<segment-7 type="boolean">false</segment-7>
+<segment-8 type="boolean">false</segment-8>
+<segment-9 type="boolean">false</segment-9>
+<segment-10 type="boolean">false</segment-10>
+<segment-11 type="boolean">false</segment-11>
+<segment-12 type="boolean">false</segment-12>
+<segment-13 type="boolean">false</segment-13>
+<segment-14 type="boolean">false</segment-14>
+<segment-15 type="boolean">false</segment-15>
+<segment-16 type="boolean">false</segment-16>
+<segment-17 type="boolean">false</segment-17>
+<segment-18 type="boolean">false</segment-18>
+<segment-19 type="boolean">false</segment-19>
+<segment-20 type="boolean">false</segment-20>
+<name>FY19 - TWH</name>
+<account-type>
+<id type="integer">1</id>
+<created-at type="dateTime">2011-11-08T10:06:29-06:00</created-at>
+<updated-at type="dateTime">2018-10-28T15:22:36-05:00</updated-at>
+<name>Trustwave Holdings, Inc.</name>
+<active type="boolean">true</active>
+<currency>
+<id type="integer">1</id>
+<code>USD</code>
+<decimals type="integer">2</decimals>
+</currency>
+<primary-contact>
+<id type="integer">6</id>
+<created-at type="dateTime">2017-01-16T17:32:21-06:00</created-at>
+<updated-at type="dateTime">2017-01-17T11:46:28-06:00</updated-at>
+<email>trustwaveap@trustwave.com</email>
+<name-prefix nil="true"/>
+<name-suffix nil="true"/>
+<name-additional nil="true"/>
+<name-given/>
+<name-family/>
+<name-fullname nil="true"/>
+<notes nil="true"/>
+<purposes type="array"/>
+<created-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</primary-contact>
+<primary-address>
+<id type="integer">8</id>
+<created-at type="dateTime">2017-01-16T17:32:21-06:00</created-at>
+<updated-at type="dateTime">2017-01-16T17:32:21-06:00</updated-at>
+<name>Trustwave Holdings, Inc.</name>
+<location-code nil="true"/>
+<street1>70 W. Madison St.</street1>
+<street2>Suite 600</street2>
+<city>Chicago</city>
+<state>IL</state>
+<postal-code>60602</postal-code>
+<attention nil="true"/>
+<active type="boolean">true</active>
+<business-group-name nil="true"/>
+<vat-number/>
+<local-tax-number/>
+<country>
+<id type="integer">223</id>
+<code>US</code>
+<name>United States</name>
+</country>
+<vat-country>
+<id type="integer">223</id>
+<code>US</code>
+<name>United States</name>
+</vat-country>
+<content-groups type="array"/>
+<purposes type="array"/>
+<created-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">18</id>
+<login>sliu</login>
+<email>sliu@theshelbygroup.com</email>
+<employee-number/>
+<firstname>Susan</firstname>
+<lastname>Liu</lastname>
+<fullname>Susan Liu</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</primary-address>
+<created-by>
+<id type="integer">1</id>
+<login>coupasupport</login>
+<email>coupasupport@coupa.com</email>
+<employee-number/>
+<firstname>Coupa</firstname>
+<lastname>Support</lastname>
+<fullname>Coupa Support</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">160</id>
+<login>upokhrel@trustwave.com</login>
+<email>upokhrel@trustwave.com</email>
+<employee-number>940164</employee-number>
+<firstname>Umesh</firstname>
+<lastname>Pokhrel</lastname>
+<fullname>Umesh Pokhrel</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>333</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</account-type>
+<created-by>
+<id type="integer">12</id>
+<login>nsouthfield@trustwave.com</login>
+<email>nsouthfield@trustwave.com</email>
+<employee-number>56932</employee-number>
+<firstname>Nolan</firstname>
+<lastname>Southfield</lastname>
+<fullname>Nolan Southfield</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>333</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">12</id>
+<login>nsouthfield@trustwave.com</login>
+<email>nsouthfield@trustwave.com</email>
+<employee-number>56932</employee-number>
+<firstname>Nolan</firstname>
+<lastname>Southfield</lastname>
+<fullname>Nolan Southfield</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>333</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</period>
+<account-allocations type="array"/>
+<currency>
+<id type="integer">1</id>
+<code>USD</code>
+<decimals type="integer">2</decimals>
+</currency>
+<accounting-total-currency>
+<id type="integer">1</id>
+<code>USD</code>
+<decimals type="integer">2</decimals>
+</accounting-total-currency>
+<foreign-currency>
+<id type="integer">1</id>
+<code>USD</code>
+<decimals type="integer">2</decimals>
+</foreign-currency>
+<foreign-currency-amount type="decimal">31.67</foreign-currency-amount>
+<exchange-rate type="decimal">1.0</exchange-rate>
+<expensed-by>
+<id type="integer">38</id>
+<login>MSullivan@trustwave.com</login>
+<email>MSullivan@trustwave.com</email>
+<employee-number>586660</employee-number>
+<firstname>Marilyn</firstname>
+<lastname>Sullivan</lastname>
+<fullname>Marilyn Sullivan</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>78</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</expensed-by>
+<created-by>
+<id type="integer">1</id>
+<login>coupasupport</login>
+<email>coupasupport@coupa.com</email>
+<employee-number/>
+<firstname>Coupa</firstname>
+<lastname>Support</lastname>
+<fullname>Coupa Support</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code/>
+<class-code/>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity/>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">38</id>
+<login>MSullivan@trustwave.com</login>
+<email>MSullivan@trustwave.com</email>
+<employee-number>586660</employee-number>
+<firstname>Marilyn</firstname>
+<lastname>Sullivan</lastname>
+<fullname>Marilyn Sullivan</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>78</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+<expense-artifacts type="array">
+<expense-artifact>
+<id type="integer">116013</id>
+<created-at type="dateTime">2018-08-14T16:09:43-05:00</created-at>
+<updated-at type="dateTime">2018-08-14T16:09:43-05:00</updated-at>
+<external-src-ref nil="true"/>
+<ocr-status nil="true"/>
+<url>https://trustwave.coupahost.com/</url>
+<image-file-name>Memo_Style.png</image-file-name>
+<image-content-type>image/png</image-content-type>
+<image-file-size>51476</image-file-size>
+<source-file-name>Memo_Style.pdf</source-file-name>
+<source-content-type>application/pdf</source-content-type>
+<source-file-size>102676</source-file-size>
+<created-by>
+<id type="integer">38</id>
+<login>MSullivan@trustwave.com</login>
+<email>MSullivan@trustwave.com</email>
+<employee-number>586660</employee-number>
+<firstname>Marilyn</firstname>
+<lastname>Sullivan</lastname>
+<fullname>Marilyn Sullivan</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>78</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</created-by>
+<updated-by>
+<id type="integer">38</id>
+<login>MSullivan@trustwave.com</login>
+<email>MSullivan@trustwave.com</email>
+<employee-number>586660</employee-number>
+<firstname>Marilyn</firstname>
+<lastname>Sullivan</lastname>
+<fullname>Marilyn Sullivan</fullname>
+<salesforce-id nil="true"/>
+<avatar-thumb-url nil="true"/>
+<dept-code>103</dept-code>
+<class-code>78</class-code>
+<apac-or-lac/>
+<government-solutions-llc/>
+<commodity-approval/>
+<legal-entity>Trustwave Holdings, Inc.</legal-entity>
+<do-not-export-er/>
+<reporting-to-bob/>
+</updated-by>
+</expense-artifact>
+</expense-artifacts>
+<expense-line-imported-data>
+<id type="integer">5644</id>
+<amount type="decimal">31.67</amount>
+<description>GRUBHUBPORTILLOSHOTDO</description>
+<external-src-ref>************9323-07132018-24492158193717491902315-0000000124</external-src-ref>
+</expense-line-imported-data>
+<expense-line-taxes type="array"/>
+<integration>
+<id type="integer">28</id>
+<created-at type="dateTime">2017-01-09T20:17:43-06:00</created-at>
+<updated-at type="dateTime">2017-12-08T20:30:08-06:00</updated-at>
+<name>Visa Corporate Card Import</name>
+<code>coupa.inbound.octet-stream.expense_corpcc</code>
+<business-object>ExpenseReport</business-object>
+<direction>to_coupa</direction>
+<end-system-type>third_party_vendor</end-system-type>
+<end-system>Visa</end-system>
+<integration-type>corporate_credit_card_file</integration-type>
+<standard type="boolean">false</standard>
+</integration>
+<expense-attendees type="array"/>
+</expense-line>
