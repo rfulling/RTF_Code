@@ -25,7 +25,7 @@ function userEventAfterSubmit(type) {
 	// Subsidiary as a segment - Disable subs only disables segment
 	// not COA (make clear in Docs)
 
-	nlapiLogExecution('AUDIT', 'Account Integration Script Called ', 'type = '
+	 nlapiLogExecution('AUDIT', 'Account Integration Script Called ', 'type = '
 			+ type + ' recordid = ' + nlapiGetRecordId());
 
 	var record = nlapiGetNewRecord();
