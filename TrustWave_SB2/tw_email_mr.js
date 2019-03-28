@@ -25,11 +25,11 @@ define([
      * @return {Array|Object|Search|RecordRef} inputSummary
      * @since 2015.1
      */
-    function handleErrorAndSendNotification(e, stage) {
+     function handleErrorAndSendNotification(e, stage) {
         log.error('Stage: ' + stage + ' failed', e);
-
+ 
         var author = -5;
-        var recipients = 'russell.fulling@trustwave.com';
+         var recipients = 'russell.fulling@trustwave.com';
         var subject = 'Mass Email Script  ' + runtime.getCurrentScript().id + ' failed for stage: ' + stage;
         var body = 'An error occurred with the following information:\n' +
             'Error code: ' + e.name + '\n' +
