@@ -85,8 +85,7 @@ function scheduled(type) {
 		if (context.getSetting('SCRIPT', 'custscript_coupa_inv_frominvdate')) {
 			url = url
 					+ '&invoice-date[gt_or_eq]='
-					+ netsuitedatetoCoupadate(context.getSetting('SCRIPT',
-							'custscript_coupa_inv_frominvdate'));
+					+ netsuitedatetoCoupadate(context.getSetting('SCRIPT','custscript_coupa_inv_frominvdate'));
 		}
 
 		if (context.getSetting('SCRIPT', 'custscript_coupa_inv_toinvdate')) {
@@ -561,9 +560,7 @@ function CreateVendorCredit(invoice) {
 				var accountNode = nlapiSelectNode(accountallocations[i],'account');
 				record.selectNewLineItem('expense');
 				if (x == 0) {
-					nlapiLogExecution('DEBUG',
-							'Check for Subsidiary segment custom field',
-							nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg'));
+					nlapiLogExecution('DEBUG','Check for Subsidiary segment custom field',nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg'));
 
 					if (nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')) {
 						var subsidiaryId = nlapiSelectValue(accountNode,nlapiGetContext().getSetting('SCRIPT','custscript_coupa_inv_subsseg')).split(':');
@@ -1226,9 +1223,7 @@ function CreateVendorCredit(invoice) {
 		record.setFieldValue('externalid', 'Coupa-VendorCredit-'
 				+ nlapiSelectValue(invoice, 'id'));
 
-		record.setFieldValue('trandate',
-				ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoice,
-						'invoice-date')));
+		record.setFieldValue('trandate',ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(invoice,'invoice-date')));
 
 		// set accounts payable account if passed as parameter to the script
 		if (nlapiGetContext().getSetting('SCRIPT',
