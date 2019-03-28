@@ -3,10 +3,12 @@
  * @NScriptType Suitelet
  * @NModuleScope SameAccount
  */
-define(['N/http',
-        'N/ui/serverWidget',
+define(['N/http','N/ui/serverWidget',
         'N/search',
         'N/task', 
+        'N/search',    
+        'N/task',
+
         'N/runtime'], function (http, ui, search, task, runtime, serverWidget) {
 
             /**
@@ -16,13 +18,18 @@ define(['N/http',
              * @param {ServerRequest} context.request - Encapsulation of the incoming request
              * @param {ServerResponse} context.response - Encapsulation of the Suitelet response
              * @Since 2015.2
+             * this is a new file and should ot be ignored 
              */
+	
+	
             function onRequest(context) {
-                if (context.request.method === 'GET') {
+                 if (context.request.method === 'GET') {
                     var objForm = ui.createForm({
                         title: 'Process Payments by Period'
                         //clientScriptFileId: 7579
                     });
+                    
+                    
 
                     var cusFilter = search.createFilter({
                         name: 'entity',
@@ -57,7 +64,8 @@ define(['N/http',
 
                     });
                     var mysub1 = objForm.addSubmitButton({
-                        label: 'Search'
+                        label: 'Search'   
+                        	
                     });
                     //hid this field when ready
                     objForm.addField({
@@ -84,7 +92,7 @@ define(['N/http',
                     var request = context.request;
                     var requstedPeriod = context.request.parameters.custpage_act_period;
                     var intCustName = context.request.parameters.custpage_customer;
-                    log.debug('actPeriod', context.request.parameters.custpage_act_period);
+                   // log.debug('actPeriod', context.request.parameters.custpage_act_period);
 
                     var objForm = ui.createForm({
                         title: 'Apply Payments by Period'
@@ -127,7 +135,7 @@ define(['N/http',
                         id: 'proc1'
                     });
 
-                    log.debug('Submitted by ' + context.request.parameters.submitter);
+                  //  log.debug('Submitted by ' + context.request.parameters.submitter);
                     var btn = context.request.parameters.submitter;
 
                     if (btn == 'Search') {
@@ -137,8 +145,9 @@ define(['N/http',
                 }
 
             }
+            
             function createAndSubmitMapReduceJob(requstedPeriod, context, objForm) {
-                var mapReduceScriptId = 'customscript_jm_mrs_apply_payments';
+                var mapReduceScriptId = 'customscript_jm_mrs_apply_payments' ;
                 log.audit('mapreduce id: ', mapReduceScriptId);
                 var mrTask = task.create({
                     taskType: task.TaskType.MAP_REDUCE
@@ -148,9 +157,9 @@ define(['N/http',
 
                 mrTask.params = { 'custscript_actPeriod': requstedPeriod };
 
-                log.debug('params' + mrTask.params);
+              //  log.debug('params' + mrTask.params);
 
-                var mrTaskId = mrTask.submit();
+                var mrTaskId = mrTask.submit(); 
                 var taskStatus = task.checkStatus(mrTaskId);
                 if (taskStatus.status === 'FAILED') {
                     var authorId = -5;
@@ -166,6 +175,7 @@ define(['N/http',
 
                 showMessagePage(context);
             }
+            
             function showMessagePage(context) {
 
                 var objFormm = ui.createForm({
@@ -189,7 +199,7 @@ define(['N/http',
             }
             
             function showResults(context, requstedPeriod, intCustName) {
-            	log.debug('showResults ', intCustName);
+            	log.debug('customerid ', intCustName);
                 //Conditional filter here 
                 if (intCustName) {
                     var cusFilter = search.createFilter({
@@ -201,20 +211,10 @@ define(['N/http',
                     var cusFilter = search.createFilter({
                         name: 'entity',
                         operator: search.Operator.ISNOTEMPTY
-
                     });
                 }
-
-
-                var objForm = ui.createForm({
-                    title: 'Process Payments by Period'
-
-                });
-            //    objForm.clientScriptFileId = 7579;
-
-              
-                log.debug('actPeriod GET', context.request.parameters.actPeriodStart);
-                
+                var objForm = ui.createForm({title: 'Process Payments by Period'});
+                              
                 var actPeriodStart = objForm.addField({
                     id: 'custpage_act_period_start',
                     type: ui.FieldType.SELECT,
@@ -231,8 +231,6 @@ define(['N/http',
 
                 }).defaultValue = context.request.parameters.custpage_act_period_end;
 
-                
-                
                 var custName = objForm.addField({
                     id: 'custpage_customer',
                     type: ui.FieldType.SELECT,
@@ -253,132 +251,163 @@ define(['N/http',
                 }).defaultValue = "Submit"
 
 
-                var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Payments', tab: null })
+              var arrPeriods =[];
+              var paySublist = objForm.addSublist({ id: 'custpage_mysublist', type: 'list', label: 'Payments', tab: null })
+               
 
-                paySublist.addField({
-                    id: 'custpage_select_actperiod',
-                    label: 'Select',
-                    type: ui.FieldType.CHECKBOX
-                });
-
-                paySublist.addField({
-                    id: 'custpage_customer',
-                    label: 'Customer',
-                    type: ui.FieldType.TEXT,
-                    source: 'Document'
-                });
-
-                paySublist.addField({
-                    id: 'custpage_payment',
-                    label: 'Payment Id',
-                    type: ui.FieldType.TEXT
-                });
-                paySublist.addField({
-                    id: 'custpage_trandate',
-                    label: 'Transaction Date',
-                    type: ui.FieldType.DATE
-                });
-
-                paySublist.addField({
-                    id: 'custpage_payment_batch',
-                    label: 'Payment Batch',
-                    type: ui.FieldType.TEXT
-                });
-
-                paySublist.addField({
-                    id: 'custpage_payment_amount',
-                    label: 'Amount',
-                    type: ui.FieldType.CURRENCY
-                });
-
-                var revrecscheduleSearchObj = search.create({
-                	   type: "revrecschedule",
-                	   filters:
-                	   [
-                	    //  ["customer.entityid","haskeywords","FirstBLQBXLI"],
-                	    //  "AND", 
-                	      ["internalid","anyof","15735"]
-                	   ],
-                	   columns:
-                	   [
-                	      search.createColumn({
-                	         name: "srctran",
-                	         summary: "GROUP",
-                	         sort: search.Sort.ASC,
-                	         label: "Source Transaction"
-                	      }),
-                	      search.createColumn({
-                	         name: "srctranpostperiod",
-                	         summary: "GROUP",
-                	         sort: search.Sort.ASC,
-                	         label: "Posting Period"
-                	      }),
-                	      search.createColumn({
-                	         name: "recurfxamount",
-                	         summary: "SUM",
-                	         label: "Amount (Foreign Currency)"
-                	      }),
-                	      search.createColumn({
-                	         name: "amount",
-                	         summary: "SUM",
-                	         label: "Amount (Schedule Total)"
-                	      })
-                	   ]
-                	});
-
-                
-
-                var myBal = revrecscheduleSearchObj.run().getRange({
-                    start: 0,
-                    end: 100
-                });
-
-
-                if (myBal) {
-                    for (var i = 0; i < myBal.length ; i++) {
-                        paySublist.setSublistValue({
-                            id: 'custpage_select_actperiod',
-                            line: i,
-                            value: "F"
-                        });
-
-                        paySublist.setSublistValue({
-                            id: 'custpage_customer',
-                            line: i,
-                            value: myBal[i].getValue({name: 'srctran',summary: 'group'})
-                           
-                        });
-
-                      /*  paySublist.setSublistValue({
-                            id: 'custpage_payment',
-                            line: i,
-                            value: myBal[i].getValue('tranid')
-                        });
-
-                        paySublist.setSublistValue({
-                            id: 'custpage_payment_amount',
-                            line: i,
-                            value: myBal[i].getValue('amount')
-                        });
-                        paySublist.setSublistValue({
-                            id: 'custpage_trandate',
-                            line: i,
-                            value: myBal[i].getValue('trandate')
-                        });*/
-                        /*
-                        paySublist.setSublistValue({
-                            id: 'custpage_payment_batch',
-                            line: i,
-                            value: myBal[i].getValue('custbody_jmf_otc_batch')
-                        });
-                        */
-                    }
-                    //HERE RUN THE SEARCH NOW SETT HE FIELDS
+              //get the revenue search  build an array of accounting periods
+              var actPeriodNames =[];
+              var seaActPeriodNames=[];
+              var revenueRec = revRecDatas(intCustName);
+              log.debug('revrec  ', revenueRec);
+              var name =''
+              var nameId =''
+              var srcTrans ='';
+              var amt ='';
+                    //go through the result set and build an array of accounting period names 
+              for (var a = 0; a < revenueRec.length ; a++) {
+            	  if (actPeriodNames.indexOf(revenueRec[a].getText({name: 'srctranpostperiod',summary: 'group'}))==-1){
+            	      //  actPeriodNames.push(revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}));
+            	        name =revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'})
+            	        nameId=revenueRec[a].getText({name: 'srctranpostperiod', summary: 'group'}).replace(/\s+/g, '');
+            	        amt = revenueRec[a].getValue({name: 'recurfxamount', summary: 'sum'});
+            	        srcTrans = revenueRec[a].getText({name: 'srctran', summary: 'group'});
+            	        seaActPeriodNames.push({gridname: name, gridid: nameId , gridamount : amt , gridsource: srcTrans});
+            	 }
+              }
+              log.debug('Revenue Periods ', actPeriodNames);
+              
+                  log.debug('beforeSplice    ' ,seaActPeriodNames); 
+                  if (seaActPeriodNames) {
+                    
+                	  log.debug('after splice.length  ' ,seaActPeriodNames.length);
+                	  log.debug('revenue search.length   ',  actPeriodNames.length);
+                	  paySublist.addField({id: 'custpage_tranid',label: 'Source Trans', type: ui.FieldType.TEXT});
+                	  for (var i = 0; i < seaActPeriodNames.length ; i++) {
+                		 var extraId = seaActPeriodNames[i].gridid.toLowerCase();
+                		 var actPeriodname = seaActPeriodNames[i].gridname
+                		 paySublist.addField({id: 'custpage_select_actperiod_'+extraId,label: actPeriodname, type: ui.FieldType.TEXT});
+                		 
+                      	// arrPeriods.push({'periodId':parseInt(extraId) ,'periodName': actPeriodname });
+                      	 }
                 };
+            	
+            	 if (seaActPeriodNames) {
+                 	for (var x = 0; x < seaActPeriodNames.length ; x++) {
+                 	     periodName =  seaActPeriodNames[x].gridname;
+                 	     amtMonthly = seaActPeriodNames[x].gridamount;
+                 	     thisPeriodId= seaActPeriodNames[x].gridid.toLowerCase();
+                 	      
+                    	     
+                 	     paySublist.setSublistValue({
+                            id: 'custpage_tranid',
+                            line: x,
+                            value: seaActPeriodNames[x].gridsource
+                        }),
+                 	
+                        paySublist.setSublistValue({
+                            id: 'custpage_select_actperiod_'+thisPeriodId,
+                            line: x,
+                            value: amtMonthly
+                        });
+               
+                 	    }
+                 	}
                 return objForm;
-                //   context.response.writePage(objForm);
+            }
+            
+            
+            function getActPeriods(arPeriods){
+            	var accountingperiodSearchObj = search.create({
+            		   type: "accountingperiod",
+            		   filters:
+            			   [
+            			      ["isquarter","is","F"], 
+            			      "AND", 
+            			      ["isyear","is","F"], 
+            			      "AND", 
+            			      ["startdate","onorafter","1/1/2017"]
+            			   ],
+            			   columns:
+            			   [
+            			      search.createColumn({
+            			         name: "internalid",
+            			         sort: search.Sort.ASC,
+            			         label: "Internal ID"
+            			      }),
+            			      search.createColumn({name: "periodname", label: "Name"})
+            			   ]
+            		});
+            	 
+            	  var myactPeriod = accountingperiodSearchObj.run().getRange({
+                      start: 0,
+                      end: 300
+                  });
+              
+            return myactPeriod;
+
             }
 
+            function revRecDatas(custId){
+            	var invSearch = search.create({
+            		   type: "revrecschedule",
+            		   filters:
+            		   [
+            		      ["customer.internalid","anyof",custId] 
+            		     
+            		   ],
+            		   columns:
+            		   [
+            		      search.createColumn({
+            		         name: "srctran",
+            		         summary: "GROUP",
+            		        
+            		         label: "Source Transaction"
+            		      }),
+            		      search.createColumn({
+            		         name: "srctranpostperiod",
+            		         summary: "GROUP",
+            		        
+            		         label: "Posting Period"
+            		      }),
+            		      search.createColumn({
+            		         name: "recurfxamount",
+            		         summary: "SUM",
+            		         label: "Amount (Foreign Currency)"
+            		      }),
+            		      search.createColumn({
+            		         name: "amount",
+            		         summary: "SUM",
+            		         label: "Amount (Schedule Total)"
+            		      })
+            		   ]
+            		});
+            
+  			var myRevRecs = invSearch.run().getRange({
+                     start: 0,
+                     end: 1000
+                 });
+             
+  			log.debu('search Results ', myRevRecs);
+  			return myRevRecs;
+
+           }
+            
+            function internalIdofPeriod(arrPeriods, txtName){
+            	//loop through  the array
+            //	log.debug('periods  ' ,arrPeriods);
+            //	log.debug('periods name ' ,periodName);
+            	var periodId = '';
+            	
+	            	for (var i = 0; i < arrPeriods.length ; i++){
+	            		if(arrPeriods[i].periodName === txtName.trim()){
+	            			periodId=arrPeriods[i].periodId;
+	            			break;
+	            		}
+	            	}	            	
+	            	
+            	return periodId;
+            }
             // ;
             return {
                 onRequest: onRequest,
