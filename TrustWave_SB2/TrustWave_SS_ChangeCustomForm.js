@@ -26,7 +26,7 @@ function fieldChanged_changeCustomForm(type, name, linenum)
     var funcTitle = 'fieldChanged_changeCustomForms';
     nlapiLogExecution(LOG._DEBUG, funcTitle, '===================== START =====================, type='+type+',name='+name);
     
-    if (name != 'custbody_suppressed_invoice')
+     if (name != 'custbody_suppressed_invoice')
     {
         return true;
     }
