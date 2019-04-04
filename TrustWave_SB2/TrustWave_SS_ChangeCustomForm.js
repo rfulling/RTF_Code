@@ -44,16 +44,6 @@ function fieldChanged_changeCustomForm(type, name, linenum)
     {
         nlapiSetFieldValue('customform', 172);
 		nlapiLogExecution(LOG._DEBUG, funcTitle, 'Canada');
-    } 
-	if (isSuppressedInvc == 'F' && subsidiary == '40')
-    {
-        nlapiSetFieldValue('customform', 200);
-		nlapiLogExecution(LOG._DEBUG, funcTitle, 'US');
-    }
-    if (isSuppressedInvc == 'T' && subsidiary == '40')
-    {
-        nlapiSetFieldValue('customform', 207);
-		nlapiLogExecution(LOG._DEBUG, funcTitle, 'US');
     }
     
     return true;
@@ -86,5 +76,4 @@ function pageInit_changeCustomForm(type)
         nlapiSetFieldValue('customform', 172);
 		nlapiLogExecution(LOG._DEBUG, funcTitle, 'Canada');
     }
-	
 }
