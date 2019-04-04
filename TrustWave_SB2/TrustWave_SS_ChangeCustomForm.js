@@ -26,7 +26,7 @@ function fieldChanged_changeCustomForm(type, name, linenum)
     var funcTitle = 'fieldChanged_changeCustomForms';
     nlapiLogExecution(LOG._DEBUG, funcTitle, '===================== START =====================, type='+type+',name='+name);
     
-     if (name != 'custbody_suppressed_invoice')
+    if (name != 'custbody_suppressed_invoice')
     {
         return true;
     }
@@ -45,6 +45,11 @@ function fieldChanged_changeCustomForm(type, name, linenum)
         nlapiSetFieldValue('customform', 172);
 		nlapiLogExecution(LOG._DEBUG, funcTitle, 'Canada');
     }
+	if (isSuppressedInvc == 'T' && subsidiary == '40')
+    {
+        nlapiSetFieldValue('customform', 207);
+		nlapiLogExecution(LOG._DEBUG, funcTitle, 'Secure Connect');
+    }
     
     return true;
 }
@@ -57,7 +62,7 @@ function pageInit_changeCustomForm(type)
     var stCustomForm = nlapiGetFieldValue('customform');
 	var subsidiary = nlapiGetFieldValue('subsidiary');
     
-    if (stCustomForm == '112' || stCustomForm == '172')
+    if (stCustomForm == '112' || stCustomForm == '172'  || stCustomForm == '207')
     {
         return true;
     }
@@ -75,5 +80,10 @@ function pageInit_changeCustomForm(type)
     {
         nlapiSetFieldValue('customform', 172);
 		nlapiLogExecution(LOG._DEBUG, funcTitle, 'Canada');
+    }
+	if (isSuppressedInvc == 'T' && subsidiary == '40')
+    {
+        nlapiSetFieldValue('customform', 207);
+		nlapiLogExecution(LOG._DEBUG, funcTitle, 'Secure Connect');
     }
 }
