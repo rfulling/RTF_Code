@@ -218,7 +218,7 @@ define([
     		 var newRatio= record.create({type:'customrecord_tw_dso_ratio',isDynamic: true});
     		   // log.debug('running results ', 'Account result'+ result.getValue({name: 'account',summary: 'group'})) ;  	
     		  
-	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_gl_act' ,value: result.getValue({name: 'account',summary: 'group'})});
+	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_gl_act' ,value: result.getValue({name: 'account', summary: 'group'})});
 	    		    newRatio.setValue({fieldId: 'custrecord_tw_dso_period',value:apId });
 	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_legal_entity' ,value: result.getValue({name: 'subsidiary',summary: 'group'})});
 	    		    newRatio.setValue({fieldId:'custrecord_tw_dso_deal_type' ,value: result.getValue({name: 'custbody_deal_type',summary: 'group'})});
