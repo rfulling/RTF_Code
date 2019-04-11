@@ -117,18 +117,32 @@ function scheduled(type) {
 					nlapiLogExecution('DEBUG', 'response code = ',response.getCode());
 					
 					//Update the Record as Paid
-					var record = nlapiLoadRecord('expensereport', internalid);
-					nlapiLogExecution('DEBUG', 'recordid', record);	
-					record.setFieldValue('custbody_status_sent_to_coupa','T');
+         
 					if (response.getCode() == '200')
 					{
-					nlapiLogExecution('DEBUG', 'Payment Date and Status sent to Coupa successfully');
-					var id = nlapiSubmitRecord(record, true);						
-					}
+						nlapiLogExecution('DEBUG', 'Payment Date and Status sent to Coupa successfully');
+											
+						
+						try{
+						
+						var record = nlapiLoadRecord('expensereport', internalid);
+						nlapiLogExecution('DEBUG', 'recordid', record);	
+						record.setFieldValue('custbody_status_sent_to_coupa','T');
+						var id = nlapiSubmitRecord(record, true);	
+						} catch (error) {
+							errmsg = (error.message);
+							nlapiLogExecution('ERROR', 'Process Error ' +' CouldNot update NS report as exported... '+ +internalid + '---'+	errmsg );
+						}
+						}
 					else {
 						nlapiLogExecution('ERROR', 'Error updating payments in Coupa');
 						//var id = nlapiSubmitRecord(record, true);					
-				}
+				}	
+		
+					
+					
+					
+					
 		}
 	}
 	
