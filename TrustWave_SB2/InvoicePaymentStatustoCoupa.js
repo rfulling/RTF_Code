@@ -139,7 +139,7 @@ function scheduled(type) {
 					nlapiLogExecution('DEBUG', 'Payment Date and Status sent to Coupa successfully');		
 					}
 					else {
-						nlapiLogExecution('ERROR', 'Error updating payments in Coupa');
+						nlapiLogExecution('ERROR', 'Error updating payments in Coupa ' + ' This ID- '+ CoupaID + ' - is -  ' + CoupaInvoiceID);
 						//var id = nlapiSubmitRecord(record, true);					
 						}
 		}
@@ -147,12 +147,16 @@ function scheduled(type) {
 	
 }
 
-function getCoupaInvoiceId(invoicenum, suppliernumber, tranid, topayamount,topaydate) {
+function getCoupaInvoiceId(invoicenum, suppliernumber, tranid, topayamount,
+		topaydate) {
 	var coupaInvoiceId;
 	var encoded_invoicenum = encodeURIComponent(invoicenum);
 
-	var url = nlapiGetContext().getSetting('SCRIPT', 'custscript_coupa_send_inv_pay_url')+ '/api/invoices?invoice-number='+ encoded_invoicenum
-	+ '&&supplier[number]=' + suppliernumber + '&&status=approved';
+	var url = nlapiGetContext()
+			.getSetting('SCRIPT', 'custscript_coupa_send_inv_pay_url')
+			+ '/api/invoices?invoice-number='
+			+ encoded_invoicenum
+			+ '&&supplier[number]=' + suppliernumber + '&&status=approved';
 
 	var headers = new Array();
 	headers['Accept'] = 'text/xml';
@@ -181,18 +185,22 @@ function getCoupaInvoiceId(invoicenum, suppliernumber, tranid, topayamount,topay
 		return 'INVOICE_PAID';
 	}
 
-	var PaymentsNode = nlapiSelectNode(responseXML,'invoice-headers/invoice-header/payments');
+	var PaymentsNode = nlapiSelectNode(responseXML,
+			'invoice-headers/invoice-header/payments');
 	var paymentnode = new Array();
 	paymentnode = nlapiSelectNodes(PaymentsNode, 'payment');
 
 	for (var i = 0; i < paymentnode.length; i++) {
 
-		if (nlapiSelectValue(paymentnode[i], 'amount-paid')&& nlapiSelectValue(paymentnode[i], 'payment-date')) {
+		if (nlapiSelectValue(paymentnode[i], 'amount-paid')
+				&& nlapiSelectValue(paymentnode[i], 'payment-date')) {
 
-			var paidamount = parseFloat(nlapiSelectValue(paymentnode[i],'amount-paid'));
+			var paidamount = parseFloat(nlapiSelectValue(paymentnode[i],
+					'amount-paid'));
 			var checknumber = nlapiSelectValue(paymentnode[i], 'notes');
 		
-			var paiddate = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(paymentnode[i], 'payment-date'));
+			var paiddate = ConvertCoupaDateToNetSuiteDate(nlapiSelectValue(
+					paymentnode[i], 'payment-date'));
 
 			nlapiLogExecution('DEBUG', 'Check for duplicate',
 					'Invoice Check = ' + checknumber + ' Netsuite Tranid = '
@@ -201,8 +209,8 @@ function getCoupaInvoiceId(invoicenum, suppliernumber, tranid, topayamount,topay
 							+ ' Invoicedate = ' + paiddate + ' ToPayDate = '
 							+ topaydate);
 
-			if ((paidamount == parseFloat(topayamount))&& (tranid == checknumber) && (paiddate == topaydate)) {
-				
+			if ((paidamount == parseFloat(topayamount))
+					&& (tranid == checknumber) && (paiddate == topaydate)) {
 				return 'DUPLICATE_PAYMENT';
 			}
 		}

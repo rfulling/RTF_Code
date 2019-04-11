@@ -59,7 +59,7 @@ define(['N/record', 'N/search'],
 					 	}
 			}
 		log.debug("set form to ", customForm);
-		newRecord.setValue({fieldId : 'customform',value: customForm});
+		newRecord.setValue({fieldId : 'customform',value: customForm, ignoreFieldChange: true});
 		
 	}
 		function afterSubmit(context){

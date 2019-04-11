@@ -265,8 +265,7 @@ function setExportedToTrue(id) {
 	}// loop end
 
 	if (response.getCode() != '200') {
-		LogErr('Coupa Purchase-Order Id = ' + id + ' response failed:'
-				+ response.getDetails());
+		LogErr('Coupa Purchase-Order Id = ' + id + ' response failed:'+ response.getDetails());
 	}
 
 }

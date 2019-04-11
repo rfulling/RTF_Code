@@ -8,9 +8,16 @@ function scheduled(type){
 	nlapiLogExecution('DEBUG', 'Running Saved Search 3');
 	columns[0] = new nlobjSearchColumn('internalid');	
 	columns[1] = new nlobjSearchColumn('custbody_to_email');	
+	
+	searches are 2290,2289, new for SCMS
+	*
 	*/
 	
-	var results = nlapiSearchRecord('invoice', 2289, null, null);
+	var searchToRun = nlapiGetContext().getSetting('SCRIPT','custscript_searchtorun');
+	//One script multiple deployments 
+	
+	
+	var results = nlapiSearchRecord('invoice', searchToRun, null, null);
 	
 	//if no results
 	if (!results)
@@ -53,6 +60,10 @@ function scheduled(type){
 				var record = nlapiLoadRecord('invoice', internalId);
 				var file = nlapiPrintRecord('TRANSACTION', internalId, 'PDF',null); 
 	 
+				 file.setName(tranid + ' - '+   '.pdf' );
+				  file.setFolder(25257);
+				  fileId = nlapiSubmitFile(file); 
+				
 				//this will allow you to define the template that will be used to print the invoice
 				//response.setContentType('PDF', 'Print Invoice Record', 'INLINE');
 				//response.write(file.getValue());
@@ -86,7 +97,20 @@ function scheduled(type){
 				renderer.setTemplate(emailBody);
 				renderBody = renderer.renderToString();
 				nlapiSendEmail(23779, cc, renderSubj, renderBody, null, null, records, file);
-				nlapiLogExecution('DEBUG', 'Email successfully Sent');	  
+				nlapiLogExecution('DEBUG', 'Email successfully Sent');	 
+				
+				  var mailedMessage = nlapiCreateRecord('message');
+				  mailedMessage.setFieldValue('author',23779);
+				  mailedMessage.setFieldValue('subject',renderSubj);
+				  mailedMessage.setFieldValue('message', renderBody);
+				  mailedMessage.setFieldValue('transaction', internalId);
+				  mailedMessage.setFieldValue('emailed','T');
+				  mailedMessage.setFieldValue('recipientemail',toEmail);
+				  mailedMessage.setFieldValue('recipientemail',toEmail);
+				  var index = mailedMessage.getLineItemCount('mediaitem');
+				  nlapiLogExecution('DEBUG', 'what index '+index);
+				  var messageId = nlapiSubmitRecord(mailedMessage);
+				  mailedMessage.setLineItemValue('mediaitem', 'mediaitem', index + 1, fileId);
 				}
 			}
 		}

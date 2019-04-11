@@ -1308,8 +1308,7 @@ function CreateVendorCredit(invoice) {
 		// record.setFieldValue('postingperiod', 160);
 
 		// set currency
-		var curr = getNetsuiteCurrency('currency', nlapiSelectValue(invoice,
-				'currency/code'));
+		var curr = getNetsuiteCurrency('currency', nlapiSelectValue(invoice,'currency/code'));
 		record.setFieldValue('currency', curr);
 
 		record.setFieldValue('tranid', nlapiSelectValue(invoice,

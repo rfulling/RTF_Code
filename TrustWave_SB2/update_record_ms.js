@@ -96,23 +96,9 @@ define([
     }
 
     function getInputData() {
-    	var customrecord284SearchObj = search.create({
-			   type: "customrecord284",
-			   filters:
-			   [
-			      ["custrecord_tw_rs_trans_type","anyof","9"]
-			   ],
-			   columns:
-			   [
-			      search.createColumn({
-			         name: "scriptid",
-			         sort: search.Sort.ASC,
-			         label: "Script ID"
-			      }),
-			   ]
-          });
+    	var transactionSearchObj = search.load({id:'customsearch_muinvoices'})
 
-        return customrecord284SearchObj;
+        return transactionSearchObj;
     }
 
     /**
@@ -123,14 +109,53 @@ define([
      */
     function map(context) {
     	var searchResult = JSON.parse(context.value);
-      
-  var salesOrderRecord = record.delete({
-       type: 'customrecord284',
-       id: contex.key
-    });
+        
+    /*
+    	var myInv = record.load({
+    		 type:  record.Type.INVOICE,
+     	    id: context.key,
+     		isDynamic: false
+    	});
+    	
+    	var myTot = myInv.getValue({fieldId: 'total'});
+    	
+       	myInv.setSublistValue({sublistId: 'item', 
+       				            fieldId :'quantity',
+       				            line: 0,
+       		                    value : 1 });
+       	myInv.setSublistValue({sublistId:'item' , 
+       		                     fieldId : 'custcol_billing_term_for_suppression', 
+       		                      line: 0,
+       		                      value : 1 });
+       	myInv.setSublistValue({sublistId:'item' , 
+       		                     fieldId :'custcol_aggregated_amount',
+       		                      line: 0,
+       		                      value : myTot});
+       	
+       	var cId = myInv.save({enableSourcing: false,ignoreMandatoryFields: true});
+    	*/
+    	
+    	record.submitFields({
+     	    type:  record.Type.INVOICE,
+     	    id: context.key,
+     	    values: {
+     	    	customform: 107,
+     	    },
+     	    options: {
+     	        enableSourcing: false,
+     	        ignoreMandatoryFields : true
+     	    }
+     	});
+     	 
+    	
+    	//log.debug('will delete this invoice ', context.key);
+        //var salesOrderRecord = record.delete({
+       //type: record.Type.INVOICE,
+      // id: context.key
+     //});
   
-  //  	context.write({
-   //         key: searchResult.id,
+      //  	context.write({
+      //         key: searchResult.id,
     //        value : searchResult.id
     //    	});
       }
@@ -293,7 +318,7 @@ define([
     return {
         getInputData: getInputData,
         map: map,
-        reduce: reduce,
+       // reduce: reduce,
         summarize: summarize
     };
 

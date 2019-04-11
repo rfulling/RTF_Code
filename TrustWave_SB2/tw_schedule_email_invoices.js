@@ -8,10 +8,18 @@ function scheduled(type){
 	nlapiLogExecution('DEBUG', 'Running Saved Search 3');
 	columns[0] = new nlobjSearchColumn('internalid');	
 	columns[1] = new nlobjSearchColumn('custbody_to_email');	
+	
+	searches are 2290,2289, new for SCMS
+	*
 	*/
 	
-	var results = nlapiSearchRecord('invoice', 2290, null, null);
-	var mailDate = new Date();	
+	var searchToRun = nlapiGetContext().getSetting('SCRIPT','custscript_searchtorun');
+	var folderId =nlapiGetContext().getSetting('SCRIPT','custscript_tw_invoice_mailing_folder');
+	//One script multiple deployments 
+	
+	
+	var results = nlapiSearchRecord('invoice', searchToRun, null, null);
+	
 	//if no results
 	if (!results)
 				{
@@ -52,8 +60,8 @@ function scheduled(type){
 				var record = nlapiLoadRecord('invoice', internalId);
 				var file = nlapiPrintRecord('TRANSACTION', internalId, 'PDF',null); 
 	 
-				 file.setName(tranid + ' - '+   '.pdf' );
-				  file.setFolder(25257);
+				 file.setName(tranid +    '.pdf' );
+				  file.setFolder(folderId );
 				  fileId = nlapiSubmitFile(file);   
 				
 				//this will allow you to define the template that will be used to print the invoice
@@ -101,16 +109,14 @@ function scheduled(type){
 				  mailedMessage.setFieldValue('recipientemail',toEmail);
 				  var index = mailedMessage.getLineItemCount('mediaitem');
 				  nlapiLogExecution('DEBUG', 'what index '+index);
-				  var messageId = nlapiSubmitRecord(mailedMessage);
+				 
 				  mailedMessage.setLineItemValue('mediaitem', 'mediaitem', index + 1, fileId);
 				  
 				  
-				  //var messageId = nlapiSubmitRecord(mailedMessage);
+				  var messageId = nlapiSubmitRecord(mailedMessage);
 				  var stop ='';
 				
 				
 				}
 			}
-		}
-}
-
+		}}
