@@ -13,10 +13,10 @@
          * 
          * @returns Array | Object | search.Search | mapReduce.ObjectRef | file.File Object
          */
-        function getInputData(){
+          function getInputData(){
  
             try{
-           
+                
              
               var openInvoiceSearch = search.create({
    type: "invoice",

@@ -13,7 +13,7 @@
          * 
          * @returns Array | Object | search.Search | mapReduce.ObjectRef | file.File Object
          */
-        function getInputData(){
+         function getInputData(){
  
             try{
            

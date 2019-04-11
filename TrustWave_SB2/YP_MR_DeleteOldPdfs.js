@@ -10,9 +10,9 @@ define(["N/file", "N/search"],
         /**
          * @description Acquires a collection of data
          * 
-         * @returns Array | Object | search.Search | mapReduce.ObjectRef | file.File Object
+           * @returns Array | Object | search.Search | mapReduce.ObjectRef | file.File Object
          */
-        function getInputData() {
+          function getInputData() {
             try {
 
                 // Get all invoices that were paid three days ago

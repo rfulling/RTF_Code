@@ -19,7 +19,7 @@ define(["N/file", "N/search"],
             // Get all invoices that were paid three days ago
             var paidInvoiceSearch = search.create({
                 type: search.Type.INVOICE,
-                filters:[
+                  filters:[
                     ["type","anyof","CustInvc"], 
                     "AND", 
                     ["systemnotes.type","is","F"], 

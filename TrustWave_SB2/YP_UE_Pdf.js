@@ -18,7 +18,7 @@ define(["N/file", "N/render", "N/record", "N/task","N/runtime",'N/email'],
          * @param {Object} scriptContext
          * @param {record.Record} scriptContext.newRecord - New record
          * @param {record.Record} scriptContext.oldRecord - Old record
-         * @param {string} scriptContext.type - Trigger type
+           * @param {string} scriptContext.type - Trigger type
          */
         function afterSubmit(scriptContext) {
  
