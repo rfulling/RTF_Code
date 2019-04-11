@@ -30,7 +30,7 @@ function scheduled(type) {
 	// Ensure test url in a non production environment.
 	try {
 		if (thisEnv != 'PRODUCTION') {
-			var test_url = false;
+			   var test_url = false;
 			for (var i = 0; i < url_test_contains.length; i++) {
 				if (param_url.indexOf(url_test_contains[i]) > -1) {
 					test_url = true;
